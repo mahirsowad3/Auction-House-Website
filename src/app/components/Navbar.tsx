@@ -1,8 +1,22 @@
+'use client'
+import Link from 'next/link';
 // src/components/Navbar.tsx
 
 import React from 'react'
 
 const Navbar = () => {
+    const [userType, setUserType] = React.useState<string | null>(null);
+    const [userName, setUserName] = React.useState<string | null>(null);
+    const [passowrd, setPassowrd] = React.useState<string | null>(null); 
+
+    React.useEffect(() => {
+        // TODO: Authenticate user
+        // TODO: Fetch user type from the server
+        setUserType("seller");
+        setUserName("Test1");
+        setPassowrd("Test1");
+    }, []);
+
     return (
         <div>
             {/* navbar for Tailwind */}
@@ -14,11 +28,14 @@ const Navbar = () => {
                                 <a href="#" className="text-white font-bold text-2xl">Eiffel Team</a>
                             </div>
                             <div className="hidden sm:block sm:ml-6">
-                                <div className="flex space-x-4">
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Calendar</a>
+                                <div style={{ border: '1px solid red' }} className="flex space-x-4">
+                                    {userType === 'seller' ? (
+                                        <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
+                                    ) : (
+                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</a>
+                                    )}
+                                    {/* <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Calendar</a> */}
                                 </div>
                             </div>
                         </div>
