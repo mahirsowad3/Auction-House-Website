@@ -1,13 +1,14 @@
-import AWS from 'aws-sdk';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { PutObjectCommand, S3, ObjectCannedACL } from '@aws-sdk/client-s3';
 import { NextRequest, NextResponse } from 'next/server';
 
-AWS.config.update({
-    accessKeyId: 'AKIAS2VS4VJA3RMJ6OEV',
-    secretAccessKey: '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',
-    region: 'us-east-2'
+const s3 = new S3({
+    credentials: {
+        accessKeyId: 'AKIAS2VS4VJA3RMJ6OEV',
+        secretAccessKey: '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',
+    },
+    region: 'us-east-2',
 });
-
-const s3 = new AWS.S3();
 
 export async function POST(req: NextRequest) {
     try {
@@ -16,13 +17,17 @@ export async function POST(req: NextRequest) {
         const params = {
             Bucket: 'auctionhouse-images',
             Key: `${Date.now()}_${fileName}`,
-            Expires: 60,
             ContentType: fileType,
-            ACL: 'public-read',
+            ACL: 'public-read' as ObjectCannedACL,
         };
 
-        const uploadURL = await s3.getSignedUrlPromise('putObject', params);
-        return NextResponse.json({ uploadURL });
+        const uploadURL = await getSignedUrl(s3, new PutObjectCommand(params), {
+            expiresIn: 60,
+        });
+
+        const response = NextResponse.json({ uploadURL });
+        response.headers.set('Cache-Control', 'no-store'); // Disable caching
+        return response;
     } catch (error) {
         console.error("Error generating signed URL", error);
         return NextResponse.json({ error: "Could not generate upload URL" }, { status: 400 });

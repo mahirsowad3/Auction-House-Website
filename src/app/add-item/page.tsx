@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -11,6 +11,8 @@ export default function AddItem() {
   const [imageFiles, setImageFiles] = React.useState<File[]>([]);
   const [addItemButtonDisabled, setAddItemButtonDisabled] = React.useState<boolean>(true);
   const imageUploadRef = React.useRef<HTMLInputElement | null>(null);
+
+  
 
   useEffect(() => {
     if (itemName !== '' && initialPrice !== '' && itemDescription !== '' && bidEndDate !== '' && imageFiles.length > 0) {
@@ -69,6 +71,9 @@ export default function AddItem() {
       console.error("Failed to add item.");
       return;
     }
+
+    sessionStorage.setItem('basicItemInfo', JSON.stringify(basicItemInfo));
+    console.log("sessionStoragePayload: ", sessionStorage.getItem('basicItemInfo'));
 
     const itemId = basicItemInfo.ItemID;
     console.log("Item created with ID:", itemId);
