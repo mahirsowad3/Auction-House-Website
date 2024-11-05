@@ -23,12 +23,26 @@ export default function AddItem() {
   }, [itemName, initialPrice, itemDescription, bidEndDate, imageFiles]);
 
   const getPresignedURL = async (file: File) => {
-    const response = await axios.post('/add-item/api/upload-url', {
-      fileName: file.name,
-      fileType: file.type,
-    });
-    return response.data.uploadURL;
-  };
+    try {
+        const response = await axios.post(`${baseURL}/upload-url`, {
+          body: 
+          {
+            fileName: file.name,
+            fileType: file.type,
+          }
+  
+        });
+        console.log(JSON.parse(response.data.body));
+        const uploadURL = JSON.parse(response.data.body);
+
+        console.log("Received presigned URL:", uploadURL);
+        return uploadURL;
+    } catch (error) {
+        console.error("Error getting presigned URL:", error);
+        return null;
+    }
+};
+
 
   const uploadImageToS3 = async (file: File, uploadURL: string) => {
     await axios.put(uploadURL, file, {
