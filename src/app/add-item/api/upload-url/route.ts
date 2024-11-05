@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         });
 
         const response = NextResponse.json({ uploadURL });
-        response.headers.set('Cache-Control', 'no-store'); // Disable caching
+        response.headers.set('Cache-Control', 'no-store');
         return response;
     } catch (error) {
         console.error("Error generating signed URL", error);
