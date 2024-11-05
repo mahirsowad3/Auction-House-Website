@@ -7,7 +7,7 @@ import React from 'react'
 const Navbar = () => {
     const [userType, setUserType] = React.useState<string | null>(null);
     const [userName, setUserName] = React.useState<string | null>(null);
-    const [passowrd, setPassowrd] = React.useState<string | null>(null); 
+    const [password, setPassword] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         // TODO: Authenticate user
@@ -17,7 +17,7 @@ const Navbar = () => {
         sessionStorage.setItem('password', 'Test1');
         setUserType(sessionStorage.getItem('userType'));
         setUserName(sessionStorage.getItem('userName'));
-        setPassowrd(sessionStorage.getItem('password'));
+        setPassword(sessionStorage.getItem('password'));
 
     }, []);
 
@@ -35,12 +35,12 @@ const Navbar = () => {
                                 <div className="flex space-x-4">
                                     <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">view-items</Link>
                                     {userType === 'seller' ? (
-                                        <span>
-                                        <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
-                                        <Link href="/review-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Review Items</Link>
+                                        <span className="flex space-x-4">
+                                            <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
+                                            <Link href="/review-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Review Items</Link>
                                         </span>
                                     ) : (
-                                    <Link href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</Link>
+                                        <Link href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</Link>
                                     )}
                                 </div>
                             </div>
