@@ -32,17 +32,16 @@ const Navbar = () => {
                                 <a href="#" className="text-white font-bold text-2xl">Eiffel Team</a>
                             </div>
                             <div className="hidden sm:block sm:ml-6">
-                                <div style={{ border: '1px solid red' }} className="flex space-x-4">
+                                <div className="flex space-x-4">
+                                    <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">view-items</Link>
                                     {userType === 'seller' ? (
-                                        <div>
+                                        <span>
                                         <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
                                         <Link href="/review-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Review Items</Link>
-                                        </div>
+                                        </span>
                                     ) : (
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</a>
+                                    <Link href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</Link>
                                     )}
-                                    {/* <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
-                                    <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Calendar</a> */}
                                 </div>
                             </div>
                         </div>
