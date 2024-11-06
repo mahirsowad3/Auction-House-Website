@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"; // Replace with your actual API URL
+const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [userType, setUserType] = useState<'seller' | 'buyer'>('seller');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -42,9 +43,12 @@ export default function LoginPage() {
         } else if (statusCode === 200) {
             setMessage('Login successful!');
             setUsername('');
+            setUserType('');
             setPassword('');
+            console.log("User type:", userType);
             sessionStorage.setItem('userName', username);
-            sessionStorage.setItem('userType', 'seller'); // Example userType, adjust if necessary
+            sessionStorage.setItem('userType', userType);
+            sessionStorage.setItem('password', password);
             window.location.href = "/";
         } else {
             setError(message || 'An unexpected error occurred. Please try again later.');

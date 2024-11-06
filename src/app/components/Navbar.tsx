@@ -5,13 +5,10 @@ import React from 'react';
 const Navbar = () => {
     const [userType, setUserType] = React.useState<string | null>(null);
     const [userName, setUserName] = React.useState<string | null>(null);
-    const [password, setPassword] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-        // Set initial values from sessionStorage if available
         setUserType(sessionStorage.getItem('userType'));
         setUserName(sessionStorage.getItem('userName'));
-        setPassword(sessionStorage.getItem('password'));
     }, []);
 
     const handleLoginLogout = () => {
@@ -20,6 +17,7 @@ const Navbar = () => {
             sessionStorage.clear();
             setUserType(null);
             setUserName(null);
+            window.location.href = "/view-items";
         } else {
             // Redirect to login page
             window.location.href = "/login-account";
@@ -61,7 +59,14 @@ const Navbar = () => {
                                     
                                     {/* Conditionally render "Close Account" if logged in */}
                                     {userName && (
-                                        <button onClick={handleCloseAccount} className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Close Account</button>
+                                        <button onClick={() => {
+                                            // Redirect to the view items page after closing account
+                                            handleCloseAccount();
+                                            window.location.href = "/view-items";
+                                        }} 
+                                        className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                            Close Account
+                                        </button>
                                     )}
                                 </div>
                             </div>
