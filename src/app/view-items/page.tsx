@@ -112,7 +112,7 @@ export default function ListItems() {
                                 infiniteLoop
                                 className="mt-4 rounded-lg shadow-sm"
                             >
-                                {item.Images.map((imageUrl, index) => (
+                                {item.Images.map((imageUrl: any, index: any) => (
                                     <div key={index}>
                                         <img
                                             src={imageUrl}
