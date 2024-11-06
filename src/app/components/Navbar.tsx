@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { response } from 'express';
 
 
 const Navbar = () => {
@@ -30,7 +31,6 @@ const Navbar = () => {
 
     const handleCloseAccount = () => {
         if (userName) {
-            // Redirect to close account page
             router.push("/close-account");
         }
     };
@@ -73,7 +73,7 @@ const Navbar = () => {
                                         <button onClick={() => {
                                             // Redirect to the view items page after closing account
                                             handleCloseAccount();
-                                            router.push("/view-items");
+                                          
                                         }} 
                                         className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             Close Account

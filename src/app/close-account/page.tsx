@@ -12,8 +12,6 @@ export default function CloseAccountPage() {
     const [error, setError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
 
-    // Assuming username is stored in sessionStorage when the user is logged in
-
     useEffect(() => {
         const username = sessionStorage.getItem('userName');
         setUsername(username);
@@ -46,7 +44,8 @@ export default function CloseAccountPage() {
             if (statusCode === 404) {
                 setError("User not found.");
             } else if (statusCode === 400) {
-                setError("Cannot close account with active auctions.");
+                window.alert("Cannot close account with active auctions.");
+                // router.push("/");
             } else if (statusCode === 200) {
                 setMessage("Account closed successfully!");
                 sessionStorage.clear();
