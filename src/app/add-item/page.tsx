@@ -14,11 +14,19 @@ export default function AddItem() {
   const [addItemButtonDisabled, setAddItemButtonDisabled] = React.useState<boolean>(true);
   const imageUploadRef = React.useRef<HTMLInputElement | null>(null);
   const [submissionLoading, setSubmissionLoading] = React.useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<string>('');
+  const [currentPassword, setCurrentPassword] = useState<string>('');
   const router = useRouter();
 
 
-
   useEffect(() => {
+    const currentUsername = sessionStorage.getItem('userName');
+    const currentPassword = sessionStorage.getItem('password');
+    if(currentUsername && currentPassword){
+      setCurrentUser(currentUsername);
+      setCurrentPassword(currentPassword);
+    }
+
     if (itemName !== '' && initialPrice !== '' && itemDescription !== '' && bidEndDate !== '' && imageFiles.length > 0) {
       setAddItemButtonDisabled(false);
     } else {
@@ -65,8 +73,8 @@ export default function AddItem() {
     const addBasicItemInfo = async () => {
       const payload = {
         body: {
-          username: "Test1",
-          password: "Test1",
+          username: currentUser,
+          password: currentPassword,
           itemName: itemName,
           initialPrice: initialPrice,
           itemDescription: itemDescription,
@@ -110,8 +118,8 @@ export default function AddItem() {
     const addImages = async (itemId: number, imageURL: string) => {
       const payload = {
         body: {
-          username: "Test1",
-          password: "Test1",
+          username: currentUser,
+          password: currentPassword,
           relatedItem: itemId,
           URL: imageURL,
         },
