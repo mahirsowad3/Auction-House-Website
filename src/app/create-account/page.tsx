@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"; // Replace with your actual API URL
+const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function AccountPage() {
     const [username, setUsername] = useState('');
