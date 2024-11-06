@@ -8,7 +8,7 @@ const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [userType, setUserType] = useState<'seller' | 'buyer'>('seller');
+    const [userType, setUserType] = useState<'seller' | 'buyer' | ''>('seller');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
