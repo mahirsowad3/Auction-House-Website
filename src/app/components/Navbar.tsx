@@ -41,8 +41,11 @@ const Navbar = () => {
                                 <Link href="/" className="text-white font-bold text-2xl">Eiffel Team</Link>
                             </div>
                             <div className="hidden sm:block sm:ml-6">
-                                <div className="flex space-x-4" style={{ border: '1px solid red' }}>
-                                    <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">View Items</Link>
+                                <div className="flex space-x-4">
+                                    
+                                    {userType !== 'seller' && (
+                                        <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">View Items</Link>
+                                    )}
                                     {userType === 'seller' ? (
                                         <>
                                             <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
@@ -51,14 +54,18 @@ const Navbar = () => {
                                     ) : userType === 'buyer' ? (
                                         <Link href="/add-funds" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</Link>
                                     ) : null}
-                                    
-                                    {/* Conditionally render "Create Account" only if not logged in */}
-                                    {!userName && (
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            <button onClick={handleLoginLogout} className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                {userName ? 'Logout' : 'Login'}
+                            </button>
+
+                            {!userName && (
                                         <Link href="/create-account" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create Account</Link>
                                     )}
-                                    
-                                    {/* Conditionally render "Close Account" if logged in */}
-                                    {userName && (
+                            {userName && (
                                         <button onClick={() => {
                                             // Redirect to the view items page after closing account
                                             handleCloseAccount();
@@ -68,13 +75,6 @@ const Navbar = () => {
                                             Close Account
                                         </button>
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <button onClick={handleLoginLogout} className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
-                                {userName ? 'Logout' : 'Login'}
-                            </button>
                         </div>
                     </div>
                 </div>
