@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
@@ -8,9 +8,14 @@ const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"
 export default function CloseAccountPage() {
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
 
     // Assuming username is stored in sessionStorage when the user is logged in
-    const username = sessionStorage.getItem('userName');
+
+    useEffect(() => {
+        const username = sessionStorage.getItem('userName');
+        setUsername(username);
+    }, []);
 
     const handleCloseAccount = async () => {
         setMessage(null);
