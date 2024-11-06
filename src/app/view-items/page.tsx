@@ -1,6 +1,8 @@
 'use client'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the carousel styles
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -8,6 +10,7 @@ export default function ListItems() {
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
     const [sortOption, setSortOption] = useState<string>(""); 
     const [sortOrder, setSortOrder] = useState<string>("asc");
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -55,6 +58,7 @@ export default function ListItems() {
             }
         });
 
+
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
     }
@@ -99,20 +103,30 @@ export default function ListItems() {
             {/* Items Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {filteredAndSortedItems.map((item) => (
-                    <div key={item.ItemID} className="bg-white border shadow-md rounded-md p-3">
+                    <div key={item.ItemID} className="bg-white shadow-md rounded-lg p-4">
+                        {/* Carousel for multiple images */}
                         {item.Images && item.Images.length > 0 && (
-                            <div className="">
-                                {item.Images.map((imageUrl: string, index: number) => (
-                                    <img
-                                        key={index}
-                                        src={imageUrl}
-                                        alt={`Image of ${item.Name}`}
-                                        className="w-full h-32 object-cover rounded-md"
-                                    />
+                            <Carousel
+                                showThumbs={false}
+                                showStatus={false}
+                                infiniteLoop
+                                className="mt-4 rounded-lg shadow-sm"
+                            >
+                                {item.Images.map((imageUrl, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={imageUrl}
+                                            alt={`Image of ${item.Name}`}
+                                            className="w-full h-64 object-cover rounded-lg"
+                                        />
+                                    </div>
                                 ))}
-                            </div>
+                            </Carousel>
                         )}
                         <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
+                        
+                        {/* Display highest bid or initial price */}
+
                         {item.HighestBid ? (
                             <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                         ) : (
@@ -120,6 +134,7 @@ export default function ListItems() {
                                 Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
                             </p>
                         )}
+
                         <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                         <p className="text-gray-500 text-sm mb-2">
                             Published Date: {new Date(item.PublishedDate).toLocaleDateString()}
@@ -127,6 +142,7 @@ export default function ListItems() {
                         <p className="text-gray-500 text-sm">
                             Expiration Date: {new Date(item.BidEndDate).toLocaleDateString()}
                         </p>
+
                         
                     </div>
                 ))}
