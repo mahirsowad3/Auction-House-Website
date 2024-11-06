@@ -47,8 +47,8 @@ export default function ListItems() {
                 return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
             } else if (sortOption === "publishedDate") {
                 return sortOrder === "asc"
-                    ? new Date(a.PublishedDate).getTime() - new Date(b.PublishedDate).getTime()
-                    : new Date(b.PublishedDate).getTime() - new Date(a.PublishedDate).getTime();
+                    ? new Date(a.BidStartDate).getTime() - new Date(b.BidStartDate).getTime()
+                    : new Date(b.BidStartDate).getTime() - new Date(a.BidStartDate).getTime();
             } else if (sortOption === "expirationDate") {
                 return sortOrder === "asc"
                     ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
@@ -87,8 +87,8 @@ export default function ListItems() {
                 >
                     <option value="">Sort By</option>
                     <option value="price">Price</option>
-                    <option value="publishedDate">Published Date</option>
-                    <option value="expirationDate">Expiration Date</option>
+                    <option value="publishedDate">Published DateTime</option>
+                    <option value="expirationDate">Expiration DateTime</option>
                 </select>
                 <select
                     value={sortOrder}
@@ -137,10 +137,28 @@ export default function ListItems() {
 
                         <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                         <p className="text-gray-500 text-sm mb-2">
-                            Published Date: {new Date(item.PublishedDate).toLocaleDateString()}
+                            Published DateTime: {new Date(item.BidStartDate.replace(' ', 'T'))
+                            .toLocaleDateString('en-US', {
+                               month: '2-digit',
+                               day: '2-digit',
+                               year: 'numeric',
+                               hour: '2-digit',
+                               minute: '2-digit',
+                               second: '2-digit',
+                               hour12: false
+                            })}
                         </p>
                         <p className="text-gray-500 text-sm">
-                            Expiration Date: {new Date(item.BidEndDate).toLocaleDateString()}
+                            Expiration DateTime: {new Date(item.BidEndDate.replace(' ', 'T'))
+                            .toLocaleDateString('en-US', {
+                                month: '2-digit',
+                               day: '2-digit',
+                               year: 'numeric',
+                               hour: '2-digit',
+                               minute: '2-digit',
+                               second: '2-digit',
+                               hour12: false
+                            })}
                         </p>
 
                         
