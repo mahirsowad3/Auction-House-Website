@@ -1,8 +1,12 @@
 'use client'
 import Link from 'next/link';
 import React from 'react';
+import { useRouter } from 'next/navigation';
+
 
 const Navbar = () => {
+
+    const router = useRouter();
     const [userType, setUserType] = React.useState<string | null>(null);
     const [userName, setUserName] = React.useState<string | null>(null);
 
@@ -17,17 +21,17 @@ const Navbar = () => {
             sessionStorage.clear();
             setUserType(null);
             setUserName(null);
-            window.location.href = "/view-items";
+            router.push("/view-items");
         } else {
             // Redirect to login page
-            window.location.href = "/login-account";
+            router.push( "/login-account");
         }
     };
 
     const handleCloseAccount = () => {
         if (userName) {
             // Redirect to close account page
-            window.location.href = "/close-account";
+            router.push("/close-account");
         }
     };
 
@@ -69,7 +73,7 @@ const Navbar = () => {
                                         <button onClick={() => {
                                             // Redirect to the view items page after closing account
                                             handleCloseAccount();
-                                            window.location.href = "/view-items";
+                                            router.push("/view-items");
                                         }} 
                                         className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             Close Account

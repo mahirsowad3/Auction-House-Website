@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function CloseAccountPage() {
+    const router = useRouter();
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export default function CloseAccountPage() {
             } else if (statusCode === 200) {
                 setMessage("Account closed successfully!");
                 sessionStorage.clear();
-                window.location.href = "/";
+                router.push("/");
             } else {
                 setError(responseMessage || "An unexpected error occurred. Please try again later.");
             }
