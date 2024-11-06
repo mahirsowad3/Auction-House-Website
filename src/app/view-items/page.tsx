@@ -1,83 +1,151 @@
-"use client";
+'use client'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the carousel styles
 
-const baseURL =
-  "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
+const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function ListItems() {
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    const [items, setItems] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [sortOption, setSortOption] = useState<string>(""); // Sorting option
+    const [sortOrder, setSortOrder] = useState<string>("asc"); // Sort order (asc or desc)
+    const [searchTerm, setSearchTerm] = useState<string>(""); // Keyword search
 
-  useEffect(() => {
+    useEffect(() => {
+        fetchItems();
+    }, []);
+
     const fetchItems = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/view-items`);
-        const data = JSON.parse(response.data.body);
-        console.log("Fetched Items:", data);
-        setItems(data);
-      } catch (error) {
-        setError("Failed to fetch items.");
-        console.error("Error fetching items:", error);
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true);
+        try {
+            const response = await axios.get(`${baseURL}/view-items`);
+            const data = JSON.parse(response.data.body);
+            setItems(data);
+        } catch (error) {
+            setError("Failed to fetch items.");
+            console.error("Error fetching items:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchItems();
-  }, []);
+    // Filter and sort items based on the selected options
+    const filteredAndSortedItems = items
+        .filter((item) => {
+            // Filter based on the search term
+            return (
+                item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        })
+        .sort((a, b) => {
+            if (sortOption === "price") {
+                const priceA = a.HighestBid || a.InitialPrice;
+                const priceB = b.HighestBid || b.InitialPrice;
+                return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
+            } else if (sortOption === "publishedDate") {
+                return sortOrder === "asc"
+                    ? new Date(a.PublishedDate).getTime() - new Date(b.PublishedDate).getTime()
+                    : new Date(b.PublishedDate).getTime() - new Date(a.PublishedDate).getTime();
+            } else if (sortOption === "expirationDate") {
+                return sortOrder === "asc"
+                    ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
+                    : new Date(b.BidEndDate).getTime() - new Date(a.BidEndDate).getTime();
+            } else {
+                return 0;
+            }
+        });
 
-  if (loading) {
-    return <p className="text-center text-gray-600">Loading...</p>;
-  }
+    if (loading) {
+        return <p className="text-center text-gray-600">Loading...</p>;
+    }
 
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
-  }
+    if (error) {
+        return <p className="text-center text-red-500">{error}</p>;
+    }
 
-  return (
-    <main className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold text-start mb-6">Customer View</h1>
-      <hr />
-      <h1 className="mt-3 text-2xl font-bold text-start mb-6">Active Items</h1>
+    return (
+        <main className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold text-center mb-6">Active Items</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {items.map((item) => (
-          <div
-            key={item.ItemID}
-            className="bg-white shadow-md rounded-md border p-4"
-          >
-            {/* Display images */}
-            {item.Images && item.Images.length > 0 && (
-              <div className="">
-                {item.Images.map((imageUrl, index) => (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    alt={`Image of ${item.Name}`}
-                    className="w-full h-32 object-cover rounded-md"
-                  />
+            {/* Search and Sort Section */}
+            <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
+                <input
+                    type="text"
+                    placeholder="Search by name or description"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border p-2 rounded-md w-full md:w-1/3"
+                />
+                <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="border p-2 rounded-md w-full md:w-1/6"
+                >
+                    <option value="">Sort By</option>
+                    <option value="price">Price</option>
+                    <option value="publishedDate">Published Date</option>
+                    <option value="expirationDate">Expiration Date</option>
+                </select>
+                <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className="border p-2 rounded-md w-full md:w-1/6"
+                >
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+
+            {/* Items Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {filteredAndSortedItems.map((item) => (
+                    <div key={item.ItemID} className="bg-white shadow-md rounded-lg p-4">
+                        {/* Carousel for multiple images */}
+                        {item.Images && item.Images.length > 0 && (
+                            <Carousel
+                                showThumbs={false}
+                                showStatus={false}
+                                infiniteLoop
+                                className="mt-4 rounded-lg shadow-sm"
+                            >
+                                {item.Images.map((imageUrl, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={imageUrl}
+                                            alt={`Image of ${item.Name}`}
+                                            className="w-full h-64 object-cover rounded-lg"
+                                        />
+                                    </div>
+                                ))}
+                            </Carousel>
+                        )}
+                        <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
+                        
+                        {/* Display highest bid or initial price */}
+                        {item.HighestBid ? (
+                            <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
+                        ) : (
+                            <p className="text-gray-700 mb-2">
+                                Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
+                            </p>
+                        )}
+                        
+                        <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
+                        <p className="text-gray-500 text-sm mb-2">
+                            Published Date: {new Date(item.PublishedDate).toLocaleDateString()}
+                        </p>
+                        <p className="text-gray-500 text-sm">
+                            Expiration Date: {new Date(item.BidEndDate).toLocaleDateString()}
+                        </p>
+
+                        
+                    </div>
                 ))}
-              </div>
-            )}
-            <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
-
-            <p className="text-gray-700 mb-2">
-              Price: ${item.HighestBid ? item.HighestBid : item.InitialPrice}
-            </p>
-
-            <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-
-            <p className="text-gray-500 text-sm mb-2">
-              Start Date: {new Date(item.BidStartDate).toLocaleDateString()}
-            </p>
-            <p className="text-gray-500 text-sm">
-              End Date: {new Date(item.BidEndDate).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-      </div>
-    </main>
-  );
+            </div>
+        </main>
+    );
 }
