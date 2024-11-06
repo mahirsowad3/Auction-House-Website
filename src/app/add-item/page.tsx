@@ -1,6 +1,8 @@
 'use client'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
+import LoadingSpinner from "../components/LoadingSpinner";
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function AddItem() {
@@ -11,8 +13,10 @@ export default function AddItem() {
   const [imageFiles, setImageFiles] = React.useState<File[]>([]);
   const [addItemButtonDisabled, setAddItemButtonDisabled] = React.useState<boolean>(true);
   const imageUploadRef = React.useRef<HTMLInputElement | null>(null);
+  const [submissionLoading, setSubmissionLoading] = React.useState<boolean>(false);
+  const router = useRouter();
 
-  
+
 
   useEffect(() => {
     if (itemName !== '' && initialPrice !== '' && itemDescription !== '' && bidEndDate !== '' && imageFiles.length > 0) {
@@ -24,24 +28,24 @@ export default function AddItem() {
 
   const getPresignedURL = async (file: File) => {
     try {
-        const response = await axios.post(`${baseURL}/upload-url`, {
-          body: 
-          {
-            fileName: file.name,
-            fileType: file.type,
-          }
-  
-        });
-        console.log(JSON.parse(response.data.body));
-        const uploadURL = JSON.parse(response.data.body);
+      const response = await axios.post(`${baseURL}/upload-url`, {
+        body:
+        {
+          fileName: file.name,
+          fileType: file.type,
+        }
 
-        console.log("Received presigned URL:", uploadURL);
-        return uploadURL;
+      });
+      console.log(JSON.parse(response.data.body));
+      const uploadURL = JSON.parse(response.data.body);
+
+      console.log("Received presigned URL:", uploadURL);
+      return uploadURL;
     } catch (error) {
-        console.error("Error getting presigned URL:", error);
-        return null;
+      console.error("Error getting presigned URL:", error);
+      return null;
     }
-};
+  };
 
 
   const uploadImageToS3 = async (file: File, uploadURL: string) => {
@@ -55,6 +59,8 @@ export default function AddItem() {
 
   const addItem = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    setSubmissionLoading(true);
 
     const addBasicItemInfo = async () => {
       const payload = {
@@ -128,6 +134,10 @@ export default function AddItem() {
     }
 
     console.log("All images associated with ItemID:", itemId);
+
+    // redirect to review-items page upon successfully adding an item
+    setSubmissionLoading(false);
+    router.push('/review-items');
   };
 
   return (
@@ -179,7 +189,12 @@ export default function AddItem() {
               </div>
             ))}
           </div>
-          <button type="submit" disabled={addItemButtonDisabled} className={!addItemButtonDisabled ? "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-6" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mb-6"}>Add Item</button>
+          <div className="flex items-center space-x-4">
+            <button type="submit" disabled={addItemButtonDisabled} className={!addItemButtonDisabled ? "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-6" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mb-6"}>{submissionLoading ? <LoadingSpinner /> : "Add Item"}</button>
+            <div>
+              {submissionLoading && <p className="text-blue-700">Currently adding item...</p>}
+            </div>
+          </div>
         </form>
       </div>
     </main>

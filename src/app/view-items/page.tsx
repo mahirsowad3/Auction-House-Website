@@ -10,10 +10,10 @@ export default function ListItems() {
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [sortOption, setSortOption] = useState<string>(""); // Sorting option
-    const [sortOrder, setSortOrder] = useState<string>("asc"); // Sort order (asc or desc)
-    const [searchTerm, setSearchTerm] = useState<string>(""); // Keyword search
 
+    const [sortOption, setSortOption] = useState<string>(""); 
+    const [sortOrder, setSortOrder] = useState<string>("asc");
+    const [searchTerm, setSearchTerm] = useState<string>("");
     useEffect(() => {
         fetchItems();
     }, []);
@@ -35,7 +35,6 @@ export default function ListItems() {
     // Filter and sort items based on the selected options
     const filteredAndSortedItems = items
         .filter((item) => {
-            // Filter based on the search term
             return (
                 item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase())
@@ -59,6 +58,7 @@ export default function ListItems() {
             }
         });
 
+
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
     }
@@ -69,7 +69,7 @@ export default function ListItems() {
 
     return (
         <main className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold text-center mb-6">Active Items</h1>
+            <h1 className="text-3xl font-bold text-start mb-6">Active Items</h1>
 
             {/* Search and Sort Section */}
             <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
@@ -126,6 +126,7 @@ export default function ListItems() {
                         <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
                         
                         {/* Display highest bid or initial price */}
+
                         {item.HighestBid ? (
                             <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                         ) : (
@@ -133,7 +134,7 @@ export default function ListItems() {
                                 Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
                             </p>
                         )}
-                        
+
                         <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                         <p className="text-gray-500 text-sm mb-2">
                             Published Date: {new Date(item.PublishedDate).toLocaleDateString()}
