@@ -20,10 +20,16 @@ const Navbar = () => {
             sessionStorage.clear();
             setUserType(null);
             setUserName(null);
-            setPassword(null);
         } else {
-            // Redirect to login page or show login modal
+            // Redirect to login page
             window.location.href = "/login-account";
+        }
+    };
+
+    const handleCloseAccount = () => {
+        if (userName) {
+            // Redirect to close account page
+            window.location.href = "/close-account";
         }
     };
 
@@ -38,7 +44,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4" style={{ border: '1px solid red' }}>
-                                <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">view-items</Link>
+                                    <Link href="/view-items" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">View Items</Link>
                                     {userType === 'seller' ? (
                                         <>
                                             <Link href="/add-item" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Item</Link>
@@ -47,8 +53,16 @@ const Navbar = () => {
                                     ) : userType === 'buyer' ? (
                                         <Link href="/add-funds" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Funds</Link>
                                     ) : null}
-                                    {/* Always show the Create Account link */}
-                                    <Link href="/create-account" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create Account</Link>
+                                    
+                                    {/* Conditionally render "Create Account" only if not logged in */}
+                                    {!userName && (
+                                        <Link href="/create-account" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create Account</Link>
+                                    )}
+                                    
+                                    {/* Conditionally render "Close Account" if logged in */}
+                                    {userName && (
+                                        <button onClick={handleCloseAccount} className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Close Account</button>
+                                    )}
                                 </div>
                             </div>
                         </div>
