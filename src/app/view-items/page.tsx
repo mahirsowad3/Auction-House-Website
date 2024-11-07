@@ -15,6 +15,7 @@ export default function ListItems() {
     const [sortOrder, setSortOrder] = useState<string>("asc");
     const [searchTerm, setSearchTerm] = useState<string>("");
     useEffect(() => {
+        console.log()
         fetchItems();
     }, []);
 
