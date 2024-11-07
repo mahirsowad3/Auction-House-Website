@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function CloseAccountPage() {
@@ -10,6 +10,8 @@ export default function CloseAccountPage() {
     const [error, setError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
 
+    const router = useRouter();
+    
     // Assuming username is stored in sessionStorage when the user is logged in
 
     useEffect(() => {
@@ -49,8 +51,9 @@ export default function CloseAccountPage() {
                 setMessage("Account closed successfully!");
                 sessionStorage.clear();
                 localStorage.clear(); 
-                document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; 
-                window.location.href = "/";
+                document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                router.push("/view-items");
+                
             } else {
                 setError(responseMessage || "An unexpected error occurred. Please try again later.");
             }
