@@ -52,7 +52,7 @@ export default function CloseAccountPage() {
                 sessionStorage.clear();
                 localStorage.clear(); 
                 document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                router.push("/view-items");
+                window.location.href = "/view-items";
                 
             } else {
                 setError(responseMessage || "An unexpected error occurred. Please try again later.");
