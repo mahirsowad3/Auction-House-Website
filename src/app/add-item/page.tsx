@@ -22,7 +22,7 @@ export default function AddItem() {
   useEffect(() => {
     const currentUsername = sessionStorage.getItem('userName');
     const currentPassword = sessionStorage.getItem('password');
-    if(currentUsername && currentPassword){
+    if (currentUsername && currentPassword) {
       setCurrentUser(currentUsername);
       setCurrentPassword(currentPassword);
     }
@@ -153,6 +153,7 @@ export default function AddItem() {
       <div className="container mx-auto mt-5">
         <h1 className="text-4xl">Add A New Item Here</h1>
         <h2 className="text-3xl text-gray-900 dark:text-white">Please fill out all of the fields in order to add this item</h2>
+        {/* Inspiration for styling form fields was taken from the following website: https://flowbite.com/docs/components/forms/ */}
         <form onSubmit={addItem}>
           <div className="grid gap-6 mb-6 md:grid-cols-1">
             <div>
