@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function CloseAccountPage() {
-    const router = useRouter();
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
+
+    // Assuming username is stored in sessionStorage when the user is logged in
 
     useEffect(() => {
         const username = sessionStorage.getItem('userName');
@@ -44,12 +44,13 @@ export default function CloseAccountPage() {
             if (statusCode === 404) {
                 setError("User not found.");
             } else if (statusCode === 400) {
-                window.alert("Cannot close account with active auctions.");
-                // router.push("/");
+                setError("Cannot close account with active auctions.");
             } else if (statusCode === 200) {
                 setMessage("Account closed successfully!");
                 sessionStorage.clear();
-                router.push("/");
+                localStorage.clear(); 
+                document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; 
+                window.location.href = "/";
             } else {
                 setError(responseMessage || "An unexpected error occurred. Please try again later.");
             }
