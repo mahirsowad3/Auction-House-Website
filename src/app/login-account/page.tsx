@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -12,7 +11,7 @@ export default function LoginPage() {
     const [userType, setUserType] = useState<'seller' | 'buyer' | ''>('seller');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
+
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
@@ -50,7 +49,7 @@ export default function LoginPage() {
             sessionStorage.setItem('userName', username);
             sessionStorage.setItem('userType', userType);
             sessionStorage.setItem('password', password);
-            router.push("/");
+            window.location.href = "/";
         } else {
             setError(message || 'An unexpected error occurred. Please try again later.');
         }
