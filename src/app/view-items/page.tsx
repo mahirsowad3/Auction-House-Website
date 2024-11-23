@@ -152,7 +152,7 @@ export default function ListItems() {
                         <p className="text-gray-500 text-sm">
                             Expiration DateTime: {new Date(item.BidEndDate.replace(' ', 'T'))
                             .toLocaleDateString('en-US', {
-                                month: '2-digit',
+                               month: '2-digit',
                                day: '2-digit',
                                year: 'numeric',
                                hour: '2-digit',

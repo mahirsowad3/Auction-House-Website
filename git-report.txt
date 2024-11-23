@@ -1,0 +1,660 @@
+commit bcd3360e0d11f32508d69d56b5542165fa6a59a5
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Thu Nov 7 17:32:02 2024 -0500
+
+    Added comment citing website for add-item form styling
+
+ src/app/add-item/page.tsx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 5949bd02124b0db330ffdcad6e5cc70727feb3bd
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Thu Nov 7 11:38:40 2024 -0500
+
+    updated readme.
+
+ README.md | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 79 insertions(+), 3 deletions(-)
+
+commit f036cd1298814c32cb4b0e01ea6e3cadac29b50c
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Thu Nov 7 09:56:46 2024 -0500
+
+    Add lambda functions related to the account (Create, login and close)
+
+ src/lambda-functions/close_account/src/index.mjs  | 84 ++++++++++++++++++++
+ src/lambda-functions/create_account/src/index.mjs | 81 +++++++++++++++++++
+ src/lambda-functions/login_account/src/index.mjs  | 95 +++++++++++++++++++++++
+ 3 files changed, 260 insertions(+)
+
+commit c9278db69dae39a3979aacbeaa71100853f6a674
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 22:42:00 2024 -0500
+
+    Fix the misspelled "Welcome"
+
+ src/app/page.tsx            | 2 +-
+ src/app/view-items/page.tsx | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit ef778cddd53580669f2127e5d2008953f7f23946
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 22:30:27 2024 -0500
+
+    fix the close account
+
+ src/app/close-account/page.tsx |  91 -------------------------
+ src/app/components/Navbar.tsx  | 147 ++++++++++++++++++++++++++++++-----------
+ 2 files changed, 110 insertions(+), 128 deletions(-)
+
+commit 205968089672273e5b9b9ce1c43fabd6eb546247
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 21:31:37 2024 -0500
+
+    add Lambda function to retrieve active items with associated images
+
+ src/lambda-functions/view-items/src/index.mjs | 82 +++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
+
+commit e5309520ec4de17247df69c035a4cf5f454c7edb
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 20:00:41 2024 -0500
+
+    fix close account redirect
+
+ src/app/close-account/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a1f1744acb4ae548e9d6c1eccd7c9ff5d5beac3a
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:53:33 2024 -0500
+
+    fix login bug
+
+ src/app/login-account/page.tsx | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 04b21c2842270aaf008b8a9dee185ec492dfa1d1
+Merge: f4cc9b8 ed40855
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:51:54 2024 -0500
+
+    Merge branch 'main' of https://github.com/AshkanGanj/CS509-Project
+
+commit f4cc9b85cc0296a0e3cff1e3d6666e53b551ce29
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:51:53 2024 -0500
+
+    use router for navigation after account closure and clean up session data
+
+ src/app/close-account/page.tsx | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 35710cfff32fbfbcfd8801eebbee19979dffb03c
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:50:00 2024 -0500
+
+    fix login bug
+
+ src/app/login-account/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ed40855ce4d267e8ba0a83d56f2b85020ef64e6f
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:38:34 2024 -0500
+
+    fix routing
+
+ src/app/close-account/page.tsx | 9 ++++++---
+ src/app/login-account/page.tsx | 5 +++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+commit 4bf5d853b24bdb5e00cb67c84f542a1627a6caef
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 19:34:55 2024 -0500
+
+    Fix close account
+
+ src/app/close-account/page.tsx | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+commit 3ea56d453dd693335fca1fd548480b75ebfa2343
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Wed Nov 6 18:49:32 2024 -0500
+
+    Fix close account message
+
+ src/app/close-account/page.tsx | 5 ++---
+ src/app/components/Navbar.tsx  | 4 ++--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+commit 30d6d49b61c2c124fd04bc9d18f965c69a07cea8
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 18:37:30 2024 -0500
+
+    changed all the routes to use "router"
+
+ src/app/close-account/page.tsx |  4 +++-
+ src/app/components/Navbar.tsx  | 12 ++++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+commit 2e2ca1d3268cb37926459a5605a20618be6320da
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 17:36:44 2024 -0500
+
+    added the required scripts to be able to "build" the folder we need to be able to upload our application on our AWS s3 bucket, and wrapped the sessionStorage items in a "useEffect" to avoid rendering issues when generating that folder
+
+ package-lock.json              | 5 +++++
+ src/app/close-account/page.tsx | 9 +++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+commit 175eb03221de44f264c71012bbdd768ca9fa2893
+Merge: d025cf6 2259a3e
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 17:14:02 2024 -0500
+
+    Merge pull request #15 from AshkanGanj/lambda-functions
+    
+    Committed my unpublished-item lambda function
+
+commit 2259a3eb81b2fed5d15930456a4630d23cb97125
+Merge: 83ca29d d025cf6
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 17:12:38 2024 -0500
+
+    Merge branch 'main' into lambda-functions
+
+commit 83ca29dc8806bf6b5b728d3c56c31c836c455e10
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 17:12:23 2024 -0500
+
+    Committing unpublished-item lambda function
+
+ src/lambda-functions/unpublish-item/src/index.mjs | 157 ++++++++++++++++++++++
+ 1 file changed, 157 insertions(+)
+
+commit d025cf624e1d72f9967cf041b8160af1e470fce5
+Merge: 736b9be 2bfefd5
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 17:02:58 2024 -0500
+
+    Merge pull request #14 from AshkanGanj/lambda-functions
+    
+    Now committing my lambda functions
+
+commit 2bfefd55d3dda20468330db182bd321de80976f1
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 17:00:51 2024 -0500
+
+    Now committing my lambda functions
+
+ .../add-item-picture/src/index.mjs                 | 126 +++++++++++++++++
+ src/lambda-functions/add-item/src/index.mjs        | 106 ++++++++++++++
+ src/lambda-functions/publish-item/src/index.mjs    | 152 +++++++++++++++++++++
+ .../remove-item-picture/src/index.mjs              | 133 ++++++++++++++++++
+ .../review-items-specific-item/src/index.mjs       | 128 +++++++++++++++++
+ src/lambda-functions/review-items/src/index.mjs    |  81 +++++++++++
+ src/lambda-functions/upload-url/src/index.mjs      |  47 +++++++
+ 7 files changed, 773 insertions(+)
+
+commit 736b9beba60f9775c4f36b1656bed34e8203dbb6
+Merge: d05818e 77761c3
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 16:20:29 2024 -0500
+
+    Merge pull request #13 from AshkanGanj/customer/view-items
+    
+    Fixed the bug due to the fact that "PublishedDate" was mistaken with …
+
+commit 77761c3e902ab7fae83cce7da6a53f030af6cb0f
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 16:18:46 2024 -0500
+
+    Fixed the bug due to the fact that "PublishedDate" was mistaken with "BidStartDate", and reformatted all the timestamps to include the times in addition to the dates on the "view-items" page
+
+ src/app/view-items/page.tsx | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+commit d05818e03ba1c6fa4b11d4897e099e4370a0f048
+Merge: 4618e36 a6248d3
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 15:57:11 2024 -0500
+
+    Merge pull request #12 from AshkanGanj/seller/edit-item
+    
+    Finished edit item use case
+
+commit a6248d39695b18a2e3debf22d6bb2022b3b152f2
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 15:53:35 2024 -0500
+
+    Finished edit item use case
+
+ .../review-items/specific-item/edit-item/page.tsx  | 389 +++++++++++++++++++++
+ src/app/review-items/specific-item/page.tsx        |   6 +-
+ 2 files changed, 394 insertions(+), 1 deletion(-)
+
+commit 4618e36175eceb23deea10ad3fbae95517b530dc
+Merge: bcd3dd9 fd2e7fe
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 08:11:09 2024 -0500
+
+    Merge pull request #11 from AshkanGanj/seller/review-items-specific-item
+    
+    Seller/review items specific item
+
+commit fd2e7fe449f8c17e64e0f8fc54c410317f1c5f74
+Merge: 7eaa759 bcd3dd9
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 08:05:57 2024 -0500
+
+    Merge branch 'main' into seller/review-items-specific-item
+
+commit 7eaa759d748f5b4d11d9592d7aa5095ca242d64a
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Wed Nov 6 08:05:30 2024 -0500
+
+    Completed review-item-specific-item page. Completed Remove Inactive Item, Publish Item, and Unpublish Item Use Cases
+
+ src/app/review-items/page.tsx               |  52 +++--
+ src/app/review-items/specific-item/page.tsx | 339 ++++++++++++++++++++++++++++
+ 2 files changed, 369 insertions(+), 22 deletions(-)
+
+commit bcd3dd91492af87f6247118c968822fa5c903319
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Wed Nov 6 00:37:09 2024 -0500
+
+    Made a small fix to a bug I encountered on the view-items page
+
+ src/app/view-items/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1216843263719434efe20cceab167c335d55e346
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Tue Nov 5 23:29:01 2024 -0500
+
+    made it so that from now own, when a seller adds new items, the authentication they used is what “counts” rather than the hardcoded “test1” credentials we initially made for testing
+
+ src/app/add-item/page.tsx | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+commit 094bd064b963f5c8ed50acab8bd0d61282311cf8
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Tue Nov 5 23:00:43 2024 -0500
+
+    Found a small bug regarding the user type on the login-account page and fixed it
+
+ src/app/login-account/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e32b89e6850f90ffefb28373f02d7c793761e61d
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 20:39:02 2024 -0500
+
+    Update Navbar component to conditionally render links based on user type and enhance user greeting on homepage
+
+ src/app/components/Navbar.tsx | 30 +++++++++++++++---------------
+ src/app/page.tsx              | 11 ++++++++++-
+ 2 files changed, 25 insertions(+), 16 deletions(-)
+
+commit 9645d79ab6c73b6a7550098f5e3c8fa9fefef3e8
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 20:04:11 2024 -0500
+
+    Bug fix.
+
+ src/app/components/Navbar.tsx  | 15 ++++++++++-----
+ src/app/login-account/page.tsx |  8 ++++++--
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+
+commit 7de095a9066d3612600876da051e9e41352a81e2
+Merge: 123e738 1efb47f
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 19:43:51 2024 -0500
+
+    Merge pull request #10 from AshkanGanj/customer/view-items
+    
+    Add carousel
+
+commit 1efb47f594d2ed05448858644d938debe6963d7f
+Merge: 797f7c4 123e738
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 19:43:39 2024 -0500
+
+    Merge branch 'main' into customer/view-items
+
+commit 797f7c4258db93cac1ff06e7a8ace8dd714093a3
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 19:39:51 2024 -0500
+
+    Add carousel
+
+ package-lock.json           |  38 +++++++--
+ package.json                |   3 +-
+ src/app/view-items/page.tsx | 202 +++++++++++++++++++++++++++++---------------
+ 3 files changed, 167 insertions(+), 76 deletions(-)
+
+commit 123e7384821d4dbc4db912d40f35435112de72f4
+Merge: e535e29 eb301d9
+Author: Maryam Ataei <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 19:18:42 2024 -0500
+
+    Merge pull request #9 from AshkanGanj/close-accounts
+    
+    Close accounts
+
+commit eb301d9dff8bc069e0553b26bf978629427a59fb
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 19:16:52 2024 -0500
+
+    Edit comment.
+
+ src/app/create-account/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 82d84d98cf5bc29a4c77b5e697593ee4cb1ba99b
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 19:16:30 2024 -0500
+
+    Add close account feature
+
+ src/app/close-account/page.tsx | 81 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+
+commit e535e29513fdfadc13e22cef050777406da19360
+Merge: 3175011 0182521
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 19:16:15 2024 -0500
+
+    Merge pull request #8 from AshkanGanj/customer/sort-search
+    
+    Add search and sort functions
+
+commit 3bcbc725dda80376efa9823eb52aff4b2858da88
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 19:16:14 2024 -0500
+
+    Add close account and modify Navbar to show create account before login and after login show close account.
+
+ src/app/components/Navbar.tsx | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+
+commit 01825219c3f28e0674f22c8a6b83986424d80c00
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 19:15:44 2024 -0500
+
+    Add search and sort functions
+
+ src/app/view-items/page.tsx | 189 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 121 insertions(+), 68 deletions(-)
+
+commit 31750118bce7d358be0cb375c2482cf71faea659
+Merge: f66e559 b5b0efc
+Author: Maryam Ataei <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 18:37:57 2024 -0500
+
+    Merge pull request #7 from AshkanGanj/login_account
+    
+    add login account feature.
+
+commit b5b0efca0f0f22c6cb09c686a207b5ea7716e904
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 18:36:20 2024 -0500
+
+    add login account feature.
+
+ src/app/login-account/page.tsx | 104 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
+
+commit f66e559c3c79ca442b6a973574c5da136a1c8452
+Merge: aeb7661 60d02b0
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 18:09:19 2024 -0500
+
+    Merge pull request #6 from AshkanGanj/create-account
+    
+    Create account
+
+commit 60d02b075164b9ca733de0d6702a2fcbf9ac90ef
+Merge: b6ea304 aeb7661
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 18:09:11 2024 -0500
+
+    Merge branch 'main' into create-account
+
+commit b6ea304311d71056ba69d12230dfec70822c299b
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 17:58:25 2024 -0500
+
+    Add create account page.
+
+ package-lock.json               | 2659 +++++++++++++++++++++++++++++++++++++--
+ src/app/create-account/page.tsx |  110 ++
+ 2 files changed, 2656 insertions(+), 113 deletions(-)
+
+commit 4d44822093ee26aade559b0a97cf3d1210bf2702
+Author: Reza_SF <93408456+maryam-ataei@users.noreply.github.com>
+Date:   Tue Nov 5 17:58:07 2024 -0500
+
+    Add create acount link to Navbar
+
+ src/app/components/Navbar.tsx | 59 ++++++++++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 26 deletions(-)
+
+commit aeb7661b2b26f2a7a8e2afd1eeb2728d979ae14a
+Merge: f690d9e eac91a6
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Tue Nov 5 17:53:16 2024 -0500
+
+    Merge pull request #5 from AshkanGanj/seller/add-item
+    
+    Seller/add item loading spinner and message + navbar links alignment bug fix
+
+commit eac91a62941e6d2ac70e77afd74f3ba96ab552a5
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Tue Nov 5 17:50:44 2024 -0500
+
+    Fixed styling issue that offset links in Navbar
+
+ src/app/components/Navbar.tsx | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 568f71f5110b60957482addf854024d22c35f3dc
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Tue Nov 5 17:30:43 2024 -0500
+
+    Added a loading spinner and message during data submission
+
+ src/app/add-item/page.tsx             | 51 ++++++++++++++++++++++-------------
+ src/app/components/LoadingSpinner.tsx | 15 +++++++++++
+ 2 files changed, 48 insertions(+), 18 deletions(-)
+
+commit f690d9eaffb552132a7bc8561ac3670c123e4970
+Merge: ae46031 3399435
+Author: Ashkan Ganj <aganj@wpi.edu>
+Date:   Tue Nov 5 15:47:28 2024 -0500
+
+    Merge pull request #4 from AshkanGanj/customer/view-items
+    
+    Customer/view items
+
+commit 339943532809a9e033c14a3616ec886680905208
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 15:45:53 2024 -0500
+
+    Add images to the card and update the card
+
+ src/app/view-items/page.tsx | 126 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 77 insertions(+), 49 deletions(-)
+
+commit 3a2ce72a06508801e80eb86df819b646b4ca98b7
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 15:22:40 2024 -0500
+
+    Add view active items
+
+ src/app/view-items/page.tsx | 55 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+commit 58efa209aa809b792d396b37cfb538da07af7bbd
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 15:21:51 2024 -0500
+
+    add view Item link
+
+ src/app/components/Navbar.tsx | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+commit ae46031212d1e2ed17e613dea5bc025416fdb945
+Merge: 245305a 840ed17
+Author: Ashkan Ganj <AshkanGanj@gmail.com>
+Date:   Tue Nov 5 11:45:33 2024 -0500
+
+    Merge pull request #3 from AshkanGanj/seller/review-items
+    
+    Can now upload pictures to the bucket from AWS host
+
+commit 840ed170ad07402394f00ea72dde2706b49fa491
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Tue Nov 5 11:44:04 2024 -0500
+
+    Can now upload pictures to the bucket from AWS host
+
+ package.json                             |  2 +-
+ src/app/add-item/api/upload-url/route.ts | 35 --------------------------------
+ src/app/add-item/page.tsx                | 26 ++++++++++++++++++------
+ 3 files changed, 21 insertions(+), 42 deletions(-)
+
+commit 245305ab7096fd8991ac6c494eb6524a83e86a22
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Tue Nov 5 11:19:50 2024 -0500
+
+    updated title
+
+ package-lock.json  | 2659 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ src/app/layout.tsx |    2 +-
+ 2 files changed, 2547 insertions(+), 114 deletions(-)
+
+commit fdcf21483bf0f0444ccc57753eb0453ae90bbfee
+Merge: cd761b2 70747d3
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Mon Nov 4 21:16:14 2024 -0500
+
+    Merge pull request #2 from AshkanGanj/seller/review-items
+    
+    Able to filter items based on activity status
+
+commit 70747d3bebeaa58efe7a3a51ec4f348b96303c1c
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Mon Nov 4 21:13:46 2024 -0500
+
+    Able to filter items based on activity status
+    
+    Able to filter items based on activity status
+
+ src/app/add-item/api/upload-url/route.ts         |  2 +-
+ src/app/components/Navbar.tsx                    | 13 ++++--
+ src/app/review-items/ItemFilter.tsx              | 20 +++++++++
+ src/app/review-items/ReviewItemCardComponent.tsx | 33 +++++++++++++++
+ src/app/review-items/page.tsx                    | 52 ++++++++++++++++++++++++
+ 5 files changed, 116 insertions(+), 4 deletions(-)
+
+commit cd761b2878ba3e763562606e248d198948f65d95
+Merge: cd5f588 13f996b
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Mon Nov 4 13:40:46 2024 -0500
+
+    Merge pull request #1 from AshkanGanj/seller/add-item
+    
+    Seller/add item
+
+commit 13f996b80f1e75d234990ca3637fd16f18ff2b49
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Mon Nov 4 13:27:31 2024 -0500
+
+    Mainly migrated my code from aws-sdk v2 to v3
+
+ next.config.ts                           |  3 ++-
+ package.json                             |  4 +++-
+ src/app/add-item/api/upload-url/route.ts | 29 +++++++++++++++++------------
+ src/app/add-item/page.tsx                |  7 ++++++-
+ 4 files changed, 28 insertions(+), 15 deletions(-)
+
+commit 52e99ff86f92fe49601c0747e548846e2f67b62f
+Author: 12axel <116901882+12axel@users.noreply.github.com>
+Date:   Sun Nov 3 16:12:00 2024 -0500
+
+    Made it possible to upload pictures into an S3 bucket
+
+ package.json                             |   8 +-
+ src/app/add-item/api/upload-url/route.ts |  30 +++++
+ src/app/add-item/page.tsx                | 203 +++++++++++++++++--------------
+ 3 files changed, 149 insertions(+), 92 deletions(-)
+
+commit e3e1e0a72ab29959b7295758906d3bcb53bbfef6
+Author: Mahir Sowad <32722691+mahirsowad3@users.noreply.github.com>
+Date:   Sun Nov 3 00:10:42 2024 -0400
+
+    Add Item for Seller (Image Upload Not Working Yet)
+
+ package.json                  |  12 ++--
+ src/app/add-item/page.tsx     | 144 ++++++++++++++++++++++++++++++++++++++++++
+ src/app/components/Navbar.tsx |  27 ++++++--
+ 3 files changed, 173 insertions(+), 10 deletions(-)
+
+commit cd5f5880e98c45a1cbd80737c4644dce56854da1
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Sat Oct 26 17:11:11 2024 -0400
+
+    update padding
+
+ src/app/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4b47add10fc1c167763fcde071ac203a9cc88ea6
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Sat Oct 26 17:10:19 2024 -0400
+
+    Add navbar
+
+ src/app/components/Navbar.tsx |  35 +++++++++++++++
+ src/app/layout.tsx            |   2 +
+ src/app/page.tsx              | 102 +++---------------------------------------
+ 3 files changed, 43 insertions(+), 96 deletions(-)
+
+commit 35b277560f2fc06ac8e3f15f4edd14e71fd205e1
+Author: Ashkan Ganj <ashkanganj@gmail.com>
+Date:   Sat Oct 26 16:28:58 2024 -0400
+
+    initial commit
+
+ .gitignore                     |   36 +
+ README.md                      |   37 +-
+ next.config.ts                 |    7 +
+ package-lock.json              | 5333 ++++++++++++++++++++++++++++++++++++++++
+ package.json                   |   26 +
+ postcss.config.mjs             |    8 +
+ public/file.svg                |    1 +
+ public/globe.svg               |    1 +
+ public/next.svg                |    1 +
+ public/vercel.svg              |    1 +
+ public/window.svg              |    1 +
+ src/app/favicon.ico            |  Bin 0 -> 25931 bytes
+ src/app/fonts/GeistMonoVF.woff |  Bin 0 -> 67864 bytes
+ src/app/fonts/GeistVF.woff     |  Bin 0 -> 66268 bytes
+ src/app/globals.css            |   21 +
+ src/app/layout.tsx             |   35 +
+ src/app/page.tsx               |  101 +
+ tailwind.config.ts             |   19 +
+ tsconfig.json                  |   27 +
+ 19 files changed, 5654 insertions(+), 1 deletion(-)
+
+commit 52be927212253ff5c49c5254e8cc5d97ffb5b990
+Author: Ashkan Ganj <AshkanGanj@gmail.com>
+Date:   Sat Oct 26 15:04:24 2024 -0400
+
+    Initial commit
+
+ LICENSE   | 674 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ README.md |   1 +
+ 2 files changed, 675 insertions(+)

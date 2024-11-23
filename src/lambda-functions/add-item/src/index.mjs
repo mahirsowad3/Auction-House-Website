@@ -49,10 +49,10 @@ export const handler = async (event, context) => {
     }
 
     
-let addItem = (itemName, creator, initialPrice, itemDescription, bidEndDate) => {
+let addItem = (itemName, creator, initialPrice, isBuyNow, itemDescription, bidEndDate) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            "INSERT INTO Item (Name, Creator, InitialPrice, ItemDescription, BidEndDate) VALUES (?, ?, ?, ?, ?)", [itemName, creator, initialPrice, itemDescription, bidEndDate], (error, result) => {  
+            "INSERT INTO Item (Name, Creator, InitialPrice, IsBuyNow, ItemDescription, BidEndDate) VALUES (?, ?, ?, ?, ?, ?)", [itemName, creator, initialPrice, isBuyNow, itemDescription, bidEndDate], (error, result) => {  
                 if (error) {
                     return reject(error);
                 }
@@ -89,7 +89,7 @@ let addItem = (itemName, creator, initialPrice, itemDescription, bidEndDate) => 
           response.error = "Invalid seller credentials";
         }
         else {
-            const itemAddedID = await addItem(info.itemName, info.username, info.initialPrice, info.itemDescription, info.bidEndDate);
+            const itemAddedID = await addItem(info.itemName, info.username, info.initialPrice, info.isBuyNow, info.itemDescription, info.bidEndDate);
             console.log(itemAddedID)
             const getTheNewItem = await getNewItem(itemAddedID)
             response.statusCode = 200;
