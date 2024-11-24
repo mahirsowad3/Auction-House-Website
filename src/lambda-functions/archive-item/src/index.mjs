@@ -131,9 +131,9 @@ export const handler = async (event, context) => {
     }
     else {
       const itemActivityStatus = await getItemActivityStatus(itemID);
-      if(itemActivityStatus != 'Inactive') {
+      if (!(itemActivityStatus == 'Inactive' || itemActivityStatus == 'Failed')) {
         response.statusCode = 400;
-        response.error = "Can only archive inactive items.";
+        response.error = "Can only archive inactive or failed items.";
       }
       else {
         const archivedItemID = await makeItemArchived(itemID);
@@ -149,3 +149,4 @@ export const handler = async (event, context) => {
   
   return response;
 };
+
