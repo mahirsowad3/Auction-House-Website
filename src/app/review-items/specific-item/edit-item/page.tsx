@@ -16,6 +16,7 @@ export default function EditItem() {
     const [itemName, setItemName] = React.useState<string>('');
     const [initialPrice, setInitialPrice] = React.useState<string>('');
     const [itemDescription, setItemDescription] = React.useState<string>('');
+    const [isABuyNow, setIsABuyNow] = React.useState<number>(0);
     const [bidEndDate, setBidEndDate] = React.useState<string>('');
     const [imageFiles, setImageFiles] = React.useState<File[]>([]); // array designated only for local file system images
     const [awsImageURLs, setAWSImageURLs] = React.useState<Picture[]>([]); // array designated only for AWS S3 image URLs
@@ -74,6 +75,7 @@ export default function EditItem() {
                 setItemName(itemDetails.Name ? itemDetails.Name : '');
                 setInitialPrice(itemDetails.InitialPrice ? itemDetails.InitialPrice : '');
                 setItemDescription(itemDetails.ItemDescription ? itemDetails.ItemDescription : '');
+                setIsABuyNow(itemDetails.IsBuyNow);
                 setBidEndDate(itemDetails.BidEndDate ? new Date(itemDetails.BidEndDate).toISOString().slice(0, 16) : '');
                 const AWSpictures: Picture[] = [];
                 itemDetails.Pictures.forEach((picture: Picture) => {
@@ -131,6 +133,7 @@ export default function EditItem() {
                     itemID: itemID,
                     itemName: itemName,
                     initialPrice: initialPrice,
+                    isBuyNow: isABuyNow,
                     itemDescription: itemDescription,
                     bidEndDate: bidEndDate,
                 },
@@ -233,12 +236,23 @@ export default function EditItem() {
     };
 
     return (
+
         <main>
             <div className="container mx-auto mt-5">
                 <h1 className="text-4xl">Edit Item (ID: {itemID})</h1>
                 <h2 className="text-3xl text-gray-900 dark:text-white">Please make sure that all of the fields are filled out in order to save your edits successfully.</h2>
                 <form onSubmit={editItem}>
                     <div className="grid gap-6 mb-6 md:grid-cols-1">
+                        <div>
+                            <label htmlFor="is_buy_now" className="inline-flex items-center cursor-pointer">
+                                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Is it a Buy-Now item?</span>
+                                <input type="checkbox" id="is_buy_now" checked={isABuyNow === 1} onChange={() => {
+                                    isABuyNow == 1 ? setIsABuyNow(0) : setIsABuyNow(1);
+                                }} className="sr-only peer"></input>
+
+                                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" />
+                            </label>
+                        </div>
                         <div>
                             <label
                                 htmlFor="item_name"

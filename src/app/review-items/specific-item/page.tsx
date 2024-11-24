@@ -14,6 +14,7 @@ export default function Home() {
     const [itemDescription, setItemDescription] = React.useState<string | null>(null);
     const [initialPrice, setInitialPrice] = React.useState<number | null>(null);
     const [bidStartDate, setBidStartDate] = React.useState<string | null>(null);
+    const [isABuyNow, setIsABuyNow] = React.useState<number>(0);
     const [bidEndDate, setBidEndDate] = React.useState<string | null>(null);
     const [bids, setBids] = React.useState<[] | null>(null);
     const [publishedDate, setPublishedDate] = React.useState<string | null>(null);
@@ -60,6 +61,7 @@ export default function Home() {
                     setItemName(item.Name);
                     setItemDescription(item.ItemDescription);
                     setInitialPrice(item.InitialPrice);
+                    setIsABuyNow(item.IsBuyNow);
                     setBidStartDate(item.BidStartDate);
                     setBidEndDate(item.BidEndDate);
                     setBids(item.Bids);
@@ -152,6 +154,7 @@ export default function Home() {
             setItemName(updatedItem.Name);
             setItemDescription(updatedItem.ItemDescription);
             setInitialPrice(updatedItem.InitialPrice);
+            setIsABuyNow(updatedItem.IsBuyNow);
             setBidStartDate(updatedItem.BidStartDate);
             setBidEndDate(updatedItem.BidEndDate);
             setBids(updatedItem.Bids);
@@ -162,7 +165,6 @@ export default function Home() {
             setCreator(updatedItem.Creator);
             setBuyerSoldTo(updatedItem.BuyerSoldTo);
             setActivityStatus(updatedItem.ActivityStatus);
-            // setPictures(updatedItem.Pictures);
         } catch (error) {
             console.error('Error publishing item:', error);
         } finally {
@@ -193,6 +195,7 @@ export default function Home() {
             setItemName(updatedItem.Name);
             setItemDescription(updatedItem.ItemDescription);
             setInitialPrice(updatedItem.InitialPrice);
+            setIsABuyNow(updatedItem.IsBuyNow);
             setBidStartDate(updatedItem.BidStartDate);
             setBidEndDate(updatedItem.BidEndDate);
             setBids(updatedItem.Bids);
@@ -221,6 +224,7 @@ export default function Home() {
     return (
         <main>
             <div className="container mx-auto mt-5">
+
                 <h1 className="text-4xl rounded bg-slate-200 p-2">Item ID: {itemID}</h1>
                 <h2 className="text-2xl mt-4 rounded bg-slate-200 p-2">Item Name: {itemName}</h2>
                 <div className="mt-4 rounded bg-slate-200 p-2">
@@ -244,15 +248,45 @@ export default function Home() {
                 </div>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Bid Start Date: </h2>
-                    <p className="text-xl">{bidStartDate}</p>
+                    <p className="text-xl">{bidStartDate ? new Date(bidStartDate.replace(' ', 'T'))
+                            .toLocaleDateString('en-US', {
+                               timeZone: 'UTC',
+                               month: '2-digit',
+                               day: '2-digit',
+                               year: 'numeric',
+                               hour: '2-digit',
+                               minute: '2-digit',
+                               second: '2-digit',
+                               hour12: false
+                            }) : "Item is currently not published."}</p>
                 </ div>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Bid End Date: </h2>
-                    <p className="text-xl">{bidEndDate}</p>
+                    <p className="text-xl">{bidEndDate ? new Date(bidEndDate.replace(' ', 'T'))
+                            .toLocaleDateString('en-US', {
+                               timeZone: 'UTC',
+                               month: '2-digit',
+                               day: '2-digit',
+                               year: 'numeric',
+                               hour: '2-digit',
+                               minute: '2-digit',
+                               second: '2-digit',
+                               hour12: false
+                            }): null }</p>
                 </div>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Published Date: </h2>
-                    <p className="text-xl">{publishedDate}</p>
+                    <p className="text-xl">{publishedDate ? new Date(publishedDate.replace(' ', 'T'))
+                            .toLocaleDateString('en-US', {
+                               timeZone: 'UTC',
+                               month: '2-digit',
+                               day: '2-digit',
+                               year: 'numeric',
+                               hour: '2-digit',
+                               minute: '2-digit',
+                               second: '2-digit',
+                               hour12: false
+                            }) : "Item is currently not published."}</p>
                 </div>
                 {activityStatus?.toLowerCase() === "archived" &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
