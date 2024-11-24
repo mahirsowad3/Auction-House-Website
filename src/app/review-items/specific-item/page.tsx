@@ -27,6 +27,7 @@ export default function Home() {
     const [pictures, setPictures] = React.useState<[] | null>(null);
     const router = useRouter();
     const [bidEndDateTooSoon, setBidEndDateTooSoon] = React.useState<boolean>(false); // to indicate if today's publish date will be later than the currently entered end date
+    const [successfullyArchivedItem, setSuccessfullyArchivedItem] = React.useState<boolean>(false); // helper variable for disappearing success message
 
     // loading use state variables
     const [pageLoading, setPageLoading] = React.useState<boolean>(true);
@@ -231,7 +232,7 @@ export default function Home() {
                     'Content-Type': 'application/json',
                 },
             });
-            const statusCode = JSON.parse(response.data.statusCode);
+            const statusCode = response.data.statusCode;
             if (statusCode === 200) {
                 const fulfilledItem = JSON.parse(response.data.body);
                 setSoldDate(fulfilledItem.SoldDate);
@@ -242,6 +243,55 @@ export default function Home() {
             }
         } catch (error) {
             console.error('Error fulfilling item:', error);
+        }
+    };
+
+    // handle archive item
+    const handleArchiveItem = async () => {
+        const payload = {
+            body: {
+                username: sessionStorage.getItem('userName'),
+                password: sessionStorage.getItem('password'),
+                itemID: itemID,
+            }
+        };
+
+        try {
+            const response = await axios.post(`${baseURL}/archive-item`, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const statusCode = response.data.statusCode;
+            if (statusCode === 200) {
+                const updatedItem = JSON.parse(response.data.body);
+                console.log('Response from archive-item:', JSON.parse(response.data.body));
+                setItemName(updatedItem.Name);
+                setItemDescription(updatedItem.ItemDescription);
+                setInitialPrice(updatedItem.InitialPrice);
+                setIsABuyNow(updatedItem.IsBuyNow);
+                setBidStartDate(updatedItem.BidStartDate);
+                setBidEndDate(updatedItem.BidEndDate);
+                setBids(updatedItem.Bids);
+                setPublishedDate(updatedItem.PublishedDate);
+                setSoldDate(updatedItem.SoldDate);
+                setIsFrozen(updatedItem.IsFrozen);
+                setRequestedUnfreeze(updatedItem.requestedunfreeze);
+                setCreator(updatedItem.Creator);
+                setBuyerSoldTo(updatedItem.BuyerSoldTo);
+                setActivityStatus(updatedItem.ActivityStatus);
+                // setPictures(updatedItem.Pictures);
+
+                // to handle archive item success message
+                setSuccessfullyArchivedItem(true);
+                setTimeout(() => {
+                    setSuccessfullyArchivedItem(false);
+                }, 5000);
+            } else {
+                console.error('Error archiving item:', response.data.error);
+            }
+        } catch (error) {
+            console.error('Error archiving item:', error);
         }
     };
 
@@ -258,6 +308,7 @@ export default function Home() {
 
                 <h1 className="text-4xl rounded bg-slate-200 p-2">Item ID: {itemID}</h1>
                 <h2 className="text-2xl mt-4 rounded bg-slate-200 p-2">Item Name: {itemName}</h2>
+                <h2 className="text-2xl mt-4 rounded bg-slate-200 p-2">Item Activity Status: {activityStatus}</h2>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     {pictures &&
                         <Carousel>
@@ -398,6 +449,12 @@ export default function Home() {
                             }}>
                             Edit Details
                         </button>}
+                    {(activityStatus?.toLowerCase() === "inactive" || activityStatus?.toLowerCase() === "failed") && (
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={handleArchiveItem}>
+                            Archive Item
+                        </button>)}
                     {activityStatus?.toLowerCase() === "completed" && (
                         <button
                             onClick={handleFulfillItem}
@@ -412,6 +469,14 @@ export default function Home() {
                         <h2 className="text-2xl">Error: </h2>
                         <p className="text-xl">
                             Bid End Date is before the publish date (today) of this item. Please click "Edit Details" button to update the Bid End Date.
+                        </p>
+                    </div>}
+                {/* Archive Item Success Message */}
+                {successfullyArchivedItem &&
+                    <div className="mt-4 rounded bg-green-200 p-2">
+                        <h2 className="text-2xl">Success: </h2>
+                        <p className="text-xl">
+                            Item has been successfully archived.
                         </p>
                     </div>}
                 {/* Back to Review Items Button Below */}
