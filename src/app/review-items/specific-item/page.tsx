@@ -215,6 +215,34 @@ export default function Home() {
         }
     };
 
+    // handle fulfill item
+    const handleFulfillItem = async () => {
+        const payload = {
+            body: {
+                username: sessionStorage.getItem('userName'),
+                password: sessionStorage.getItem('password'),
+                itemID: itemID,
+            }
+        };
+
+        try {
+            const response = await axios.post(`${baseURL}/fulfill-item`, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const statusCode = JSON.parse(response.data.statusCode);
+            if (statusCode === 200) {
+                console.log('Item fulfilled successfully: ', response.data.body);
+                setActivityStatus('Archived');
+            } else {
+                console.error('Error fulfilling item:', response.data.body);
+            }
+        } catch (error) {
+            console.error('Error fulfilling item:', error);
+        }
+    };
+
     // if fetching data is taking too long
     if (pageLoading) {
         return (<div className="flex items-center justify-center">
@@ -250,44 +278,44 @@ export default function Home() {
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Bid Start Date: </h2>
                     <p className="text-xl">{bidStartDate ? new Date(bidStartDate.replace(' ', 'T'))
-                            .toLocaleDateString('en-US', {
-                               timeZone: 'UTC',
-                               month: '2-digit',
-                               day: '2-digit',
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit',
-                               second: '2-digit',
-                               hour12: false
-                            }) : "Item is currently not published."}</p>
+                        .toLocaleDateString('en-US', {
+                            timeZone: 'UTC',
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }) : "Item is currently not published."}</p>
                 </ div>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Bid End Date: </h2>
                     <p className="text-xl">{bidEndDate ? new Date(bidEndDate.replace(' ', 'T'))
-                            .toLocaleDateString('en-US', {
-                               timeZone: 'UTC',
-                               month: '2-digit',
-                               day: '2-digit',
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit',
-                               second: '2-digit',
-                               hour12: false
-                            }): null }</p>
+                        .toLocaleDateString('en-US', {
+                            timeZone: 'UTC',
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }) : null}</p>
                 </div>
                 <div className="mt-4 rounded bg-slate-200 p-2">
                     <h2 className="text-2xl">Published Date: </h2>
                     <p className="text-xl">{publishedDate ? new Date(publishedDate.replace(' ', 'T'))
-                            .toLocaleDateString('en-US', {
-                               timeZone: 'UTC',
-                               month: '2-digit',
-                               day: '2-digit',
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit',
-                               second: '2-digit',
-                               hour12: false
-                            }) : "Item is currently not published."}</p>
+                        .toLocaleDateString('en-US', {
+                            timeZone: 'UTC',
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }) : "Item is currently not published."}</p>
                 </div>
                 {activityStatus?.toLowerCase() === "archived" &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
@@ -352,6 +380,13 @@ export default function Home() {
                             }}>
                             Edit Details
                         </button>}
+                    {activityStatus?.toLowerCase() === "completed" && (
+                        <button
+                            onClick={handleFulfillItem}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Fulfill Item
+                        </button>
+                    )}
                 </div>
                 {/* Publish Item Error Message Below */}
                 {bidEndDateTooSoon &&

@@ -21,31 +21,32 @@ const Navbar = () => {
         setUserName(storedUserName);
     };
 
+    // to get the seller's funds
+    const getSellerInformation = async () => {
+        const payload = {
+            body: {
+                username: sessionStorage.getItem('userName'),
+                password: sessionStorage.getItem('password'),
+            }
+        };
+        try {
+            const response = await axios.post(`${baseURL}/get-seller-information`, payload, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const sellerFunds = JSON.parse(response.data.body).Funds;
+            console.log("Seller's funds: ", sellerFunds);
+            setFunds(sellerFunds);
+            return sellerFunds;
+        } catch (error) {
+            console.error("Error retrieving the seller's information: ", error);
+        }
+    };
+
     useEffect(() => {
         syncSessionState();
         const handleStorageChange = () => syncSessionState();
         window.addEventListener('storage', handleStorageChange);
-
-        // to get the seller's funds
-        const getSellerInformation = async () => {
-            const payload = {
-                body: {
-                    username: sessionStorage.getItem('userName'),
-                    password: sessionStorage.getItem('password'),
-                }
-            };
-            try {
-                const response = await axios.post(`${baseURL}/get-seller-information`, payload, {
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                const sellerFunds = JSON.parse(response.data.body).Funds;
-                console.log("Seller's funds: ", sellerFunds);
-                setFunds(sellerFunds);
-            } catch (error) {
-                console.error("Error retrieving the seller's information: ", error);
-            }
-        };
 
         if (sessionStorage.getItem("userType") === 'seller') {
             getSellerInformation();
@@ -108,6 +109,10 @@ const Navbar = () => {
         }
     };
 
+    const handleSeeYourFunds = async () => {
+        const updatedSellerFunds = await getSellerInformation();
+        alert(`Your funds: $${updatedSellerFunds}`);
+    };
 
     return (
         <div>
@@ -159,9 +164,7 @@ const Navbar = () => {
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             {userName && funds && (
                                 <button
-                                    onClick={() => {
-                                        alert(`Your funds: $${funds}`)
-                                    }}
+                                    onClick={handleSeeYourFunds}
                                     className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'>
                                     See Your Funds
                                 </button>)}
