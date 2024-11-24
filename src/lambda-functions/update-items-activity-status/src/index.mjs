@@ -156,6 +156,7 @@ export const handler = async (event, context) => {
   }
 
   try {
+    await adjustTimeZone();
     const [NYTimeZone, activeExpiredItems] = await Promise.all([
       adjustTimeZone(), 
       getActiveItemsPastExpirationDate()

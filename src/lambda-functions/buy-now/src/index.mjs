@@ -231,6 +231,7 @@ export const handler = async (event, context) => {
 
   // Main query to buy the item
   try {
+    await adjustTimeZone();
     const [NYTimeZone, buyer] = await Promise.all([
       adjustTimeZone(),
       buyerExists(username, password) 
