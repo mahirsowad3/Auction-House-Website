@@ -233,7 +233,9 @@ export default function Home() {
             });
             const statusCode = JSON.parse(response.data.statusCode);
             if (statusCode === 200) {
-                console.log('Item fulfilled successfully: ', response.data.body);
+                const fulfilledItem = JSON.parse(response.data.body);
+                setSoldDate(fulfilledItem.SoldDate);
+                setBuyerSoldTo(fulfilledItem.BuyerSoldTo)
                 setActivityStatus('Archived');
             } else {
                 console.error('Error fulfilling item:', response.data.body);
@@ -317,10 +319,26 @@ export default function Home() {
                             hour12: false
                         }) : "Item is currently not published."}</p>
                 </div>
-                {activityStatus?.toLowerCase() === "archived" &&
+                {activityStatus?.toLowerCase() === "archived" && bids && bids.length > 0 &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
                         <h2 className="text-2xl">Sold Date: </h2>
-                        <p className="text-xl">{soldDate}</p>
+                        <p className="text-xl">{soldDate ? new Date(soldDate.replace(' ', 'T'))
+                        .toLocaleDateString('en-US', {
+                            timeZone: 'UTC',
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }) : "Item has not been sold yet."}</p>
+                    </div>}
+
+                    {activityStatus?.toLowerCase() === "archived" && bids && bids.length > 0 &&
+                    < div className="mt-4 rounded bg-slate-200 p-2">
+                        <h2 className="text-2xl">Buyer Sold To: </h2>
+                        <p className="text-xl">{buyerSoldTo ? buyerSoldTo : "Item has not been sold yet."}</p>
                     </div>}
                 {/* Bid Table for Bids When Item is published */}
                 {activityStatus?.toLowerCase() === "active" &&
