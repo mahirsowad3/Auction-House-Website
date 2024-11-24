@@ -310,7 +310,7 @@ export default function EditItem() {
                             <label
                                 htmlFor="bid_end_date"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Bid End Date
+                                {isABuyNow ? "Purchase End Date" : "Bid End Date"}
                             </label>
                             <input
                                 type="datetime-local"
