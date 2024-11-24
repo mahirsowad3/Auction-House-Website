@@ -104,7 +104,7 @@ export const handler = async (event, context) => {
 
   const checkItemIsCompleted = (itemID) => {
     return new Promise((resolve, reject) => {
-      pool.query("SELECT * FROM Item WHERE itemID = ? and ActivityStatus='Completed'", [itemID], (error, rows) => {
+      pool.query("SELECT * FROM Item WHERE ItemID = ? and ActivityStatus='Completed'", [itemID], (error, rows) => {
         if (error) {
           return reject(error);
         } else if (rows && rows.length > 0) {
@@ -148,7 +148,7 @@ export const handler = async (event, context) => {
 
   const changeActivityStausToFulfilled = (itemID) => {
     return new Promise((resolve, reject) => {
-      pool.query("UPDATE Item SET ActivityStatus = 'Archived' WHERE itemID = ?", [itemID], (error, results) => {
+      pool.query("UPDATE Item SET ActivityStatus = 'Archived' WHERE ItemID = ?", [itemID], (error, results) => {
         if (error) {
           return reject(error);
         } else if (results && results.changedRows > 0) {
@@ -160,8 +160,38 @@ export const handler = async (event, context) => {
     });
   }
 
+  const changeItemSoldDateAndBuyerSoldTo = (username, itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("UPDATE Item SET SoldDate = NOW(), BuyerSoldTo = ? WHERE ItemID = ?", [username, itemID], (error, results) => {
+        if (error) {
+          return reject(error);
+        } else if (results && results.changedRows > 0) {
+          return resolve(results.changedRows);
+        } else {
+          return resolve(0);
+        }
+      });
+    });
+  }
+
+  const updatedItem = (itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("SELECT * FROM Item WHERE ItemID = ?", [itemID], (error, rows) => {
+        if (error) {
+          return reject(error);
+        } else if (rows && rows.length > 0) {
+          resolve(rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+    });
+  }
+
+
   // Main query to fulfill item
   try {
+    await adjustTimeZone();
     const [NYTimeZone, seller] = await Promise.all([
       adjustTimeZone(),
       sellerExists(username, password)
@@ -205,8 +235,10 @@ export const handler = async (event, context) => {
               response.statusCode = 400;
               response.error = "Activity Status was not updated successfully.";
             } else {
+              const getChangeItemSoldDateAndBuyerSoldTo = await changeItemSoldDateAndBuyerSoldTo(highestBidBuyer, itemID);
+              const getUpdatedItem = await updatedItem(itemID);
               response.statusCode = 200;
-              response.body = "Successfully fulfilled item and updated the respective funds for buyer and seller";
+              response.body = JSON.stringify(getUpdatedItem);
             }
           }
         }
