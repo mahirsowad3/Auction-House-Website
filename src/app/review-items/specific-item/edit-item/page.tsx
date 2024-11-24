@@ -245,7 +245,7 @@ export default function EditItem() {
                     <div className="grid gap-6 mb-6 md:grid-cols-1">
                         <div>
                             <label htmlFor="is_buy_now" className="inline-flex items-center cursor-pointer">
-                                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Is it a Buy-Now item?</span>
+                                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Is it a Buy-Now item? Toggled on = Yes. Toggled off = No.</span>
                                 <input type="checkbox" id="is_buy_now" checked={isABuyNow === 1} onChange={() => {
                                     isABuyNow == 1 ? setIsABuyNow(0) : setIsABuyNow(1);
                                 }} className="sr-only peer"></input>
