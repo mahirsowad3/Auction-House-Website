@@ -9,6 +9,7 @@ export default function AddItem() {
   const [itemName, setItemName] = React.useState<string>('');
   const [initialPrice, setInitialPrice] = React.useState<string>('');
   const [itemDescription, setItemDescription] = React.useState<string>('');
+  const [isBuyNow, setIsBuyNow] = React.useState<number>(0);
   const [bidEndDate, setBidEndDate] = React.useState<string>('');
   const [isABuyNow, setIsABuyNow] = React.useState<number>(0);
   const [imageFiles, setImageFiles] = React.useState<File[]>([]);
@@ -78,6 +79,7 @@ export default function AddItem() {
           password: currentPassword,
           itemName: itemName,
           initialPrice: initialPrice,
+          isBuyNow: isBuyNow,
           itemDescription: itemDescription,
           bidEndDate: bidEndDate,
         },
@@ -157,6 +159,16 @@ export default function AddItem() {
         {/* Inspiration for styling form fields was taken from the following website: https://flowbite.com/docs/components/forms/ */}
         <form onSubmit={addItem}>
           <div className="grid gap-6 mb-6 md:grid-cols-1">
+            <div>
+              <label htmlFor="is_buy_now" className="inline-flex items-center cursor-pointer">
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Is it a Buy-Now item?</span>
+                <input type="checkbox" id="is_buy_now" checked={isBuyNow === 1} onChange={() => {
+                  isBuyNow == 1 ? setIsBuyNow(0) : setIsBuyNow(1);
+                }} className="sr-only peer"></input>
+
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" />
+              </label>
+            </div>
             <div>
               <label htmlFor="is_buy_now" className="inline-flex items-center cursor-pointer">
                 <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Is it a Buy-Now item? Toggled on = Yes. Toggled off = No.</span>
