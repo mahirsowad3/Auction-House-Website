@@ -19,18 +19,37 @@ export default function ReviewItems() {
         setUserName(sessionStorage.getItem('userName'));
         setPassword(sessionStorage.getItem('password'));
 
-        const getSellerItems = async () => {
-            const response = await axios.post(`${baseURL}/review-items`, {
-                body: {
-                    username: sessionStorage.getItem('userName'),
-                    password: sessionStorage.getItem('password'),
-                }
+        const updateItemsActivityStatus = async () => {
+            try {
+                const response = await axios.get(`${baseURL}/update-items-activity-status`);
+                const data = JSON.parse(response.data.body);
+                console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
+                return 1;
 
-            });
-            console.log(JSON.parse(response.data.body));
-            setItems(JSON.parse(response.data.body));
+            } catch (error) {
+                console.error('Error updating items activity status: ', error);
+                return 0;
+            }
+        };
+
+
+        const getSellerItems = async () => {
+            const updatedItems = await updateItemsActivityStatus();
+            if(updatedItems == 1) {
+                const response = await axios.post(`${baseURL}/review-items`, {
+                    body: {
+                        username: sessionStorage.getItem('userName'),
+                        password: sessionStorage.getItem('password'),
+                    }
+    
+                });
+                console.log(JSON.parse(response.data.body));
+                setItems(JSON.parse(response.data.body));
+            }
         };
         getSellerItems();
+
+
     }, []);
 
     const filteredItems = items.filter((item: any) =>
