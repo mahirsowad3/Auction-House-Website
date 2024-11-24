@@ -10,6 +10,7 @@ const Navbar = () => {
     const router = useRouter();
     const [userType, setUserType] = useState<string | null>(null);
     const [userName, setUserName] = useState<string | null>(null);
+    const [funds, setFunds] = useState<number | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -24,6 +25,33 @@ const Navbar = () => {
         syncSessionState();
         const handleStorageChange = () => syncSessionState();
         window.addEventListener('storage', handleStorageChange);
+
+        // to get the seller's funds
+        const getSellerInformation = async () => {
+            const payload = {
+                body: {
+                    username: sessionStorage.getItem('userName'),
+                    password: sessionStorage.getItem('password'),
+                }
+            };
+            try {
+                const response = await axios.post(`${baseURL}/get-seller-information`, payload, {
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                const sellerFunds = JSON.parse(response.data.body).Funds;
+                console.log("Seller's funds: ", sellerFunds);
+                setFunds(sellerFunds);
+            } catch (error) {
+                console.error("Error retrieving the seller's information: ", error);
+            }
+        };
+
+        if (sessionStorage.getItem("userType") === 'seller') {
+            getSellerInformation();
+        } else if (sessionStorage.getItem("userType") === 'buyer') {
+            // call function to get buyer's funds when implemented
+        }
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
@@ -45,32 +73,32 @@ const Navbar = () => {
             alert("Username is not available. Please log in.");
             return;
         }
-    
+
         if (!confirm("Are you sure you want to close your account? This action cannot be undone.")) {
             return;
         }
-    
+
         try {
             const response = await axios.post(`${baseURL}/close-account`, {
                 body: { username: userName },
             }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-    
+
             const { statusCode, message: responseMessage } = response.data;
-    
+
             if (statusCode === 404) {
                 alert("User not found.");
             } else if (statusCode === 400) {
                 alert("Cannot close account with active auctions.");
             } else if (statusCode === 200) {
                 alert("Account closed successfully!");
-    
+
                 sessionStorage.clear();
                 localStorage.clear();
                 document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    
-                syncSessionState(); 
+
+                syncSessionState();
                 router.push('/view-items');
             } else {
                 alert(responseMessage || "An unexpected error occurred. Please try again later.");
@@ -79,7 +107,7 @@ const Navbar = () => {
             alert('An error occurred. Please try again later.');
         }
     };
-    
+
 
     return (
         <div>
@@ -129,6 +157,14 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            {userName && funds && (
+                                <button
+                                    onClick={() => {
+                                        alert(`Your funds: $${funds}`)
+                                    }}
+                                    className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'>
+                                    See Your Funds
+                                </button>)}
                             <button
                                 onClick={handleLoginLogout}
                                 className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
