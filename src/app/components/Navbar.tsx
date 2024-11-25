@@ -11,8 +11,6 @@ const Navbar = () => {
     const [userType, setUserType] = useState<string | null>(null);
     const [userName, setUserName] = useState<string | null>(null);
     const [funds, setFunds] = useState<number | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
 
     const syncSessionState = () => {
         const storedUserType = sessionStorage.getItem('userType');
@@ -21,49 +19,72 @@ const Navbar = () => {
         setUserName(storedUserName);
     };
 
-    // to get the seller's funds
-    const getSellerInformation = async () => {
+    const fetchFunds = async () => {
         const payload = {
-            body: {
-                username: sessionStorage.getItem('userName'),
-                password: sessionStorage.getItem('password'),
-            }
+          body: {
+            username: sessionStorage.getItem("userName"),
+            password: sessionStorage.getItem("password"),
+          },
         };
+      
         try {
-            const response = await axios.post(`${baseURL}/get-seller-information`, payload, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            const sellerFunds = JSON.parse(response.data.body).Funds;
-            console.log("Seller's funds: ", sellerFunds);
-            setFunds(sellerFunds);
-            return sellerFunds;
+          let fundsResponse;
+          console.log("User type:", userType);
+          if (userType === "Seller") {
+            const response = await axios.post(
+              `${baseURL}/get-seller-information`,
+              payload,
+              {
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+      
+            if (response.data?.body) {
+              const parsedBody = JSON.parse(response.data.body);
+              fundsResponse = parsedBody?.Funds;
+            }
+          } else if (userType === "Buyer") {
+            const response = await axios.post(
+              `${baseURL}/get-buyer-information`,
+              payload,
+              {
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+      
+            if (response.data?.body) {
+              const parsedBody = JSON.parse(response.data.body);
+              fundsResponse = parsedBody?.AccountFunds;
+            }
+          }
+      
+          if (!fundsResponse) throw new Error("Funds field is missing in the response.");
+          setFunds(fundsResponse);
         } catch (error) {
-            console.error("Error retrieving the seller's information: ", error);
+          console.error("Error retrieving funds:", error);
+          setFunds(null);
         }
-    };
+      };
 
     useEffect(() => {
         syncSessionState();
         const handleStorageChange = () => syncSessionState();
         window.addEventListener('storage', handleStorageChange);
 
-        if (sessionStorage.getItem("userType")?.toLowerCase() === 'seller') {
-            getSellerInformation();
-        } else if (sessionStorage.getItem("userType")?.toLowerCase() === 'buyer') {
-            // call function to get buyer's funds when implemented
+        if (userType) {
+            fetchFunds();
         }
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [userType]);
 
     const handleLoginLogout = () => {
         if (userName) {
             sessionStorage.clear();
             syncSessionState();
-            router.push('/view-items');
+            router.push('/');
         } else {
             router.push('/login-account');
         }
@@ -81,7 +102,10 @@ const Navbar = () => {
 
         try {
             const response = await axios.post(`${baseURL}/close-account`, {
-                body: { username: userName },
+                body: {
+                    username: userName,
+                    userType: userType, // Pass userType to distinguish between seller and buyer
+                },
             }, {
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -91,7 +115,7 @@ const Navbar = () => {
             if (statusCode === 404) {
                 alert("User not found.");
             } else if (statusCode === 400) {
-                alert("Cannot close account with active auctions.");
+                alert(responseMessage || "Cannot close account with active engagements.");
             } else if (statusCode === 200) {
                 alert("Account closed successfully!");
 
@@ -100,18 +124,22 @@ const Navbar = () => {
                 document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
                 syncSessionState();
-                router.push('/view-items');
+                router.push('/');
             } else {
                 alert(responseMessage || "An unexpected error occurred. Please try again later.");
             }
         } catch (err: any) {
+            console.error("Error closing account:", err);
             alert('An error occurred. Please try again later.');
         }
     };
 
-    const handleSeeYourFunds = async () => {
-        const updatedSellerFunds = await getSellerInformation();
-        alert(`Your funds: $${updatedSellerFunds}`);
+    const handleSeeYourFunds = () => {
+        if (funds !== null) {
+            alert(`Your funds: $${funds}`);
+        } else {
+            alert('Unable to fetch funds. Please try again later.');
+        }
     };
 
     return (
@@ -127,7 +155,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
-                                    {userType?.toLowerCase() !== 'seller' && (
+                                    {userType !== 'Seller' && (
                                         <Link
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -135,7 +163,7 @@ const Navbar = () => {
                                             View Items
                                         </Link>
                                     )}
-                                    {userType?.toLowerCase() === 'seller' ? (
+                                    {userType === 'Seller' ? (
                                         <>
                                             <Link
                                                 href="/add-item"
@@ -150,7 +178,7 @@ const Navbar = () => {
                                                 Review Items
                                             </Link>
                                         </>
-                                    ) : userType?.toLowerCase() === 'buyer' ? (
+                                    ) : userType === 'Buyer' ? (
                                         <Link
                                             href="/add-funds"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -162,19 +190,20 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds && (
+                            {userName && funds !== null && (
                                 <button
                                     onClick={handleSeeYourFunds}
-                                    className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'>
+                                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                >
                                     See Your Funds
-                                </button>)}
+                                </button>
+                            )}
                             <button
                                 onClick={handleLoginLogout}
                                 className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
                             >
                                 {userName ? 'Logout' : 'Login'}
                             </button>
-
                             {!userName && (
                                 <Link
                                     href="/create-account"
