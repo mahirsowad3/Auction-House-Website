@@ -34,7 +34,7 @@ export default function ListItems() {
     };
 
     // Filter and sort items based on the selected options
-    const filteredAndSortedItems = items
+    const filteredAndSortedItems = Array.isArray(items) ? items
         .filter((item) => {
             return (
                 item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,8 +57,7 @@ export default function ListItems() {
             } else {
                 return 0;
             }
-        });
-
+        }) : [];
 
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
@@ -102,72 +101,76 @@ export default function ListItems() {
             </div>
 
             {/* Items Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {filteredAndSortedItems.map((item) => (
-                    <div key={item.ItemID} className="bg-white shadow-md rounded-lg p-4">
-                        {/* Carousel for multiple images */}
-                        {item.Images && item.Images.length > 0 && (
-                            <Carousel
-                                showThumbs={false}
-                                showStatus={false}
-                                infiniteLoop
-                                className="mt-4 rounded-lg shadow-sm"
-                            >
-                                {item.Images.map((imageUrl: any, index: any) => (
-                                    <div key={index}>
-                                        <img
-                                            src={imageUrl}
-                                            alt={`Image of ${item.Name}`}
-                                            className="w-full h-64 object-cover rounded-lg"
-                                        />
-                                    </div>
-                                ))}
-                            </Carousel>
-                        )}
-                        <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
-                        
-                        {/* Display highest bid or initial price */}
+            {filteredAndSortedItems.length === 0 ? (
+                <p className="text-center text-gray-600">No active items found.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {filteredAndSortedItems.map((item) => (
+                        <div key={item.ItemID} className="bg-white shadow-md rounded-lg p-4">
+                            {/* Carousel for multiple images */}
+                            {item.Images && item.Images.length > 0 && (
+                                <Carousel
+                                    showThumbs={false}
+                                    showStatus={false}
+                                    infiniteLoop
+                                    className="mt-4 rounded-lg shadow-sm"
+                                >
+                                    {item.Images.map((imageUrl: any, index: any) => (
+                                        <div key={index}>
+                                            <img
+                                                src={imageUrl}
+                                                alt={`Image of ${item.Name}`}
+                                                className="w-full h-64 object-cover rounded-lg"
+                                            />
+                                        </div>
+                                    ))}
+                                </Carousel>
+                            )}
+                            <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
+                            
+                            {/* Display highest bid or initial price */}
 
-                        {item.HighestBid ? (
-                            <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
-                        ) : (
-                            <p className="text-gray-700 mb-2">
-                                Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
+                            {item.HighestBid ? (
+                                <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
+                            ) : (
+                                <p className="text-gray-700 mb-2">
+                                    Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
+                                </p>
+                            )}
+
+                            <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
+                            <p className="text-gray-500 text-sm mb-2">
+                                Published DateTime: {new Date(item.BidStartDate.replace(' ', 'T'))
+                                .toLocaleDateString('en-US', {
+                                   timeZone: 'UTC',
+                                   month: '2-digit',
+                                   day: '2-digit',
+                                   year: 'numeric',
+                                   hour: '2-digit',
+                                   minute: '2-digit',
+                                   second: '2-digit',
+                                   hour12: false
+                                })}
                             </p>
-                        )}
+                            <p className="text-gray-500 text-sm">
+                                Expiration DateTime: {new Date(item.BidEndDate.replace(' ', 'T'))
+                                .toLocaleDateString('en-US', {
+                                   timeZone: 'UTC',
+                                   month: '2-digit',
+                                   day: '2-digit',
+                                   year: 'numeric',
+                                   hour: '2-digit',
+                                   minute: '2-digit',
+                                   second: '2-digit',
+                                   hour12: false
+                                })}
+                            </p>
 
-                        <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-                        <p className="text-gray-500 text-sm mb-2">
-                            Published DateTime: {new Date(item.BidStartDate.replace(' ', 'T'))
-                            .toLocaleDateString('en-US', {
-                               timeZone: 'UTC',
-                               month: '2-digit',
-                               day: '2-digit',
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit',
-                               second: '2-digit',
-                               hour12: false
-                            })}
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                            Expiration DateTime: {new Date(item.BidEndDate.replace(' ', 'T'))
-                            .toLocaleDateString('en-US', {
-                               timeZone: 'UTC',
-                               month: '2-digit',
-                               day: '2-digit',
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit',
-                               second: '2-digit',
-                               hour12: false
-                            })}
-                        </p>
-
-                        
-                    </div>
-                ))}
-            </div>
+                            
+                        </div>
+                    ))}
+                </div>
+            )}
         </main>
     );
 }
