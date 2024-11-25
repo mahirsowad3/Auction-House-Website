@@ -160,7 +160,7 @@ export default function Home() {
             setIsABuyNow(updatedItem.IsBuyNow);
             setBidStartDate(updatedItem.BidStartDate);
             setBidEndDate(updatedItem.BidEndDate);
-            setBids(updatedItem.Bids);
+            //setBids(updatedItem.Bids);
             setPublishedDate(updatedItem.PublishedDate);
             setSoldDate(updatedItem.SoldDate);
             setIsFrozen(updatedItem.IsFrozen);
@@ -201,7 +201,6 @@ export default function Home() {
             setIsABuyNow(updatedItem.IsBuyNow);
             setBidStartDate(updatedItem.BidStartDate);
             setBidEndDate(updatedItem.BidEndDate);
-            setBids(updatedItem.Bids);
             setPublishedDate(updatedItem.PublishedDate);
             setSoldDate(updatedItem.SoldDate);
             setIsFrozen(updatedItem.IsFrozen);
@@ -273,7 +272,6 @@ export default function Home() {
                 setIsABuyNow(updatedItem.IsBuyNow);
                 setBidStartDate(updatedItem.BidStartDate);
                 setBidEndDate(updatedItem.BidEndDate);
-                setBids(updatedItem.Bids);
                 setPublishedDate(updatedItem.PublishedDate);
                 setSoldDate(updatedItem.SoldDate);
                 setIsFrozen(updatedItem.IsFrozen);
