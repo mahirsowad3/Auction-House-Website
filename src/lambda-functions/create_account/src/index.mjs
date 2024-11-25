@@ -60,7 +60,13 @@ export const handler = async (event, context) => {
 
     try {
         // Check if the user already exists
-        const userExists = await query("SELECT * FROM Seller WHERE Username = ?", [username]);
+        const userExists =
+
+            userType === "Seller"
+
+                ? await query("SELECT * FROM Seller WHERE Username = ?", [username])
+
+                : await query("SELECT * FROM Buyer WHERE Username = ?", [username]);
         if (userExists.length > 0) {
             response.statusCode = 400;
             response.body = JSON.stringify({ message: "Username already exists." });
@@ -68,7 +74,27 @@ export const handler = async (event, context) => {
         }
 
         // Insert a new account
-        await query("INSERT INTO Seller (Username, Password, Funds, UserType, IsClosed) VALUES (?, ?, 0, ?, 0)", [username, password, userType]);
+        if (userType === "Seller") {
+
+            await query(
+
+                "INSERT INTO Seller (Username, Password, Funds, UserType, IsClosed) VALUES (?, ?, 0, ?, 0)",
+
+                [username, password, userType]
+
+            );
+
+        } else if (userType === "Buyer") {
+
+            await query(
+
+                "INSERT INTO Buyer (Username, Password, AccountFunds, UserType, IsClosed) VALUES (?, ?, 0, ?, 0)",
+
+                [username, password, userType]
+
+            );
+
+        }
         response.statusCode = 200;
         response.body = JSON.stringify({ message: "Account created successfully." });
     } catch (error) {

@@ -8,13 +8,13 @@ const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"
 export default function AccountPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [userType, setUserType] = useState<'seller' | 'buyer'>('seller');
+    const [userType, setUserType] = useState<'Seller' | 'Buyer'>('Seller');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
-    const handleUserTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => setUserType(e.target.value as 'seller' | 'buyer');
+    const handleUserTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => setUserType(e.target.value as 'Seller' | 'Buyer');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,7 +39,7 @@ export default function AccountPage() {
                 setMessage('Account created successfully!');
                 setUsername('');
                 setPassword('');
-                setUserType('seller'); // Reset to default if needed
+                setUserType('Seller'); // Reset to default if needed
             }
         } catch (err: any) {
             console.error("Error caught in catch block:", err);
@@ -93,8 +93,8 @@ export default function AccountPage() {
                         onChange={handleUserTypeChange}
                         className="w-full p-2 border border-gray-300 rounded"
                     >
-                        <option value="seller">Seller</option>
-                        <option value="buyer">Buyer</option>
+                        <option value="Seller">Seller</option>
+                        <option value="Buyer">Buyer</option>
                     </select>
                 </div>
 
