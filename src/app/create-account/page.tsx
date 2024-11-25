@@ -20,7 +20,7 @@ export default function AccountPage() {
         e.preventDefault();
         setMessage(null);
         setError(null);
-    
+
         try {
             const response = await axios.post(`${baseURL}/create-account`, {
                 body: {
@@ -29,37 +29,28 @@ export default function AccountPage() {
                     userType,
                 },
             });
-    
-            console.log("Response received:", response);
-    
-            // Check the status code in response data
+
             if (response.data.statusCode === 400) {
                 setError(response.data.body.message || 'Account creation failed: Username already exists.');
             } else if (response.status === 200) {
                 setMessage('Account created successfully!');
                 setUsername('');
                 setPassword('');
-                setUserType('Seller'); // Reset to default if needed
+                setUserType('Seller'); // Reset to default
             }
         } catch (err: any) {
-            console.error("Error caught in catch block:", err);
-    
             if (err.response && err.response.status === 400) {
-                // Handle 400 errors (e.g., username already exists)
                 setError(err.response.data.message || 'Account creation failed.');
             } else {
-                // Handle other errors (e.g., network or server error)
                 setError('Failed to create account. Please try again.');
             }
         }
     };
-    
 
     return (
         <main className="container mx-auto mt-5">
             <h1 className="text-4xl mb-6">Create Account</h1>
 
-            {/* Display success or error messages */}
             {message && <div className="text-green-500 mb-4">{message}</div>}
             {error && <div className="text-red-500 mb-4">{error}</div>}
 

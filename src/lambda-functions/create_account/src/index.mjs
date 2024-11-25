@@ -31,10 +31,8 @@ export const handler = async (event, context) => {
         }
     };
 
-    // Handle both JSON object and string body formats
     let body;
     try {
-        // If event.body is an object, use it directly; if it's a string, parse it
         if (typeof event.body === "string") {
             body = JSON.parse(event.body);
         } else if (typeof event.body === "object") {
@@ -51,7 +49,6 @@ export const handler = async (event, context) => {
 
     const { username, password, userType } = body;
 
-    // Validate required fields
     if (!username || !password || !userType) {
         response.statusCode = 400;
         response.body = JSON.stringify({ message: "Missing required fields: username, password, and/or userType" });
@@ -59,14 +56,12 @@ export const handler = async (event, context) => {
     }
 
     try {
-        // Check if the user already exists
-        const userExists =
+        // Check if the username exists for any userType
+        const userExists = await query(
+            "SELECT * FROM Seller WHERE Username = ? UNION SELECT * FROM Buyer WHERE Username = ?",
+            [username, username]
+        );
 
-            userType === "Seller"
-
-                ? await query("SELECT * FROM Seller WHERE Username = ?", [username])
-
-                : await query("SELECT * FROM Buyer WHERE Username = ?", [username]);
         if (userExists.length > 0) {
             response.statusCode = 400;
             response.body = JSON.stringify({ message: "Username already exists." });
@@ -75,26 +70,17 @@ export const handler = async (event, context) => {
 
         // Insert a new account
         if (userType === "Seller") {
-
             await query(
-
                 "INSERT INTO Seller (Username, Password, Funds, UserType, IsClosed) VALUES (?, ?, 0, ?, 0)",
-
                 [username, password, userType]
-
             );
-
         } else if (userType === "Buyer") {
-
             await query(
-
                 "INSERT INTO Buyer (Username, Password, AccountFunds, UserType, IsClosed) VALUES (?, ?, 0, ?, 0)",
-
                 [username, password, userType]
-
             );
-
         }
+
         response.statusCode = 200;
         response.body = JSON.stringify({ message: "Account created successfully." });
     } catch (error) {
