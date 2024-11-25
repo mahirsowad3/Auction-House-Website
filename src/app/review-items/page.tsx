@@ -62,7 +62,7 @@ export default function ReviewItems() {
     }, []);
 
     const filteredItems = items.filter((item: any) =>
-        chosenFilter === '' || item.ActivityStatus === chosenFilter);
+        chosenFilter === '' || item.ActivityStatus.toLowerCase() === chosenFilter.toLowerCase());
 
     return (
         <main >

@@ -401,7 +401,7 @@ export default function Home() {
                             <div>
                                 <div>
                                     <h3 className="text-center text-2xl text-black-700">
-                                        Table of {isABuyNow ? "the purchase made on the item" : "the bids made on the item"}
+                                        Table of {isABuyNow ? "the purchase made on the item." : "the bids made on the item."}
                                     </h3>
                                     <Table bids={bids} IsBuyNow={isABuyNow} />
                                 </div>
