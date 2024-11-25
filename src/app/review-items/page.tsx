@@ -44,8 +44,9 @@ export default function ReviewItems() {
                         }
         
                     });
-                    console.log(JSON.parse(response.data.body));
-                    setItems(JSON.parse(response.data.body));
+                    const data = response.data.body ? response.data.body : [];
+                    console.log(JSON.parse(data));
+                    setItems(JSON.parse(data));
                 }
                 catch (error) {
                     console.error('Error fetching seller items: ', error);
