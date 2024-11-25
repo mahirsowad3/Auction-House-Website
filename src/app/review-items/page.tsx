@@ -36,15 +36,23 @@ export default function ReviewItems() {
         const getSellerItems = async () => {
             const updatedItems = await updateItemsActivityStatus();
             if(updatedItems == 1) {
-                const response = await axios.post(`${baseURL}/review-items`, {
-                    body: {
-                        username: sessionStorage.getItem('userName'),
-                        password: sessionStorage.getItem('password'),
-                    }
-    
-                });
-                console.log(JSON.parse(response.data.body));
-                setItems(JSON.parse(response.data.body));
+                try{
+                    const response = await axios.post(`${baseURL}/review-items`, {
+                        body: {
+                            username: sessionStorage.getItem('userName'),
+                            password: sessionStorage.getItem('password'),
+                        }
+        
+                    });
+                    console.log(JSON.parse(response.data.body));
+                    setItems(JSON.parse(response.data.body));
+                }
+                catch (error) {
+                    console.error('Error fetching seller items: ', error);
+                }
+            }
+            else {
+                console.error('Failed to update items activity status.');
             }
         };
         getSellerItems();
