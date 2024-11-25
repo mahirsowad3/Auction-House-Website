@@ -5,6 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import Table, { BidsProps } from "./Table";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -16,7 +17,7 @@ export default function Home() {
     const [bidStartDate, setBidStartDate] = React.useState<string | null>(null);
     const [isABuyNow, setIsABuyNow] = React.useState<number>(0);
     const [bidEndDate, setBidEndDate] = React.useState<string | null>(null);
-    const [bids, setBids] = React.useState<[] | null>(null);
+    const [bids, setBids] = React.useState<[]>([]);
     const [publishedDate, setPublishedDate] = React.useState<string | null>(null);
     const [soldDate, setSoldDate] = React.useState<string | null>(null);
     const [isFrozen, setIsFrozen] = React.useState<number | null>(null);
@@ -371,7 +372,7 @@ export default function Home() {
                             hour12: false
                         }) : "Item is currently not published."}</p>
                 </div>
-                {activityStatus?.toLowerCase() === "archived" && bids && bids.length > 0 &&
+                {activityStatus?.toLowerCase() === "archived" && bids.length > 0 &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
                         <h2 className="text-2xl">Sold Date: </h2>
                         <p className="text-xl">{soldDate ? new Date(soldDate.replace(' ', 'T'))
@@ -387,29 +388,17 @@ export default function Home() {
                             }) : "Item has not been sold yet."}</p>
                     </div>}
 
-                {activityStatus?.toLowerCase() === "archived" && bids && bids.length > 0 &&
+                {activityStatus?.toLowerCase() === "archived" && bids.length > 0 &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
                         <h2 className="text-2xl">Buyer Sold To: </h2>
                         <p className="text-xl">{buyerSoldTo ? buyerSoldTo : "Item has not been sold yet."}</p>
                     </div>}
                 {/* Bid Table for Bids When Item is published */}
-                {activityStatus?.toLowerCase() === "active" &&
+                {(activityStatus?.toLowerCase() === "active" || activityStatus?.toLowerCase() === "completed" || (activityStatus?.toLowerCase() === "archived" && bids.length > 0)) &&
                     <div className="flex justify-center mt-4 rounded bg-slate-200">
-                        {!bids || bids.length === 0 ?
+                        {bids.length === 0 ?
                             <div>No bids have been placed yet</div> :
-                            (<table className="table-auto">
-                                <thead>
-                                    <tr className="flex justify-around">
-                                        <th className="px-4 py-2">Bid ID</th>
-                                        <th className="px-4 py-2">Item ID</th>
-                                        <th className="px-4 py-2">Buyer</th>
-                                        <th className="px-4 py-2">Placement Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>)}
+                            (<Table bids={bids} />)}
                     </div>}
                 {/* Buttons */}
                 <div className="flex justify-between mt-4 mb-8">
@@ -433,7 +422,7 @@ export default function Home() {
                                 <LoadingSpinner /> :
                                 "Publish Item"}
                         </button>}
-                    {activityStatus?.toLowerCase() === "active" && (bids == null || bids?.length === 0) &&
+                    {activityStatus?.toLowerCase() === "active" && bids.length === 0 &&
                         <button
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                             onClick={handleUnpublishItem}>

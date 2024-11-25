@@ -48,9 +48,9 @@ const Navbar = () => {
         const handleStorageChange = () => syncSessionState();
         window.addEventListener('storage', handleStorageChange);
 
-        if (sessionStorage.getItem("userType") === 'Seller') {
+        if (sessionStorage.getItem("userType")?.toLowerCase() === 'seller') {
             getSellerInformation();
-        } else if (sessionStorage.getItem("userType") === 'Buyer') {
+        } else if (sessionStorage.getItem("userType")?.toLowerCase() === 'buyer') {
             // call function to get buyer's funds when implemented
         }
 
@@ -127,7 +127,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
-                                    {userType !== 'Seller' && (
+                                    {userType?.toLowerCase() !== 'seller' && (
                                         <Link
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -135,7 +135,7 @@ const Navbar = () => {
                                             View Items
                                         </Link>
                                     )}
-                                    {userType === 'Seller' ? (
+                                    {userType?.toLowerCase() === 'seller' ? (
                                         <>
                                             <Link
                                                 href="/add-item"
@@ -150,7 +150,7 @@ const Navbar = () => {
                                                 Review Items
                                             </Link>
                                         </>
-                                    ) : userType === 'Buyer' ? (
+                                    ) : userType?.toLowerCase() === 'buyer' ? (
                                         <Link
                                             href="/add-funds"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
