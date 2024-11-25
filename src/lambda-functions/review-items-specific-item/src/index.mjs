@@ -70,11 +70,11 @@ export const handler = async (event, context) => {
             if (error) {
               return reject(error);
             }
-            if ((rows) && (rows.length > 0)) {
+            if ((rows)) {
               return resolve(rows);
             } 
             else {
-              return resolve(null);
+              return reject(error);
             }
           });
       });
@@ -86,11 +86,11 @@ export const handler = async (event, context) => {
             if (error) {
               return reject(error);
             }
-            if ((rows) && (rows.length > 0)) {
+            if ((rows)) {
               return resolve(rows);
             } 
             else {
-              return resolve(null);
+              return reject(error);
             }
           });
       });
@@ -104,6 +104,7 @@ export const handler = async (event, context) => {
       }
       else {
         const getTheSpecificSellerItem = await getSpecificSellerItem(info.itemID, info.username);
+        console.log(getTheSpecificSellerItem);
         if(getTheSpecificSellerItem === null){
           response.statusCode = 400;
           response.error = "Item does not exist or does not belong to the current seller.";
