@@ -8,7 +8,6 @@ const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial"
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [userType, setUserType] = useState<'seller' | 'buyer' | ''>('seller');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -16,55 +15,60 @@ export default function LoginPage() {
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
     const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage(null);
-    setError(null);
-
-    try {
-        const response = await axios.post(`${baseURL}/login-account`, {
-            body: {
-                username,
-                password,
-            },
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
+        e.preventDefault();
+        setMessage(null);
+        setError(null);
+    
+        try {
+            const response = await axios.post(`${baseURL}/login-account`, {
+                body: {
+                    username,
+                    password,
+                },
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            console.log("Response received:", response);
+    
+            // Parse the response
+            const { statusCode, body } = response.data;
+            if (statusCode === 200) {
+                const parsedBody = JSON.parse(body); // Parse the 'body' field to access userType
+                const { userType, message } = parsedBody;
+    
+                setMessage(message || 'Login successful!');
+    
+                // Store user details in sessionStorage
+                sessionStorage.setItem('userName', username);
+                sessionStorage.setItem('userType', userType); // Store the correct userType
+                sessionStorage.setItem('password', password);
+    
+                console.log("Stored userType:", userType);
+    
+                // Redirect to the common page (e.g., home)
+                window.location.href = "/";
+            } else if (statusCode === 401) {
+                setError('Invalid username or password.');
+            } else if (statusCode === 403) {
+                setError('Account is closed and cannot be logged in.');
+            } else {
+                setError(message || 'An unexpected error occurred. Please try again later.');
             }
-        });
-
-        console.log("Response received:", response);
-
-        const { statusCode, message } = response.data;
-
-        if (statusCode === 401) {
-            setError('Invalid username or password.');
-        } else if (statusCode === 403) {
-            setError('Account is closed and cannot be logged in.');
-        } else if (statusCode === 200) {
-            setMessage('Login successful!');
-            setUsername('');
-            setUserType('');
-            setPassword('');
-            console.log("User type:", userType);
-            sessionStorage.setItem('userName', username);
-            sessionStorage.setItem('userType', userType);
-            sessionStorage.setItem('password', password);
-            window.location.href = "/";
-        } else {
-            setError(message || 'An unexpected error occurred. Please try again later.');
+        } catch (err: any) {
+            console.error("Error caught in catch block:", err);
+            if (err.response && err.response.status === 500) {
+                setError('Failed to login. Please try again.');
+            } else if (err.message.includes("Network Error")) {
+                setError('Network error. Please check your connection and try again.');
+            } else {
+                setError('An unexpected error occurred. Please try again later.');
+            }
         }
-    } catch (err: any) {
-        console.error("Error caught in catch block:", err);
-        if (err.response && err.response.status === 500) {
-            setError('Failed to login. Please try again.');
-        } else if (err.message.includes("Network Error")) {
-            setError('Network error. Please check your connection and try again.');
-        } else {
-            setError('An unexpected error occurred. Please try again later.');
-        }
-    }
-};
-
+    };
+    
     return (
         <main className="container mx-auto mt-5">
             <h1 className="text-4xl mb-6">Login</h1>
