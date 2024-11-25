@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 
 export interface BidsProps {
+    IsBuyNow: number;
     bids: {
         AmountBid: number;
         BidID: number;
@@ -18,12 +19,9 @@ const styles = {
         display: "flex",
         justifyContent: "center",
     },
-    tableStyles: {
-
-    },
 }
 
-export default function Table({ bids }: BidsProps) {
+export default function Table({ bids, IsBuyNow }: BidsProps) {
 
     useEffect(() => {
         console.log("Bid print from Table component: ", bids);
@@ -31,17 +29,17 @@ export default function Table({ bids }: BidsProps) {
 
     return (
         <div style={styles.wrapperDivStyles} className="relative overflow-x-auto">
-            <table style={styles.tableStyles} className="table-auto w-full text-sm text-left rtl:text-right text-black-500 dark:text-black-400">
+            <table className="table-auto w-full text-sm text-left rtl:text-right text-black-500 dark:text-black-400">
                 <thead className="text-xs text-black-700 uppercase bg-black-50 dark:bg-black-700 dark:text-black-400">
                     <tr>
                         <th scope="col" className="border px-6 py-3 text-center border-black">
-                            Bid ID
+                            {IsBuyNow ? "Purchase ID" : "Bid ID"}
                         </th>
                         <th scope="col" className="border px-6 py-3 text-center border-black">
                             Item ID
                         </th>
                         <th scope="col" className="border px-6 py-3 text-center border-black">
-                            Amount Bid
+                            {IsBuyNow ? "Item Price" : "Amount Bid"}
                         </th>
                         <th scope="col" className="border px-6 py-3 text-center border-black">
                             Buyer

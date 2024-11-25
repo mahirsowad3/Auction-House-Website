@@ -385,20 +385,27 @@ export default function Home() {
                                 minute: '2-digit',
                                 second: '2-digit',
                                 hour12: false
-                            }) : "Item has not been sold yet."}</p>
+                            }) : "Item has not been sold."}</p>
                     </div>}
 
                 {activityStatus?.toLowerCase() === "archived" && bids.length > 0 &&
                     < div className="mt-4 rounded bg-slate-200 p-2">
                         <h2 className="text-2xl">Buyer Sold To: </h2>
-                        <p className="text-xl">{buyerSoldTo ? buyerSoldTo : "Item has not been sold yet."}</p>
+                        <p className="text-xl">{buyerSoldTo ? buyerSoldTo : "Item has not been sold."}</p>
                     </div>}
                 {/* Bid Table for Bids When Item is published */}
-                {(activityStatus?.toLowerCase() === "active" || activityStatus?.toLowerCase() === "completed" || (activityStatus?.toLowerCase() === "archived" && bids.length > 0)) &&
-                    <div className="flex justify-center mt-4 rounded bg-slate-200">
+                {(activityStatus?.toLowerCase() === "active" || activityStatus?.toLowerCase() === "completed" || (activityStatus?.toLowerCase() === "archived")) &&
+                    <div className="flex justify-center mt-4 py-6 rounded bg-slate-200">
                         {bids.length === 0 ?
-                            <div>No bids have been placed yet</div> :
-                            (<Table bids={bids} />)}
+                            <div>{isABuyNow == 0 ? "No bids have been placed" : "The item has not been purchased."}</div> :
+                            <div>
+                                <div>
+                                    <h3 className="text-center text-2xl text-black-700">
+                                        Table of {isABuyNow ? "the purchase made on the item" : "the bids made on the item"}
+                                    </h3>
+                                    <Table bids={bids} IsBuyNow={isABuyNow} />
+                                </div>
+                            </div>}
                     </div>}
                 {/* Buttons */}
                 <div className="flex justify-between mt-4 mb-8">
@@ -458,7 +465,7 @@ export default function Home() {
                     <div className="mt-4 rounded bg-red-200 p-2">
                         <h2 className="text-2xl">Error: </h2>
                         <p className="text-xl">
-                            Bid End Date is before the publish date (today) of this item. Please click "Edit Details" button to update the Bid End Date.
+                            {isABuyNow ? "Purchase" : "Bid"} End Date is before the publish date (today) of this item. Please click "Edit Details" button to update the {isABuyNow ? "Purchase" : "Bid"} End Date.
                         </p>
                     </div>}
                 {/* Archive Item Success Message */}
