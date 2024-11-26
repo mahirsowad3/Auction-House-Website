@@ -105,7 +105,17 @@ export default function ViewSpecificItem() {
                         <p className="text-gray-600 mb-2">
                             <strong className="text-gray-800">Bid End Date:</strong>{" "}
                             {itemDetails.BidEndDate
-                                ? new Date(itemDetails.BidEndDate).toLocaleString()
+                                ? new Date(itemDetails.BidEndDate.replace(' ', 'T'))
+                                .toLocaleDateString('en-US', {
+                                    timeZone: 'UTC',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                })
                                 : "N/A"}
                         </p>
                         <p className="text-gray-600 mb-2">
