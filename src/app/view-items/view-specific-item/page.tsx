@@ -192,7 +192,7 @@ export default function ViewSpecificItem() {
                 </div>
             )}
 
-            {/* Buyer Details */}
+            {/* Buyer Details
             {itemType === "Bidding" && (
                 <div className="bg-white shadow-md rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Buyer Details</h2>
@@ -214,7 +214,7 @@ export default function ViewSpecificItem() {
                         <p className="text-gray-600">No buyer information available.</p>
                     )}
                 </div>
-            )}
+            )} */}
         </div>
     );
 }
