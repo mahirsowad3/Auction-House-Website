@@ -188,7 +188,7 @@ export default function ListItems() {
                                 <p className="text-gray-700 mb-2 font-bold">Type: {itemType}</p>
                                 <p className="text-gray-700 mb-2">Price: ${item.InitialPrice}</p>
                                 {itemType === "Bidding" && (
-                                    <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid || item.InitialPrice}</p>
+                                    <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                                 )}
                                 <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                                 {sessionStorage.getItem("userType") === "Buyer" && (
