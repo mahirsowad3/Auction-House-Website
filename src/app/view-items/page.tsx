@@ -39,7 +39,7 @@ export default function ListItems() {
     const fetchItems = async () => {
         setLoading(true);
         const updatedItems = await updateItemsActivityStatus();
-        if (updatedItems == 1) {
+        if (updatedItems === 1) {
             try {
                 const response = await axios.get(`${baseURL}/view-items`);
                 const data = JSON.parse(response.data.body);
@@ -70,7 +70,7 @@ export default function ListItems() {
                       item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase());
 
                   // Filter by price range
-                  const price = item.HighestBid || item.InitialPrice;
+                  const price = item.InitialPrice;
                   const matchesPriceRange =
                       (!minPrice || price >= parseFloat(minPrice)) &&
                       (!maxPrice || price <= parseFloat(maxPrice));
@@ -79,13 +79,13 @@ export default function ListItems() {
               })
               .sort((a, b) => {
                   if (sortOption === "price") {
-                      const priceA = a.HighestBid || a.InitialPrice;
-                      const priceB = b.HighestBid || b.InitialPrice;
+                      const priceA = a.InitialPrice;
+                      const priceB = b.InitialPrice;
                       return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
                   } else if (sortOption === "publishedDate") {
                       return sortOrder === "asc"
-                          ? new Date(a.BidStartDate).getTime() - new Date(b.BidStartDate).getTime()
-                          : new Date(b.BidStartDate).getTime() - new Date(a.BidStartDate).getTime();
+                          ? new Date(a.PublishedDate).getTime() - new Date(b.PublishedDate).getTime()
+                          : new Date(b.PublishedDate).getTime() - new Date(a.PublishedDate).getTime();
                   } else if (sortOption === "expirationDate") {
                       return sortOrder === "asc"
                           ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
@@ -156,48 +156,52 @@ export default function ListItems() {
                 <p className="text-center text-gray-600">No active items found.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {filteredAndSortedItems.map((item) => (
-                        <div
-                            key={item.ItemID}
-                            className="bg-white shadow-md rounded-lg p-4"
-                        >
-                            {item.Images && item.Images.length > 0 && (
-                                <Carousel
-                                    showThumbs={false}
-                                    showStatus={false}
-                                    infiniteLoop
-                                    className="mt-4 rounded-lg shadow-sm"
-                                >
-                                    {item.Images.map((imageUrl: any, index: any) => (
-                                        <div key={index}>
-                                            <img
-                                                src={imageUrl}
-                                                alt={`Image of ${item.Name}`}
-                                                className="w-full h-64 object-cover rounded-lg"
-                                            />
-                                        </div>
-                                    ))}
-                                </Carousel>
-                            )}
-                            <h2 className="text-xl font-semibold my-2"><span className="text-blue-500">#{item.ItemID}</span>: {item.Name}</h2>
-                            {item.HighestBid ? (
-                                <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
-                            ) : (
-                                <p className="text-gray-700 mb-1">
-                                    Price: ${item.InitialPrice}
-                                </p>
-                            )}
-                            <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-                            {sessionStorage.getItem("userType") === "Buyer" && (
-                                <button
-                                    onClick={() => viewItemDetails(item.ItemID)}
-                                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                >
-                                    View Details
-                                </button>
-                            )}
-                        </div>
-                    ))}
+                    {filteredAndSortedItems.map((item) => {
+                        const itemType = item.IsBuyNow === 1 ? "Buy Now" : "Bidding";
+
+                        return (
+                            <div
+                                key={item.ItemID}
+                                className="bg-white shadow-md rounded-lg p-4"
+                            >
+                                {item.Images && item.Images.length > 0 && (
+                                    <Carousel
+                                        showThumbs={false}
+                                        showStatus={false}
+                                        infiniteLoop
+                                        className="mt-4 rounded-lg shadow-sm"
+                                    >
+                                        {item.Images.map((imageUrl: string, index: number) => (
+                                            <div key={index}>
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`Image of ${item.Name}`}
+                                                    className="w-full h-64 object-cover rounded-lg"
+                                                />
+                                            </div>
+                                        ))}
+                                    </Carousel>
+                                )}
+                                <h2 className="text-xl font-semibold my-2">
+                                    <span className="text-blue-500">#{item.ItemID}</span>: {item.Name}
+                                </h2>
+                                <p className="text-gray-700 mb-2 font-bold">Type: {itemType}</p>
+                                <p className="text-gray-700 mb-2">Price: ${item.InitialPrice}</p>
+                                {itemType === "Bidding" && (
+                                    <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid || item.InitialPrice}</p>
+                                )}
+                                <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
+                                {sessionStorage.getItem("userType") === "Buyer" && (
+                                    <button
+                                        onClick={() => viewItemDetails(item.ItemID)}
+                                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    >
+                                        View Details
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </main>
