@@ -1,8 +1,10 @@
-'use client'
+"use client";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the carousel styles
+import { Carousel } from "react-responsive-carousel";
+import { useRouter } from "next/navigation";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -10,12 +12,13 @@ export default function ListItems() {
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const [sortOption, setSortOption] = useState<string>(""); 
-    const [sortOrder, setSortOrder] = useState<string>("asc");
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [sortOption, setSortOption] = useState<string>("");
+    const [sortOrder, setSortOrder] = useState<string>("asc");
+
+    const router = useRouter();
+
     useEffect(() => {
-        console.log()
         fetchItems();
     }, []);
 
@@ -33,31 +36,36 @@ export default function ListItems() {
         }
     };
 
-    // Filter and sort items based on the selected options
-    const filteredAndSortedItems = Array.isArray(items) ? items
-        .filter((item) => {
-            return (
-                item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        })
-        .sort((a, b) => {
-            if (sortOption === "price") {
-                const priceA = a.HighestBid || a.InitialPrice;
-                const priceB = b.HighestBid || b.InitialPrice;
-                return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
-            } else if (sortOption === "publishedDate") {
-                return sortOrder === "asc"
-                    ? new Date(a.BidStartDate).getTime() - new Date(b.BidStartDate).getTime()
-                    : new Date(b.BidStartDate).getTime() - new Date(a.BidStartDate).getTime();
-            } else if (sortOption === "expirationDate") {
-                return sortOrder === "asc"
-                    ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
-                    : new Date(b.BidEndDate).getTime() - new Date(a.BidEndDate).getTime();
-            } else {
-                return 0;
-            }
-        }) : [];
+    const viewItemDetails = (itemID: number) => {
+        router.push(`/view-specific-item/${itemID}`);
+    };
+
+    const filteredAndSortedItems = Array.isArray(items)
+        ? items
+              .filter((item) => {
+                  return (
+                      item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase())
+                  );
+              })
+              .sort((a, b) => {
+                  if (sortOption === "price") {
+                      const priceA = a.HighestBid || a.InitialPrice;
+                      const priceB = b.HighestBid || b.InitialPrice;
+                      return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
+                  } else if (sortOption === "publishedDate") {
+                      return sortOrder === "asc"
+                          ? new Date(a.BidStartDate).getTime() - new Date(b.BidStartDate).getTime()
+                          : new Date(b.BidStartDate).getTime() - new Date(a.BidStartDate).getTime();
+                  } else if (sortOption === "expirationDate") {
+                      return sortOrder === "asc"
+                          ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
+                          : new Date(b.BidEndDate).getTime() - new Date(a.BidEndDate).getTime();
+                  } else {
+                      return 0;
+                  }
+              })
+        : [];
 
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
@@ -106,8 +114,11 @@ export default function ListItems() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {filteredAndSortedItems.map((item) => (
-                        <div key={item.ItemID} className="bg-white shadow-md rounded-lg p-4">
-                            {/* Carousel for multiple images */}
+                        <div
+                            key={item.ItemID}
+                            className="bg-white shadow-md rounded-lg p-4"
+                            onClick={() => viewItemDetails(item.ItemID)}
+                        >
                             {item.Images && item.Images.length > 0 && (
                                 <Carousel
                                     showThumbs={false}
@@ -127,46 +138,20 @@ export default function ListItems() {
                                 </Carousel>
                             )}
                             <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
-                            
-                            {/* Display highest bid or initial price */}
-
                             {item.HighestBid ? (
                                 <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                             ) : (
                                 <p className="text-gray-700 mb-2">
-                                    Price: ${item.InitialPrice} <span className="text-sm text-gray-500">(No bids yet)</span>
+                                    Price: ${item.InitialPrice}{" "}
+                                    <span className="text-sm text-gray-500">(No bids yet)</span>
                                 </p>
                             )}
-
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-                            <p className="text-gray-500 text-sm mb-2">
-                                Published DateTime: {new Date(item.BidStartDate.replace(' ', 'T'))
-                                .toLocaleDateString('en-US', {
-                                   timeZone: 'UTC',
-                                   month: '2-digit',
-                                   day: '2-digit',
-                                   year: 'numeric',
-                                   hour: '2-digit',
-                                   minute: '2-digit',
-                                   second: '2-digit',
-                                   hour12: false
-                                })}
-                            </p>
-                            <p className="text-gray-500 text-sm">
-                                Expiration DateTime: {new Date(item.BidEndDate.replace(' ', 'T'))
-                                .toLocaleDateString('en-US', {
-                                   timeZone: 'UTC',
-                                   month: '2-digit',
-                                   day: '2-digit',
-                                   year: 'numeric',
-                                   hour: '2-digit',
-                                   minute: '2-digit',
-                                   second: '2-digit',
-                                   hour12: false
-                                })}
-                            </p>
-
-                            
+                            <button
+                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                View Details
+                            </button>
                         </div>
                     ))}
                 </div>
