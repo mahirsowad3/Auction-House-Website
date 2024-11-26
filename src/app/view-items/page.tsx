@@ -139,7 +139,7 @@ export default function ListItems() {
                         <div
                             key={item.ItemID}
                             className="bg-white shadow-md rounded-lg p-4"
-                            onClick={() => viewItemDetails(item.ItemID)}
+                            // onClick={() => viewItemDetails(item.ItemID)}
                         >
                             {item.Images && item.Images.length > 0 && (
                                 <Carousel
