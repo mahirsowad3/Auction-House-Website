@@ -144,8 +144,8 @@ export const handler = async (event, context) => {
             biddingHistory: biddingHistory,
             buyerDetails: {
                 Username: username,
-                CanPlaceHigherBid: !isExpired && !isSold, // Assume they can bid if auction is active
-                CanPlaceCustomBid: !isExpired && !isSold, // Assume they can bid if auction is active
+                CanPlaceHigherBid: !isExpired && !isSold,
+                CanPlaceCustomBid: !isExpired && !isSold,
             },
         });
     } catch (error) {
