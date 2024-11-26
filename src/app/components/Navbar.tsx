@@ -21,51 +21,52 @@ const Navbar = () => {
 
     const fetchFunds = async () => {
         const payload = {
-          body: {
-            username: sessionStorage.getItem("userName"),
-            password: sessionStorage.getItem("password"),
-          },
+            body: {
+                username: sessionStorage.getItem("userName"),
+                password: sessionStorage.getItem("password"),
+            },
         };
-      
+    
         try {
-          let fundsResponse;
-          console.log("User type:", userType);
-          if (userType === "Seller") {
-            const response = await axios.post(
-              `${baseURL}/get-seller-information`,
-              payload,
-              {
-                headers: { "Content-Type": "application/json" },
-              }
-            );
-      
-            if (response.data?.body) {
-              const parsedBody = JSON.parse(response.data.body);
-              fundsResponse = parsedBody?.Funds;
+            let fundsResponse = null; // Initialize fundsResponse
+    
+            console.log("User type:", userType);
+            if (userType === "Seller") {
+                const response = await axios.post(
+                    `${baseURL}/get-seller-information`,
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+    
+                if (response.data?.body) {
+                    const parsedBody = JSON.parse(response.data.body);
+                    fundsResponse = parsedBody?.Funds;
+                }
+            } else if (userType === "Buyer") {
+                const response = await axios.post(
+                    `${baseURL}/get-buyer-information`,
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+    
+                if (response.data?.body) {
+                    const parsedBody = JSON.parse(response.data.body);
+                    fundsResponse = parsedBody?.AccountFunds;
+                }
             }
-          } else if (userType === "Buyer") {
-            const response = await axios.post(
-              `${baseURL}/get-buyer-information`,
-              payload,
-              {
-                headers: { "Content-Type": "application/json" },
-              }
-            );
-      
-            if (response.data?.body) {
-              const parsedBody = JSON.parse(response.data.body);
-              fundsResponse = parsedBody?.AccountFunds;
+    
+            // Allow 0 as a valid value
+            if (fundsResponse === null || fundsResponse === undefined) {
+                throw new Error("Funds field is missing in the response.");
             }
-          }
-      
-          if (!fundsResponse) throw new Error("Funds field is missing in the response.");
-          setFunds(fundsResponse);
+    
+            setFunds(fundsResponse); // Set funds to the returned value, including 0
         } catch (error) {
-          console.error("Error retrieving funds:", error);
-          setFunds(null);
+            console.error("Error retrieving funds:", error);
+            setFunds(null); // Set funds to null in case of error
         }
-      };
-
+    };
+    
     useEffect(() => {
         syncSessionState();
         const handleStorageChange = () => syncSessionState();
@@ -190,7 +191,7 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds !== null && (
+                            {userName && funds !== null && funds !== undefined && funds >= 0 &&  (
                                 <button
                                     onClick={handleSeeYourFunds}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -221,6 +222,7 @@ const Navbar = () => {
                                 </button>
                             )}
                         </div>
+
                     </div>
                 </div>
             </nav>
