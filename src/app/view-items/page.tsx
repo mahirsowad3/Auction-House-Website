@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Router } from "express";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -16,7 +15,11 @@ export default function ListItems() {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [sortOption, setSortOption] = useState<string>("");
     const [sortOrder, setSortOrder] = useState<string>("asc");
+    const [minPrice, setMinPrice] = useState<string>("");
+    const [maxPrice, setMaxPrice] = useState<string>("");
+
     const router = useRouter();
+
     useEffect(() => {
         fetchItems();
     }, []);
@@ -27,7 +30,6 @@ export default function ListItems() {
             const data = JSON.parse(response.data.body);
             console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
             return 1;
-
         } catch (error) {
             console.error('Error updating items activity status: ', error);
             return 0;
@@ -48,27 +50,32 @@ export default function ListItems() {
             } finally {
                 setLoading(false);
             }
-        }
-        else {
+        } else {
             setLoading(false);
-            console.log("Failed to update the items' activity status.")
+            console.log("Failed to update the items' activity status.");
         }
     };
 
     const viewItemDetails = (itemID: number) => {
-        // Store itemID in session storage
         sessionStorage.setItem("viewItemID", itemID.toString());
-        
         router.push("view-items/view-specific-item");
     };
 
     const filteredAndSortedItems = Array.isArray(items)
         ? items
               .filter((item) => {
-                  return (
+                  // Filter by search term
+                  const matchesSearchTerm =
                       item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                      item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase())
-                  );
+                      item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase());
+
+                  // Filter by price range
+                  const price = item.HighestBid || item.InitialPrice;
+                  const matchesPriceRange =
+                      (!minPrice || price >= parseFloat(minPrice)) &&
+                      (!maxPrice || price <= parseFloat(maxPrice));
+
+                  return matchesSearchTerm && matchesPriceRange;
               })
               .sort((a, b) => {
                   if (sortOption === "price") {
@@ -110,6 +117,20 @@ export default function ListItems() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="border p-2 rounded-md w-full md:w-1/3"
                 />
+                <input
+                    type="number"
+                    placeholder="Min Price"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="border p-2 rounded-md w-full md:w-1/6"
+                />
+                <input
+                    type="number"
+                    placeholder="Max Price"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="border p-2 rounded-md w-full md:w-1/6"
+                />
                 <select
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
@@ -139,7 +160,6 @@ export default function ListItems() {
                         <div
                             key={item.ItemID}
                             className="bg-white shadow-md rounded-lg p-4"
-                            // onClick={() => viewItemDetails(item.ItemID)}
                         >
                             {item.Images && item.Images.length > 0 && (
                                 <Carousel
@@ -164,8 +184,7 @@ export default function ListItems() {
                                 <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                             ) : (
                                 <p className="text-gray-700 mb-1">
-                                    Price: ${item.InitialPrice}{" "}
-                                    {/* <span className="text-sm text-gray-500">(No bids yet)</span> */}
+                                    Price: ${item.InitialPrice}
                                 </p>
                             )}
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
