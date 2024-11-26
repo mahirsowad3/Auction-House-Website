@@ -26,18 +26,16 @@ const Navbar = () => {
                 password: sessionStorage.getItem("password"),
             },
         };
-    
+
         try {
-            let fundsResponse = null; // Initialize fundsResponse
-    
-            console.log("User type:", userType);
+            let fundsResponse = null;
+
             if (userType === "Seller") {
                 const response = await axios.post(
                     `${baseURL}/get-seller-information`,
                     payload,
                     { headers: { "Content-Type": "application/json" } }
                 );
-    
                 if (response.data?.body) {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.Funds;
@@ -48,36 +46,45 @@ const Navbar = () => {
                     payload,
                     { headers: { "Content-Type": "application/json" } }
                 );
-    
                 if (response.data?.body) {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.AccountFunds;
                 }
             }
-    
-            // Allow 0 as a valid value
+
             if (fundsResponse === null || fundsResponse === undefined) {
                 throw new Error("Funds field is missing in the response.");
             }
-    
-            setFunds(fundsResponse); // Set funds to the returned value, including 0
+
+            setFunds(fundsResponse); // Set funds to the returned value
         } catch (error) {
             console.error("Error retrieving funds:", error);
             setFunds(null); // Set funds to null in case of error
         }
     };
-    
+
     useEffect(() => {
         syncSessionState();
+
         const handleStorageChange = () => syncSessionState();
-        window.addEventListener('storage', handleStorageChange);
+
+        // Listen for the "fundsUpdated" custom event
+        const handleFundsUpdated = (event: CustomEvent<{ newFunds: number }>) => {
+            const { newFunds } = event.detail; // Extract updated funds from the event
+            console.log("Funds updated via event:", newFunds);
+            setFunds(newFunds); // Update Navbar's funds state
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        window.addEventListener("fundsUpdated", handleFundsUpdated as EventListener);
 
         if (userType) {
             fetchFunds();
         }
 
         return () => {
-            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener("storage", handleStorageChange);
+            window.removeEventListener("fundsUpdated", handleFundsUpdated as EventListener);
         };
     }, [userType]);
 
@@ -105,7 +112,7 @@ const Navbar = () => {
             const response = await axios.post(`${baseURL}/close-account`, {
                 body: {
                     username: userName,
-                    userType: userType, // Pass userType to distinguish between seller and buyer
+                    userType: userType,
                 },
             }, {
                 headers: { 'Content-Type': 'application/json' },
@@ -191,7 +198,7 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds !== null && funds !== undefined && funds >= 0 &&  (
+                            {userName && funds !== null && funds !== undefined && funds >= 0 && (
                                 <button
                                     onClick={handleSeeYourFunds}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"

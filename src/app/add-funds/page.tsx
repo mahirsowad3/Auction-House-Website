@@ -77,64 +77,65 @@ export default function AddFundsPage() {
     setError(null);
 
     try {
-      const username = sessionStorage.getItem("userName");
+        const username = sessionStorage.getItem("userName");
 
-      if (!username) {
-        setError("User is not logged in.");
-        return;
-      }
-
-      const payload = {
-        body: {
-          username,
-          amount: parseInt(amount, 10),
-        },
-      };
-
-      console.log("Sending request to add funds:", payload);
-
-      const response = await axios.post(`${baseURL}/add-funds`, payload, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      console.log("Received response after adding funds:", response);
-
-      if (response.status === 200 && response.data) {
-        const parsedBody =
-          typeof response.data.body === "string"
-            ? JSON.parse(response.data.body)
-            : response.data.body;
-
-        const updatedFunds = parsedBody?.updatedFunds;
-
-        if (updatedFunds !== undefined) {
-          setMessage("Funds added successfully!");
-          setCurrentBalance(updatedFunds); // Update the balance in state
-
-          // Update session storage for consistency with the navbar
-          sessionStorage.setItem("currentFunds", updatedFunds.toString());
-
-          // Notify the navbar to refresh funds
-          window.dispatchEvent(new Event("storage"));
-
-          setAmount(''); // Reset the amount input field
-        } else {
-          console.error("Updated funds missing in response:", response.data);
-          setError("Unexpected response format from server. Please try again.");
+        if (!username) {
+            setError("User is not logged in.");
+            return;
         }
-      } else {
-        setError("Failed to update funds. Please try again.");
-      }
-    } catch (err: any) {
-      console.error("Error updating funds:", err);
 
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Failed to update funds. Please try again.");
-      }
-    }
+        const payload = {
+            body: {
+                username,
+                amount: parseInt(amount, 10),
+            },
+        };
+
+        console.log("Sending request to add funds:", payload);
+
+        const response = await axios.post(`${baseURL}/add-funds`, payload, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        console.log("Received response after adding funds:", response);
+
+        if (response.status === 200 && response.data) {
+            const parsedBody =
+                typeof response.data.body === "string"
+                    ? JSON.parse(response.data.body)
+                    : response.data.body;
+
+            const updatedFunds = parsedBody?.updatedFunds;
+
+            if (updatedFunds !== undefined) {
+                setMessage("Funds added successfully!");
+                setCurrentBalance(updatedFunds); // Update the balance in state
+
+                // Update session storage for consistency with the navbar
+                sessionStorage.setItem("currentFunds", updatedFunds.toString());
+
+                // Emit custom event for Navbar to update funds
+                window.dispatchEvent(new CustomEvent("fundsUpdated", { detail: { newFunds: updatedFunds } }));
+
+                setAmount(''); // Reset the amount input field
+            } else {
+                console.error("Updated funds missing in response:", response.data);
+                setError("Unexpected response format from server. Please try again.");
+            }
+        } else {
+            setError("Failed to update funds. Please try again.");
+        }
+    } catch (err: any) {
+        console.error("Error updating funds:", err);
+
+        if (err.response && err.response.data && err.response.data.message) {
+            setError(err.response.data.message);
+        } else {
+            setError("Failed to update funds. Please try again.");
+        }
+    } 
   };
+
 
   return (
     <main className="container mx-auto mt-5">
