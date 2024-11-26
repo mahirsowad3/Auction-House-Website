@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
-import { useRouter } from "next/navigation";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Router } from "express";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -15,9 +16,7 @@ export default function ListItems() {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [sortOption, setSortOption] = useState<string>("");
     const [sortOrder, setSortOrder] = useState<string>("asc");
-
     const router = useRouter();
-
     useEffect(() => {
         fetchItems();
     }, []);
@@ -37,7 +36,10 @@ export default function ListItems() {
     };
 
     const viewItemDetails = (itemID: number) => {
-        router.push(`/view-specific-item/${itemID}`);
+        // Store itemID in session storage
+        sessionStorage.setItem("viewItemID", itemID.toString());
+        
+        router.push("view-items/view-specific-item");
     };
 
     const filteredAndSortedItems = Array.isArray(items)
@@ -148,6 +150,7 @@ export default function ListItems() {
                             )}
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                             <button
+                                onClick={() => viewItemDetails(item.ItemID)}
                                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
                                 View Details
