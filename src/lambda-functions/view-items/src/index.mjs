@@ -34,21 +34,42 @@ export const handler = async (event, context) => {
     try {
         // Query to retrieve all active items
         const itemSql = `
-            SELECT ItemID, Name, InitialPrice, BidStartDate, BidEndDate, ItemDescription, ActivityStatus
+            SELECT *
             FROM Item 
             WHERE ActivityStatus = 'Active'
         `;
-        
         const activeItems = await query(itemSql, []);
 
-        // Query to get all images related to active items
+        // Extract item IDs
         const itemIds = activeItems.map(item => item.ItemID);
+
+        if (itemIds.length === 0) {
+            response.statusCode = 200;
+            response.body = JSON.stringify([]);
+            return response;
+        }
+
+        // Query to retrieve the highest bid for each item
+        const highestBidSql = `
+            SELECT RelatedItemID, MAX(AmountBid) AS HighestBid
+            FROM Bid
+            WHERE RelatedItemID IN (?)
+            GROUP BY RelatedItemID
+        `;
+        const highestBids = await query(highestBidSql, [itemIds]);
+
+        // Map highest bids to corresponding items
+        const highestBidsByItem = highestBids.reduce((acc, bid) => {
+            acc[bid.RelatedItemID] = bid.HighestBid;
+            return acc;
+        }, {});
+
+        // Query to get all images related to active items
         const pictureSql = `
             SELECT RelatedItem, URL
             FROM Picture
             WHERE RelatedItem IN (?)
         `;
-        
         const pictures = await query(pictureSql, [itemIds]);
 
         // Organize images by item
@@ -61,14 +82,15 @@ export const handler = async (event, context) => {
             return acc;
         }, {});
 
-        // Add images to each item
-        const itemsWithImages = activeItems.map(item => ({
+        // Add images and highest bid to each item
+        const itemsWithDetails = activeItems.map(item => ({
             ...item,
-            Images: imagesByItem[item.ItemID] || [], // Add images array, or an empty array if none found
+            Images: imagesByItem[item.ItemID] || [], 
+            HighestBid: highestBidsByItem[item.ItemID] || null 
         }));
 
         response.statusCode = 200;
-        response.body = JSON.stringify(itemsWithImages);
+        response.body = JSON.stringify(itemsWithDetails);
     } catch (error) {
         console.error("Error in Lambda function:", error);
         response.statusCode = 400;
