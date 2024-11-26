@@ -190,6 +190,22 @@ export default function ListItems() {
                                 {itemType === "Bidding" && (
                                     <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                                 )}
+                                <p className="text-gray-600 mb-2">
+                                    <strong>Published Date:</strong>{" "}
+                                    {new Date(item.PublishedDate).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </p>
+                                <p className="text-gray-600 mb-2">
+                                    <strong>Expiration Date:</strong>{" "}
+                                    {new Date(item.BidEndDate).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </p>
                                 <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
                                 {sessionStorage.getItem("userType") === "Buyer" && (
                                     <button
