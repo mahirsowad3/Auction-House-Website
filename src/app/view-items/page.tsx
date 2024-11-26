@@ -165,7 +165,7 @@ export default function ListItems() {
                             ) : (
                                 <p className="text-gray-700 mb-1">
                                     Price: ${item.InitialPrice}{" "}
-                                    <span className="text-sm text-gray-500">(No bids yet)</span>
+                                    {/* <span className="text-sm text-gray-500">(No bids yet)</span> */}
                                 </p>
                             )}
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
