@@ -15,6 +15,21 @@ export default function ViewSpecificItem() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+
+        const updateItemsActivityStatus = async () => {
+            try {
+                const response = await axios.get(`${baseURL}/update-items-activity-status`);
+                const data = JSON.parse(response.data.body);
+                console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
+                return 1;
+    
+            } catch (error) {
+                console.error('Error updating items activity status: ', error);
+                return 0;
+            }
+        };
+
+
         const fetchItemDetails = async () => {
             const itemID = sessionStorage.getItem("viewItemID");
             if (!itemID) {
@@ -23,29 +38,37 @@ export default function ViewSpecificItem() {
                 return;
             }
 
-            try {
-                const payload = {
-                    body: {
-                        username: sessionStorage.getItem("userName"),
-                        password: sessionStorage.getItem("password"),
-                        itemID: parseInt(itemID),
-                    },
-                };
+            const updatedItems = await updateItemsActivityStatus();
 
-                const response = await axios.post(`${baseURL}/view-specific-item`, payload, {
-                    headers: { "Content-Type": "application/json" },
-                });
-
-                const data = JSON.parse(response.data.body);
-                setItemDetails(data.itemDetails);
-                setBiddingHistory(data.biddingHistory);
-                setBuyerDetails(data.buyerDetails);
-            } catch (err) {
-                console.error("Error fetching item details:", err);
-                setError("Failed to fetch item details.");
-            } finally {
-                setLoading(false);
+            if(updatedItems == 1) {
+                try {
+                    const payload = {
+                        body: {
+                            username: sessionStorage.getItem("userName"),
+                            password: sessionStorage.getItem("password"),
+                            itemID: parseInt(itemID),
+                        },
+                    };
+    
+                    const response = await axios.post(`${baseURL}/view-specific-item`, payload, {
+                        headers: { "Content-Type": "application/json" },
+                    });
+    
+                    const data = JSON.parse(response.data.body);
+                    setItemDetails(data.itemDetails);
+                    setBiddingHistory(data.biddingHistory);
+                    setBuyerDetails(data.buyerDetails);
+                } catch (err) {
+                    console.error("Error fetching item details:", err);
+                    setError("Failed to fetch item details.");
+                } finally {
+                    setLoading(false);
+                }
             }
+            else {
+                console.error('Error updating items activity status: ', error);
+            }
+
         };
 
         fetchItemDetails();
@@ -64,6 +87,7 @@ export default function ViewSpecificItem() {
     }
 
     return (
+        
         <div className="container mx-auto p-4">
             {/* Item Details */}
             <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
@@ -116,7 +140,6 @@ export default function ViewSpecificItem() {
                     )}
                 </div>
             </div>
-
             {/* Bidding History */}
             <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Bidding History</h2>

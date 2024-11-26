@@ -21,17 +21,37 @@ export default function ListItems() {
         fetchItems();
     }, []);
 
+    const updateItemsActivityStatus = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/update-items-activity-status`);
+            const data = JSON.parse(response.data.body);
+            console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
+            return 1;
+
+        } catch (error) {
+            console.error('Error updating items activity status: ', error);
+            return 0;
+        }
+    };
+
     const fetchItems = async () => {
         setLoading(true);
-        try {
-            const response = await axios.get(`${baseURL}/view-items`);
-            const data = JSON.parse(response.data.body);
-            setItems(data);
-        } catch (error) {
-            setError("Failed to fetch items.");
-            console.error("Error fetching items:", error);
-        } finally {
+        const updatedItems = await updateItemsActivityStatus();
+        if (updatedItems == 1) {
+            try {
+                const response = await axios.get(`${baseURL}/view-items`);
+                const data = JSON.parse(response.data.body);
+                setItems(data);
+            } catch (error) {
+                setError("Failed to fetch items.");
+                console.error("Error fetching items:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        else {
             setLoading(false);
+            console.log("Failed to update the items' activity status.")
         }
     };
 
