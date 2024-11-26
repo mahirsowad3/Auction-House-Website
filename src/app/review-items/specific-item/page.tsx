@@ -38,6 +38,20 @@ export default function Home() {
     const [unpublishItemLoading, setUnpublishItemLoading] = React.useState<boolean>(false);
 
     React.useEffect(() => {
+
+        const updateItemsActivityStatus = async () => {
+            try {
+                const response = await axios.get(`${baseURL}/update-items-activity-status`);
+                const data = JSON.parse(response.data.body);
+                console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
+                return 1;
+
+            } catch (error) {
+                console.error('Error updating items activity status: ', error);
+                return 0;
+            }
+        };
+
         const selectedItemID = sessionStorage.getItem('selectedItemID');
         if (selectedItemID) {
             console.log('Selected item ID:', selectedItemID);
@@ -52,34 +66,40 @@ export default function Home() {
             };
 
             const getReviewSpecificItem = async () => {
-                try {
-                    const response = await axios.post(`${baseURL}/review-items-specific-item`, payload, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                    console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
-
-                    const item = JSON.parse(response.data.body);
-                    setItemName(item.Name);
-                    setItemDescription(item.ItemDescription);
-                    setInitialPrice(item.InitialPrice);
-                    setIsABuyNow(item.IsBuyNow);
-                    setBidStartDate(item.BidStartDate);
-                    setBidEndDate(item.BidEndDate);
-                    setBids(item.Bids);
-                    setPublishedDate(item.PublishedDate);
-                    setSoldDate(item.SoldDate);
-                    setIsFrozen(item.IsFrozen);
-                    setRequestedUnfreeze(item.requestedunfreeze);
-                    setCreator(item.Creator);
-                    setBuyerSoldTo(item.BuyerSoldTo);
-                    setActivityStatus(item.ActivityStatus);
-                    setPictures(item.Pictures);
-                } catch (error) {
-                    console.error('Error getting specified item: ', error);
-                } finally {
-                    setPageLoading(false);
+                const updatedItems = await updateItemsActivityStatus();
+                if(updatedItems == 1) {
+                    try {
+                        const response = await axios.post(`${baseURL}/review-items-specific-item`, payload, {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
+    
+                        const item = JSON.parse(response.data.body);
+                        setItemName(item.Name);
+                        setItemDescription(item.ItemDescription);
+                        setInitialPrice(item.InitialPrice);
+                        setIsABuyNow(item.IsBuyNow);
+                        setBidStartDate(item.BidStartDate);
+                        setBidEndDate(item.BidEndDate);
+                        setBids(item.Bids);
+                        setPublishedDate(item.PublishedDate);
+                        setSoldDate(item.SoldDate);
+                        setIsFrozen(item.IsFrozen);
+                        setRequestedUnfreeze(item.requestedunfreeze);
+                        setCreator(item.Creator);
+                        setBuyerSoldTo(item.BuyerSoldTo);
+                        setActivityStatus(item.ActivityStatus);
+                        setPictures(item.Pictures);
+                    } catch (error) {
+                        console.error('Error getting specified item: ', error);
+                    } finally {
+                        setPageLoading(false);
+                    }
+                }
+                else {
+                    console.log("Failed to update items activity status.");
                 }
             };
 
@@ -116,24 +136,30 @@ export default function Home() {
         }
     };
 
-    // to check if seller can publish item
     const canPublishItem = () => {
-        if (
-            activityStatus?.toLowerCase() === "inactive" &&
-            bidEndDate &&
-            bidEndDate > new Date().toISOString()) {
-            setBidStartDate(new Date().toISOString());
+        const currentDate = new Date();
+        currentDate.setTime(currentDate.getTime() - (currentDate.getTimezoneOffset() * 60000));
+        const currentDateAsString =  currentDate.toISOString();
+        console.log(currentDateAsString);
+        const currentDatePlus30Minutes = new Date(currentDate.getTime() + 30 * 60 * 1000);
+        const currentDatePlus30MinutesAsString = currentDatePlus30Minutes.toISOString();
+        console.log("currentDatePlus30MinutesAsString: " + currentDatePlus30MinutesAsString);
+    
+        if (activityStatus?.toLowerCase() === "inactive" && bidEndDate && new Date(bidEndDate).toISOString() >= currentDatePlus30MinutesAsString) {
+            setBidStartDate(currentDateAsString);
             console.log('Can publish item');
             return true;
-        } else if (bidEndDate && bidEndDate < new Date().toISOString()) {
+        } else if (bidEndDate && new Date(bidEndDate).toISOString() < currentDatePlus30MinutesAsString) {
+            const isoString = new Date(bidEndDate).toISOString();
+            console.log("Bid End Date ISO String: ", isoString);
             console.log('Bid end date is too soon');
             setBidEndDateTooSoon(true);
             return false;
-        }
-        else {
+        } else {
             return false;
         }
     };
+    
 
     // handle publish item
     const handlePublishItem = async () => {
@@ -464,7 +490,7 @@ export default function Home() {
                     <div className="mt-4 rounded bg-red-200 p-2">
                         <h2 className="text-2xl">Error: </h2>
                         <p className="text-xl">
-                            {isABuyNow ? "Purchase" : "Bid"} End Date is before the publish date (today) of this item. Please click "Edit Details" button to update the {isABuyNow ? "Purchase" : "Bid"} End Date.
+                            {isABuyNow ? "Purchase" : "Bid"} End Date needs to be at least 30 minutes after the current dateTime. Please click "Edit Details" button to update the {isABuyNow ? "Purchase" : "Bid"} End Date.
                         </p>
                     </div>}
                 {/* Archive Item Success Message */}
@@ -490,3 +516,7 @@ export default function Home() {
         </main >
     );
 }
+function moment() {
+    throw new Error("Function not implemented.");
+}
+
