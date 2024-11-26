@@ -159,7 +159,7 @@ export default function ListItems() {
                                     ))}
                                 </Carousel>
                             )}
-                            <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
+                            <h2 className="text-xl font-semibold mb-2"><span className="text-blue-500">#{item.ItemID}</span>: {item.Name}</h2>
                             {item.HighestBid ? (
                                 <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                             ) : (
