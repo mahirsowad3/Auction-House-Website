@@ -104,18 +104,25 @@ export default function ViewSpecificItem() {
                                 {itemDetails.HighestBid ? `$${itemDetails.HighestBid}` : "No bids yet"}
                             </p>
                         )}
+                        {/* <p className="text-gray-600 mb-2">
+                            <strong className="text-gray-800">Published Date:</strong>{" "}
+                            {itemDetails.PublishedDate
+                                ? new Date(itemDetails.PublishedDate.replace(" ", "T")).toLocaleDateString("en-US", {
+                                      timeZone: "UTC",
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                  })
+                                : "N/A"}
+                        </p> */}
                         <p className="text-gray-600 mb-2">
-                            <strong className="text-gray-800">Bid End Date:</strong>{" "}
+                            <strong className="text-gray-800">Expiration Date:</strong>{" "}
                             {itemDetails.BidEndDate
                                 ? new Date(itemDetails.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
                                       timeZone: "UTC",
-                                      month: "2-digit",
-                                      day: "2-digit",
                                       year: "numeric",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      second: "2-digit",
-                                      hour12: false,
+                                      month: "long",
+                                      day: "numeric",
                                   })
                                 : "N/A"}
                         </p>
@@ -173,9 +180,9 @@ export default function ViewSpecificItem() {
                                         <td className="border border-gray-300 px-4 py-2">
                                             {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
                                                 timeZone: "UTC",
-                                                month: "2-digit",
-                                                day: "2-digit",
                                                 year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
                                                 hour: "2-digit",
                                                 minute: "2-digit",
                                                 second: "2-digit",
@@ -191,30 +198,6 @@ export default function ViewSpecificItem() {
                     )}
                 </div>
             )}
-
-            {/* Buyer Details
-            {itemType === "Bidding" && (
-                <div className="bg-white shadow-md rounded-lg p-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Buyer Details</h2>
-                    {buyerDetails ? (
-                        <>
-                            <p className="text-gray-600 mb-2">
-                                <strong className="text-gray-800">Username:</strong> {buyerDetails.Username}
-                            </p>
-                            <p className="text-gray-600 mb-2">
-                                <strong className="text-gray-800">Can Place Higher Bid:</strong>{" "}
-                                {buyerDetails.CanPlaceHigherBid ? "Yes" : "No"}
-                            </p>
-                            <p className="text-gray-600 mb-2">
-                                <strong className="text-gray-800">Can Place Custom Bid:</strong>{" "}
-                                {buyerDetails.CanPlaceCustomBid ? "Yes" : "No"}
-                            </p>
-                        </>
-                    ) : (
-                        <p className="text-gray-600">No buyer information available.</p>
-                    )}
-                </div>
-            )} */}
         </div>
     );
 }
