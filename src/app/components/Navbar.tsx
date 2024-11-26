@@ -15,8 +15,8 @@ const Navbar = () => {
     const syncSessionState = () => {
         const storedUserType = sessionStorage.getItem('userType');
         const storedUserName = sessionStorage.getItem('userName');
-        setUserType(storedUserType);
-        setUserName(storedUserName);
+        setUserType(storedUserType || null); // Ensure null if not set
+        setUserName(storedUserName || null); // Ensure null if not set
     };
 
     const fetchFunds = async () => {
@@ -56,7 +56,7 @@ const Navbar = () => {
                 throw new Error("Funds field is missing in the response.");
             }
 
-            setFunds(fundsResponse); // Set funds to the returned value
+            setFunds(fundsResponse);
         } catch (error) {
             console.error("Error retrieving funds:", error);
             setFunds(null); // Set funds to null in case of error
@@ -68,11 +68,10 @@ const Navbar = () => {
 
         const handleStorageChange = () => syncSessionState();
 
-        // Listen for the "fundsUpdated" custom event
         const handleFundsUpdated = (event: CustomEvent<{ newFunds: number }>) => {
-            const { newFunds } = event.detail; // Extract updated funds from the event
+            const { newFunds } = event.detail;
             console.log("Funds updated via event:", newFunds);
-            setFunds(newFunds); // Update Navbar's funds state
+            setFunds(newFunds);
         };
 
         window.addEventListener("storage", handleStorageChange);
@@ -86,28 +85,29 @@ const Navbar = () => {
             window.removeEventListener("storage", handleStorageChange);
             window.removeEventListener("fundsUpdated", handleFundsUpdated as EventListener);
         };
-    }, [userType]);
+    }, [userType, userName]); // Added userName to ensure proper synchronization
 
     const handleLoginLogout = () => {
         if (userName) {
             sessionStorage.clear();
-            syncSessionState();
+            setUserName(null); // Clear userName explicitly
+            setUserType(null); // Clear userType explicitly
             router.push('/');
         } else {
             router.push('/login-account');
         }
     };
-
+    
     const handleCloseAccount = async () => {
         if (!userName) {
             alert("Username is not available. Please log in.");
             return;
         }
-
+    
         if (!confirm("Are you sure you want to close your account? This action cannot be undone.")) {
             return;
         }
-
+    
         try {
             const response = await axios.post(`${baseURL}/close-account`, {
                 body: {
@@ -117,30 +117,21 @@ const Navbar = () => {
             }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-
-            const { statusCode, message: responseMessage } = response.data;
-
-            if (statusCode === 404) {
-                alert("User not found.");
-            } else if (statusCode === 400) {
-                alert(responseMessage || "Cannot close account with active engagements.");
-            } else if (statusCode === 200) {
+    
+            if (response.data.statusCode === 200) {
                 alert("Account closed successfully!");
-
                 sessionStorage.clear();
-                localStorage.clear();
-                document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-                syncSessionState();
+                setUserName(null); // Clear userName explicitly
+                setUserType(null); // Clear userType explicitly
                 router.push('/');
             } else {
-                alert(responseMessage || "An unexpected error occurred. Please try again later.");
+                alert("An unexpected error occurred.");
             }
-        } catch (err: any) {
-            console.error("Error closing account:", err);
-            alert('An error occurred. Please try again later.');
+        } catch (err) {
+            console.error(err);
+            alert("Error closing account. Please try again.");
         }
-    };
+    };    
 
     const handleSeeYourFunds = () => {
         if (funds !== null) {
@@ -229,12 +220,17 @@ const Navbar = () => {
                                 </button>
                             )}
                         </div>
-
                     </div>
                 </div>
             </nav>
+            <div className="container mx-auto mt-6">
+                <h1 className="text-3xl text-gray-900">
+                    {userName ? `Welcome ${userName}` : 'Welcome'}
+                </h1>
+            </div>
         </div>
     );
+    
 };
 
 export default Navbar;
