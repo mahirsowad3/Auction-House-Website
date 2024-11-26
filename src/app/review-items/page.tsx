@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import ItemFilter from "./ItemFilter";
+import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewItemCardComponent, { ReviewItemCardComponentProps } from './ReviewItemCardComponent';
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
@@ -10,6 +11,7 @@ export default function ReviewItems() {
     const [userType, setUserType] = React.useState<string | null>(null);
     const [userName, setUserName] = React.useState<string | null>(null);
     const [password, setPassword] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState(true);
     const [items, setItems] = React.useState<any[]>([]);
     const [chosenFilter, setChosenFilter] = React.useState<string>('');
     const router = useRouter();
@@ -47,6 +49,7 @@ export default function ReviewItems() {
                     const data = response.data.body ? response.data.body : [];
                     console.log(JSON.parse(data));
                     setItems(JSON.parse(data));
+                    setLoading(false);
                 }
                 catch (error) {
                     console.error('Error fetching seller items: ', error);
@@ -69,6 +72,7 @@ export default function ReviewItems() {
             <div className="container mx-auto mt-5">
                 <h1 className="text-4xl mb-6">Review Items Page</h1>
                 <ItemFilter {...{ chosenFilter, setChosenFilter }} />
+                {loading ? <div style = {{display: "flex", justifyContent: "center", alignItems: "center"}}> <LoadingSpinner></LoadingSpinner> </div> : 
                 <div className="grid grid-cols-4 gap-4">
                     {filteredItems.map((item: ReviewItemCardComponentProps, index: number) => (
                         <div
@@ -81,7 +85,7 @@ export default function ReviewItems() {
                             <ReviewItemCardComponent {...item} />
                         </div>
                     ))}
-                </div>
+                </div>}
             </div>
         </main>
     );
