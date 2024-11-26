@@ -132,10 +132,20 @@ export default function ViewSpecificItem() {
                         <tbody>
                             {biddingHistory.map((bid, index) => (
                                 <tr key={index} className="hover:bg-gray-100">
-                                    <td className="border border-gray-300 px-4 py-2">{bid.BuyerID}</td>
-                                    <td className="border border-gray-300 px-4 py-2">${bid.BidValue}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{bid.RelatedBuyer}</td>
+                                    <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
                                     <td className="border border-gray-300 px-4 py-2">
-                                        {new Date(bid.DateMade).toLocaleString()}
+                                        {new Date(bid.PlacementDate.replace(' ', 'T'))
+                                .toLocaleDateString('en-US', {
+                                    timeZone: 'UTC',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                })}
                                     </td>
                                 </tr>
                             ))}
