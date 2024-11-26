@@ -163,18 +163,20 @@ export default function ListItems() {
                             {item.HighestBid ? (
                                 <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                             ) : (
-                                <p className="text-gray-700 mb-2">
+                                <p className="text-gray-700 mb-1">
                                     Price: ${item.InitialPrice}{" "}
                                     <span className="text-sm text-gray-500">(No bids yet)</span>
                                 </p>
                             )}
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-                            <button
-                                onClick={() => viewItemDetails(item.ItemID)}
-                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                                View Details
-                            </button>
+                            {sessionStorage.getItem("userType") === "Buyer" && (
+                                <button
+                                    onClick={() => viewItemDetails(item.ItemID)}
+                                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                >
+                                    View Details
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
