@@ -139,7 +139,7 @@ export default function ListItems() {
                         <div
                             key={item.ItemID}
                             className="bg-white shadow-md rounded-lg p-4"
-                            onClick={() => viewItemDetails(item.ItemID)}
+                            // onClick={() => viewItemDetails(item.ItemID)}
                         >
                             {item.Images && item.Images.length > 0 && (
                                 <Carousel
@@ -159,22 +159,24 @@ export default function ListItems() {
                                     ))}
                                 </Carousel>
                             )}
-                            <h2 className="text-xl font-semibold mb-2">{item.Name}</h2>
+                            <h2 className="text-xl font-semibold my-2"><span className="text-blue-500">#{item.ItemID}</span>: {item.Name}</h2>
                             {item.HighestBid ? (
                                 <p className="text-gray-700 mb-2">Highest Bid: ${item.HighestBid}</p>
                             ) : (
-                                <p className="text-gray-700 mb-2">
+                                <p className="text-gray-700 mb-1">
                                     Price: ${item.InitialPrice}{" "}
-                                    <span className="text-sm text-gray-500">(No bids yet)</span>
+                                    {/* <span className="text-sm text-gray-500">(No bids yet)</span> */}
                                 </p>
                             )}
                             <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
-                            <button
-                                onClick={() => viewItemDetails(item.ItemID)}
-                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                                View Details
-                            </button>
+                            {sessionStorage.getItem("userType") === "Buyer" && (
+                                <button
+                                    onClick={() => viewItemDetails(item.ItemID)}
+                                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                >
+                                    View Details
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
