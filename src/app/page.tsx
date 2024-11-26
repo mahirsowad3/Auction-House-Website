@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main>
       <div className="container mx-auto mt-5">
-        {/* <h1 className="text-4xl">Welcome {userName}</h1> */}
+        {/* <h1 className="text-4xl">welcome {userName}</h1> */}
       </div>
     </main>
   );
