@@ -224,8 +224,8 @@ const Navbar = () => {
                 </div>
             </nav>
             <div className="container mx-auto mt-6">
-                <h1 className="text-3xl text-gray-900">
-                    {userName ? `Welcome ${userName}` : 'Welcome'}
+                <h1 className="text-5xl text-gray-900">
+                    {userName ? ` Welcome ${userName}` : 'Welcome'}
                 </h1>
             </div>
         </div>
