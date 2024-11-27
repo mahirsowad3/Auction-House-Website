@@ -1,3 +1,4 @@
+import mysql from 'mysql';
 
 // Set up the connection to your MySQL database
 const pool = mysql.createPool({
@@ -248,11 +249,8 @@ let getNewBid = (insertID) => {
 
   // Main query to publish item
   try {
-    await adjustTimeZone();
-    const [NYTimeZone, buyer] = await Promise.all([
-      adjustTimeZone(), 
-      buyerExists(username, password)
-    ]);
+    const NYTimeZone = await adjustTimeZone();
+    const buyer = await buyerExists(username, password);
     if(!buyer){
       response.statusCode = 400;
       response.error = "Invalid buyer credentials";
@@ -318,4 +316,3 @@ let getNewBid = (insertID) => {
   
   return response;
 };
-

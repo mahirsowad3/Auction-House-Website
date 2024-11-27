@@ -26,6 +26,16 @@
 - Publish Item
 - Unpublish Item
 
+### Buyer Use-Cases
+
+- Create Account
+- Close Account
+- Login Account
+- See Your Fund
+- Add Funds
+- View Items
+- Place Bid
+
 ---
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
@@ -136,7 +146,7 @@
 2. You will be redirected to the Add Funds page.
 3. On this page, your current balance will be displayed as: "Current Balance: $...".
 4. Enter the amount you want to add in the "Enter amount to add" box and click the "Add Funds" button to update your balance.
-5. The "Funds added successfully!" message is shown.
+5. The "Funds added successfully!" message will be shown.
 6. The updated balance will be shown as "Current Balance: $...". You can also click the "See Your Funds" button in the navbar to view the updated balance.
 7. Make sure the entered value is an integer; decimal values are not allowed.
 
@@ -148,15 +158,20 @@
 4. If successful, you will see: "Account closed successfully!".
 
 #### View Item
-1. Buyer can view all the active items.
+1. Buyer can view all the active items by clicking on "View Items" on the top left side of the navbar.
 2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
-#### View details of the item
-1. Buyer can click on the item to view more details of the item.
-2. Buyer can see the details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
-3. Buyer can see the bid history of the item.
-4. Buyer can place a bid on the item.
-5. Buyer can see the highest bid on the item.
-6. Buyer can see the time remaining for the bid to end.
+3. Buyer can click on the "View Details" for each item to view more details of that.
+4. Buyer can see the all details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+5. Buyer can see the bid history of the item.
+6. Buyer can see the highest bid on the item.
+7. Buyer can see the time remaining for the bid to end.
+
+#### Place bid
+1. Buyer can place a bid on the item.
+2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
+3. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
+
+
 
 ---
 

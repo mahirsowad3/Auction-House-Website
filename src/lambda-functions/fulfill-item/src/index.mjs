@@ -191,11 +191,8 @@ export const handler = async (event, context) => {
 
   // Main query to fulfill item
   try {
-    await adjustTimeZone();
-    const [NYTimeZone, seller] = await Promise.all([
-      adjustTimeZone(),
-      sellerExists(username, password)
-    ]);
+    const NYTimeZone = await adjustTimeZone();
+    const seller = await sellerExists(username, password);
     if(!seller){
       response.statusCode = 400;
       response.error = "Invalid buyer credentials";
