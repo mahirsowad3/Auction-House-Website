@@ -36,6 +36,11 @@ export default function Home() {
     const [removeItemLoading, setRemoveItemLoading] = React.useState<boolean>(false);
     const [publishItemLoading, setPublishItemLoading] = React.useState<boolean>(false);
     const [unpublishItemLoading, setUnpublishItemLoading] = React.useState<boolean>(false);
+    const [fulfillItemLoading, setFulfillItemLoading] = React.useState<boolean>(false);
+
+    // success and error messages variables
+    const [fulfillItemSuccessMessage, setFulfillItemSuccessMessage] = React.useState<string>('');
+    const [fulfillItemErrorMessage, setFulfillItemErrorMessage] = React.useState<string>('');
 
     React.useEffect(() => {
 
@@ -67,7 +72,7 @@ export default function Home() {
 
             const getReviewSpecificItem = async () => {
                 const updatedItems = await updateItemsActivityStatus();
-                if(updatedItems == 1) {
+                if (updatedItems == 1) {
                     try {
                         const response = await axios.post(`${baseURL}/review-items-specific-item`, payload, {
                             headers: {
@@ -75,7 +80,7 @@ export default function Home() {
                             },
                         });
                         console.log('Response from getReviewSpecificItem:', JSON.parse(response.data.body));
-    
+
                         const item = JSON.parse(response.data.body);
                         setItemName(item.Name);
                         setItemDescription(item.ItemDescription);
@@ -139,12 +144,12 @@ export default function Home() {
     const canPublishItem = () => {
         const currentDate = new Date();
         currentDate.setTime(currentDate.getTime() - (currentDate.getTimezoneOffset() * 60000));
-        const currentDateAsString =  currentDate.toISOString();
+        const currentDateAsString = currentDate.toISOString();
         console.log(currentDateAsString);
         const currentDatePlus30Minutes = new Date(currentDate.getTime() + 30 * 60 * 1000);
         const currentDatePlus30MinutesAsString = currentDatePlus30Minutes.toISOString();
         console.log("currentDatePlus30MinutesAsString: " + currentDatePlus30MinutesAsString);
-    
+
         if (activityStatus?.toLowerCase() === "inactive" && bidEndDate && new Date(bidEndDate).toISOString() >= currentDatePlus30MinutesAsString) {
             setBidStartDate(currentDateAsString);
             console.log('Can publish item');
@@ -159,7 +164,7 @@ export default function Home() {
             return false;
         }
     };
-    
+
 
     // handle publish item
     const handlePublishItem = async () => {
@@ -245,6 +250,7 @@ export default function Home() {
 
     // handle fulfill item
     const handleFulfillItem = async () => {
+        setFulfillItemLoading(true);
         const payload = {
             body: {
                 username: sessionStorage.getItem('userName'),
@@ -265,8 +271,14 @@ export default function Home() {
                 setSoldDate(fulfilledItem.SoldDate);
                 setBuyerSoldTo(fulfilledItem.BuyerSoldTo)
                 setActivityStatus('Archived');
+                setFulfillItemLoading(false);
+                setFulfillItemSuccessMessage('Item has been successfully fulfilled.');
+                setTimeout(() => {
+                    setFulfillItemSuccessMessage('');
+                }, 5000);
             } else {
-                console.error('Error fulfilling item:', response.data.body);
+                console.error('Error fulfilling item:', response.data.error);
+                setFulfillItemErrorMessage('Error fulfilling item: ' + response.data.error);
             }
         } catch (error) {
             console.error('Error fulfilling item:', error);
@@ -480,11 +492,18 @@ export default function Home() {
                     {activityStatus?.toLowerCase() === "completed" && (
                         <button
                             onClick={handleFulfillItem}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Fulfill Item
+                            disabled={fulfillItemLoading}
+                            className={!fulfillItemLoading ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"}>
+                            {fulfillItemLoading ? <LoadingSpinner /> : "Fulfill Item"}
                         </button>
                     )}
                 </div>
+                {/* Fulfill Item success message */}
+                {fulfillItemSuccessMessage &&
+                    <div className="mt-4 rounded bg-green-200 p-2">
+                        <h2 className="text-2xl">Success: </h2>
+                        <p className="text-xl">{fulfillItemSuccessMessage}</p>
+                    </div>}
                 {/* Publish Item Error Message Below */}
                 {bidEndDateTooSoon &&
                     <div className="mt-4 rounded bg-red-200 p-2">
