@@ -136,8 +136,9 @@
 2. You will be redirected to the Add Funds page.
 3. On this page, your current balance will be displayed as: "Current Balance: $...".
 4. Enter the amount you want to add in the "Enter amount to add" box and click the "Add Funds" button to update your balance.
-5. The updated balance will be shown as "Current Balance: $...". You can also click the "See Your Funds" button in the navbar to view the updated balance.
-6. Make sure the entered value is an integer; decimal values are not allowed.
+5. The "Funds added successfully!" message is shown.
+6. The updated balance will be shown as "Current Balance: $...". You can also click the "See Your Funds" button in the navbar to view the updated balance.
+7. Make sure the entered value is an integer; decimal values are not allowed.
 
 #### Close Account
 
