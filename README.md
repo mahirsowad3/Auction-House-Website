@@ -25,6 +25,7 @@
 - Edit Item
 - Publish Item
 - Unpublish Item
+- Archive Item
 
 ### Buyer Use-Cases
 
@@ -35,6 +36,7 @@
 - Add Funds
 - View Items
 - Place Bid
+- Buy Now
 
 ---
 
@@ -118,6 +120,14 @@
 3. If you have active items, you will see: "Cannot close account with active auctions".
 4. If successful, you will see: "Account closed successfully!".
 
+#### Archive Item
+
+1. After logging in as a Seller, the user should navigate to the Review Items page.
+2. On the Review Items page, select either the "Inactive" or "Completed" filter options from the Activity Status filter options.
+3. Click on a completed item which will take you to the /review-items/specific-items for that particular item.
+4. Scroll down to the bottom of the /review-items/specific-item page and click on the "Archive Item" button.
+5. If successful, you will briefly see a green alert notification stating "Item has been successfully archived." You will also see that the "Activity Status" field has now been updated to "Archived".
+
 ### Buyer Use-Cases
 
 #### Create Account
@@ -158,6 +168,7 @@
 4. If successful, you will see: "Account closed successfully!".
 
 #### View Item
+
 1. Buyer can view all the active items by clicking on "View Items" on the top left side of the navbar.
 2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
 3. Buyer can click on the "View Details" for each item to view more details of that.
@@ -167,11 +178,20 @@
 7. Buyer can see the time remaining for the bid to end.
 
 #### Place bid
+
 1. Buyer can place a bid on the item.
 2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
 3. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
+4. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
 
+#### Buy Now
 
+1. After logging in as a buyer, go to the "View Items" page.
+2. Find an item that has a "Type:" field with a value of "Buy Now" and click on the "View Details" button to be taken to the /view-items/view-specific-item page for that item.
+3. Click on the "Buy Now" button to buy the item.
+4. Upon successfully buying the item, there will be a green alert notification that states "You have successfully purchased the item!".
+5. If you scroll down to the "Purchase History" table, you will also see the purchase that you have just made on this item.
+6. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
 
 ---
 
@@ -187,3 +207,4 @@ yarn dev
 pnpm dev
 # or
 bun dev
+```
