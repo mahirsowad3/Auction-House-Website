@@ -146,6 +146,17 @@
 3. If you have active bids, you will see: "Cannot close account with active auctions".
 4. If successful, you will see: "Account closed successfully!".
 
+#### View Item
+1. Buyer can view all the active items.
+2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+#### View details of the item
+1. Buyer can click on the item to view more details of the item.
+2. Buyer can see the details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+3. Buyer can see the bid history of the item.
+4. Buyer can place a bid on the item.
+5. Buyer can see the highest bid on the item.
+6. Buyer can see the time remaining for the bid to end.
+
 ---
 
 ## Getting Started
