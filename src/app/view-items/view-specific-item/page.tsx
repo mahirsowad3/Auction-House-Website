@@ -22,11 +22,47 @@ interface ItemDetailsProps {
     Name: string;
 };
 
+interface BiddingHistoryProps {
+    AmountBid: number;
+    PlacementDate: string;
+    RelatedBuyer: string;
+};
+
+interface BuyerDetailsProps {
+    CanPlaceCustomBid: boolean;
+    CanPlaceHigherBid: false;
+    Username: string;
+};
+
+interface BuyNowResponseDataBodyProps {
+    ActivityStatus: string;
+    BidEndDate: string;
+    BidStartDate: string;
+    Bids: {
+        AmountBid: number;
+        BidID: number;
+        PlacementDate: string;
+        RelatedBuyer: string;
+        RelatedItemID: number;
+    }[];
+    BuyerSoldTo: string | null;
+    Creator: string;
+    InitialPrice: number;
+    IsBuyNow: number;
+    IsFrozen: number;
+    ItemDescription: string;
+    ItemID: number;
+    Name: string;
+    PublishedDate: string;
+    SoldDate: string | null;
+    requestedUnfreeze: number;
+};
+
 export default function ViewSpecificItem() {
     const [itemDetails, setItemDetails] = useState<ItemDetailsProps | null>(null);
-    const [biddingHistory, setBiddingHistory] = useState<any[]>([]);
+    const [biddingHistory, setBiddingHistory] = useState<BiddingHistoryProps[]>([]);
     const [placeBidLoading, setPlaceBidLoading] = useState<boolean>(false);
-    const [buyerDetails, setBuyerDetails] = useState<any>(null);
+    const [buyerDetails, setBuyerDetails] = useState<BuyerDetailsProps | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [placeBidError, setPlaceBidError] = useState<string>('');
@@ -34,6 +70,7 @@ export default function ViewSpecificItem() {
     const [Bid, setBid] = React.useState<string>('');
     const [buyNowSuccess, setBuyNowSuccess] = useState<string>('');
     const [buyNowError, setBuyNowError] = useState<string>('');
+    const [buyNowLoading, setBuyNowLoading] = useState<boolean>(false);
 
     useEffect(() => {
         console.log("itemDetails: ", itemDetails);
@@ -180,6 +217,8 @@ export default function ViewSpecificItem() {
     }
 
     const handleBuyNow = async () => {
+        setBuyNowError('');
+        setBuyNowLoading(true);
         console.log("Buy Now button pressed");
         const itemID = sessionStorage.getItem("viewItemID");
         if (!itemID) {
@@ -201,8 +240,12 @@ export default function ViewSpecificItem() {
             const data = JSON.parse(response.data.body);
             console.log(`buy now response data body: `, data)
             console.log("Fetching the new item details after buy now");
-            setBuyNowSuccess('The item has been successfully bought!');
+            setBuyNowSuccess('You have successfully purchased the item!');
+            setTimeout(() => {
+                setBuyNowSuccess('');
+            }, 5000);
             await fetchItemDetails();
+            setBuyNowLoading(false);
         } else {
             const error = response.data.error;
             setBuyNowError(error);
@@ -316,11 +359,14 @@ export default function ViewSpecificItem() {
                                 </div>}
 
                             {/* Buy now button and alerts*/}
-                            {itemType === "Buy Now" &&
+                            {(itemType === "Buy Now" && !itemDetails.IsSold) &&
                                 <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    onClick={handleBuyNow}>
-                                    Buy Now
+                                    className={(buyNowLoading) ?
+                                        "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" :
+                                        "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}
+                                    onClick={handleBuyNow}
+                                    disabled={buyNowLoading}>
+                                    {buyNowLoading ? <LoadingSpinner /> : "Buy Now"}
                                 </button>}
                             {buyNowError != '' &&
                                 <div className="mt-4 rounded bg-red-200 p-2">
@@ -401,6 +447,47 @@ export default function ViewSpecificItem() {
                             </table>
                         ) : (
                             <p className="text-gray-600">No bidding history available.</p>
+                        )}
+                    </div>
+                )
+            }
+            {/* Buy Now History */}
+            {
+                itemType === "Buy Now" && (
+                    <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Purchase History</h2>
+                        {biddingHistory.length > 0 ? (
+                            <table className="w-full table-auto border-collapse border border-gray-300 text-sm">
+                                <thead>
+                                    <tr className="bg-gray-200 text-left">
+                                        <th className="border border-gray-300 px-4 py-2">Buyer ID</th>
+                                        <th className="border border-gray-300 px-4 py-2">Purchase Price</th>
+                                        <th className="border border-gray-300 px-4 py-2">Date Purchased</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {biddingHistory.map((bid, index) => (
+                                        <tr key={index} className="hover:bg-gray-100">
+                                            <td className="border border-gray-300 px-4 py-2">{bid.RelatedBuyer}</td>
+                                            <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
+                                                    timeZone: "UTC",
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                    hour12: false,
+                                                })}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p className="text-gray-600">This item has not been purchased.</p>
                         )}
                     </div>
                 )
