@@ -57,6 +57,17 @@ const Navbar = () => {
             }
 
             setFunds(fundsResponse || null);
+            
+            // Allow 0 as a valid value
+            if (fundsResponse === null || fundsResponse === undefined) {
+
+                throw new Error("Funds field is missing in the response.");
+
+            }
+
+            setFunds(fundsResponse); // Set funds to the returned value, including 0
+
+
         } catch (error) {
             console.error("Error retrieving funds:", error);
             setFunds(null);
@@ -189,7 +200,7 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds !== null && (
+                            {userName && funds !== null && funds >= 0 && (
                                 <button
                                     onClick={() => alert(`Your funds: $${funds}`)}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
