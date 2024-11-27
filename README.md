@@ -6,7 +6,10 @@
 
 ---
 
-## Use-Cases Completed for This Iteration
+Additionally, we have also include our config.json file in case there are issues with navigating through our app on AWS and
+you wish to try running it locally.
+
+## Use-Cases Completed so far since Iteration 1:
 
 ### Customer Use-Cases
 
@@ -26,6 +29,7 @@
 - Publish Item
 - Unpublish Item
 - Archive Item
+- Fulfill Item
 
 ### Buyer Use-Cases
 
@@ -42,7 +46,14 @@
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
 
-**IMPORTANT NOTE:** Do NOT refresh/reload the application once there through the link as that will break the application's functionality.
+**IMPORTANT NOTES:** 
+1. Do NOT refresh/reload the application once there through the link as that will break the application's functionality.
+2. When accessing certain pages on the application such as "view items" "review items", or when viewing a specific item,
+expired items will automatically become completed or failed depending on the condtions described on the "FINALIZED" version
+of the use-cases before any of the items and their contennts show up.
+3. Despite what is said on the README reagrding each use-case, it is important to take into consideration what is described on the "FINALIZED" version of the use-cases as to why the condition behaves in certain ways when certain actions are taken by the user.
+4. You will be treated as a Customer until you log in as either a seller or buyer. If you log out of your account at any point, you will be treated as a Customer again until you log back in as either a seller or buyer.
+5. Do NOT use the usernames "Test1", "TestB", "Seller2", "Buyer1", "Buyer2", "Buyer3" when creating an account(s) as all those usernames have already been used to create accounts for testing purposes.
 
 ### Customer Use-Cases
 
@@ -65,6 +76,8 @@
 1. Use the search bar on the top left side of the page (placeholder: "search by name or description").
 2. As you type, only items containing the typed string in their name or description will appear.
 3. To undo the search, clear the search bar.
+4. In addition to this, you can also search items by price range, and when that happens, only items with a price
+without the typed range will be shown.
 
 ### Seller Use-Cases
 
@@ -72,8 +85,9 @@
 
 1. Click on the "Create Account" button at the top-right corner of the page.
 2. Fill in the username, password, and select "Seller" as the user type.
-3. Avoid using usernames: "Beta", "Special", "Test1", "Test15", "Test16", and "Test2".
+3. Avoid using usernames: "Test1", "TestB", "Seller2".
 4. Upon successful account creation, you will see a message: "Account created successfully!".
+5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer.
 
 #### Login Account
 
@@ -123,10 +137,21 @@
 #### Archive Item
 
 1. After logging in as a Seller, the user should navigate to the Review Items page.
-2. On the Review Items page, select either the "Inactive" or "Completed" filter options from the Activity Status filter options.
-3. Click on a completed item which will take you to the /review-items/specific-items for that particular item.
+2. On the Review Items page, you have the option to select the "Inactive" filter options from the Activity Status filter options
+if you do not feel like trying out all the items one by one.
+3. Click on an "Inactive" item which will take you to the /review-items/specific-items for that particular item.
 4. Scroll down to the bottom of the /review-items/specific-item page and click on the "Archive Item" button.
 5. If successful, you will briefly see a green alert notification stating "Item has been successfully archived." You will also see that the "Activity Status" field has now been updated to "Archived".
+
+### Fulfill Item
+
+1. After logging in as a Seller, the user should navigate to the Review Items page.
+2. On the Review Items page, you have the option to select the "Completed" filter options from the Activity Status filter options
+if you do not feel like trying out all the items one by one.
+3. Click on a "Completed" item which will take you to the /review-items/specific-items for that particular item.
+4. Scroll down to the bottom of the /review-items/specific-item page and click on the "Fulfill Item" button.
+5. If successful, you will briefly see a green alert notification stating "Item has been successfully fulfilled." You will also see that the "Activity Status" field has now been updated to "Archived".
+6. After fulfilling an item, both the seller's and the winning buyer's funds should be updated accordingly. Of course, if the item was of type "Buy Now" then the winning buyer is just the person who bought the item.
 
 ### Buyer Use-Cases
 
@@ -134,8 +159,10 @@
 
 1. Click on the "Create Account" button at the top-right corner of the page.
 2. Fill in the username, password, and select "Buyer" as the user type.
-3. Avoid using usernames: "Buyer1", "Buyer2".
+3. Avoid using usernames: "Buyer1", "Buyer2", "Buyer3".
 4. Upon successful account creation, you will see a message: "Account created successfully!".
+5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer.
+
 
 #### Login Account
 
@@ -183,6 +210,11 @@
 2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
 3. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
 4. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
+5. If the item currently has no bids, the item's price will be treated as the item's current highest bid, the buyer's highest bid will be treated as 0, and the difference between the buyer's requested bid and their highest bid will just be treated as
+the buyer's requested bid when determining if the buyer can place their desired bid.
+6. Buyer can only place a bid if their requested bid is higher than the item's current highest bid, if they are not related to
+the item's overall highest bid, and if the difference between the buyer's requested bid and their highest bid + the sum of their
+current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
 
 #### Buy Now
 
@@ -192,6 +224,8 @@
 4. Upon successfully buying the item, there will be a green alert notification that states "You have successfully purchased the item!".
 5. If you scroll down to the "Purchase History" table, you will also see the purchase that you have just made on this item.
 6. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
+6. Buyer can only buy an item if the item is not already bought, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
+
 
 ---
 
