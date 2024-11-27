@@ -48,7 +48,7 @@ export default function LoginPage() {
     
                 console.log("Stored userType:", userType);
     
-                // Redirect to the common page (e.g., home)
+                // Redirect to the common page (e.g. home)
                 window.location.href = "/";
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
