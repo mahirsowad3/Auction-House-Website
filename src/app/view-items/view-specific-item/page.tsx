@@ -4,70 +4,160 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function ViewSpecificItem() {
     const [itemDetails, setItemDetails] = useState<any>(null);
     const [biddingHistory, setBiddingHistory] = useState<any[]>([]);
+    const [placeBidLoading, setPlaceBidLoading] = useState<boolean>(false);
     const [buyerDetails, setBuyerDetails] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [placeBidError, setPlaceBidError] = useState<string>('');
+    const [placeBidSuccess, setPlaceBidSuccess] = useState<string>('');
+    const [Bid, setBid] = React.useState<string>('');
+
+    const updateItemsActivityStatus = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/update-items-activity-status`);
+            const data = JSON.parse(response.data.body);
+            console.log("Response from getReviewSpecificItem:", JSON.parse(response.data.body));
+            return 1;
+        } catch (error) {
+            console.error("Error updating items activity status: ", error);
+            return 0;
+        }
+    };
+
+
+
+    const fetchItemDetails = async () => {
+        const itemID = sessionStorage.getItem("viewItemID");
+        if (!itemID) {
+            setError("No item selected.");
+            setLoading(false);
+            return;
+        }
+
+        const updatedItems = await updateItemsActivityStatus();
+
+        if (updatedItems === 1) {
+            try {
+                const payload = {
+                    body: {
+                        username: sessionStorage.getItem("userName"),
+                        password: sessionStorage.getItem("password"),
+                        itemID: parseInt(itemID),
+                    },
+                };
+
+                const response = await axios.post(`${baseURL}/view-specific-item`, payload, {
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                const data = JSON.parse(response.data.body);
+                setItemDetails(data.itemDetails);
+                setBiddingHistory(data.biddingHistory);
+                setBuyerDetails(data.buyerDetails);
+            } catch (err) {
+                console.error("Error fetching item details:", err);
+                setError("Failed to fetch item details.");
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            console.error("Error updating items activity status.");
+        }
+    };
+
 
     useEffect(() => {
-        const updateItemsActivityStatus = async () => {
-            try {
-                const response = await axios.get(`${baseURL}/update-items-activity-status`);
-                const data = JSON.parse(response.data.body);
-                console.log("Response from getReviewSpecificItem:", JSON.parse(response.data.body));
-                return 1;
-            } catch (error) {
-                console.error("Error updating items activity status: ", error);
-                return 0;
-            }
-        };
-
-        const fetchItemDetails = async () => {
-            const itemID = sessionStorage.getItem("viewItemID");
-            if (!itemID) {
-                setError("No item selected.");
-                setLoading(false);
-                return;
-            }
-
-            const updatedItems = await updateItemsActivityStatus();
-
-            if (updatedItems === 1) {
-                try {
-                    const payload = {
-                        body: {
-                            username: sessionStorage.getItem("userName"),
-                            password: sessionStorage.getItem("password"),
-                            itemID: parseInt(itemID),
-                        },
-                    };
-
-                    const response = await axios.post(`${baseURL}/view-specific-item`, payload, {
-                        headers: { "Content-Type": "application/json" },
-                    });
-
-                    const data = JSON.parse(response.data.body);
-                    setItemDetails(data.itemDetails);
-                    setBiddingHistory(data.biddingHistory);
-                    setBuyerDetails(data.buyerDetails);
-                } catch (err) {
-                    console.error("Error fetching item details:", err);
-                    setError("Failed to fetch item details.");
-                } finally {
-                    setLoading(false);
-                }
-            } else {
-                console.error("Error updating items activity status.");
-            }
-        };
+        
 
         fetchItemDetails();
     }, []);
+
+    const placeBid = async () => {
+        setPlaceBidError('');
+        setPlaceBidLoading(true);
+        console.log("placing Bid");
+        const itemID = sessionStorage.getItem("viewItemID");
+        if (!itemID) {
+            setError("No item selected.");
+            return;
+        }
+        const payload = {
+            body: {
+                username: sessionStorage.getItem("userName"),
+                password: sessionStorage.getItem("password"),
+                itemID: parseInt(itemID),
+                requestedBid: parseInt(Bid)
+            },
+        };
+        const response = await axios.post(`${baseURL}/place-bid`, payload, {
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log(`response data: `, response.data)
+        if(response.data.body){
+            const data = JSON.parse(response.data.body);
+            console.log(`response data body: `, response.data.body)
+            await fetchItemDetails();
+            setPlaceBidLoading(false);
+            setPlaceBidSuccess('true');
+                setTimeout(() => {
+                    setPlaceBidSuccess('');
+                }, 5000);
+        }
+        else {
+            setPlaceBidLoading(false);
+            const error = response.data.error;
+            setPlaceBidError(error);
+            console.log(`response data error: `, response.data.error)
+        }
+
+    }
+
+    const placeNextHigherBid = async (theNextHighestBid: number) => {
+        await fetchItemDetails();
+        setPlaceBidError('');
+        setPlaceBidLoading(true);
+        console.log("placing Bid");
+        const itemID = sessionStorage.getItem("viewItemID");
+        if (!itemID) {
+            setError("No item selected.");
+            return;
+        }
+        const payload = {
+            body: {
+                username: sessionStorage.getItem("userName"),
+                password: sessionStorage.getItem("password"),
+                itemID: parseInt(itemID),
+                requestedBid: theNextHighestBid
+            },
+        };
+        const response = await axios.post(`${baseURL}/place-bid`, payload, {
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log(`response data: `, response.data)
+        if(response.data.body){
+            const data = JSON.parse(response.data.body);
+            console.log(`response data body: `, response.data.body)
+            await fetchItemDetails();
+            setPlaceBidLoading(false);
+            setPlaceBidSuccess('true');
+                setTimeout(() => {
+                    setPlaceBidSuccess('');
+                }, 5000);
+        }
+        else {
+            setPlaceBidLoading(false);
+            const error = response.data.error;
+            setPlaceBidError(error);
+            console.log(`response data error: `, response.data.error)
+        }
+    }
 
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
@@ -134,6 +224,40 @@ export default function ViewSpecificItem() {
                                 ? "Expired"
                                 : "Active"}
                         </p>
+                        <div>
+                            <div>
+                                <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
+                                <input type="text" id="custom_bid" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded my-3" 
+                                placeholder="0" value={Bid} onChange={(event) => {
+
+                                    const value = event.target.value.replace(/^0+|[^0-9]/g, ""); 
+                                    setBid(value);}} required />
+                            </div>
+                             <button disabled={(Bid == '' || placeBidLoading) ? true : false} onClick = {placeBid} className={
+                                !(Bid == '' || placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{ placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Custom Entered Bid" }
+                            </button>
+                            <div className="text-black font-bold py-2 px-4">Or:</div>
+                            <button onClick = {(event) => {
+                                console.log("button pressed");
+                                placeNextHigherBid(itemDetails.HighestBid + 1);
+                            }} className={
+                                !(placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{ placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Next Highest Bid (The Item's Current Highest Bid + 1)" }
+                            </button>
+                            {placeBidError != '' &&
+                            <div className="mt-4 rounded bg-red-200 p-2">
+                                <h2 className="text-2xl">Error: </h2>
+                                <p className="text-xl">
+                                {placeBidError}
+                                </p>
+                            </div>}
+                            {placeBidSuccess != '' &&
+                    <div className="mt-4 rounded bg-green-200 p-2">
+                        <h2 className="text-2xl">Success: </h2>
+                        <p className="text-xl">
+                            The bid has been successfully placed.
+                        </p>
+                    </div>}
+                        </div>
                     </div>
                     {itemDetails.Images && itemDetails.Images.length > 0 && (
                         <div>
@@ -158,6 +282,7 @@ export default function ViewSpecificItem() {
                     )}
                 </div>
             </div>
+
 
             {/* Bidding History */}
             {itemType === "Bidding" && (

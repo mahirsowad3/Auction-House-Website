@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-
+    const router = useRouter();
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
@@ -47,9 +47,8 @@ export default function LoginPage() {
                 sessionStorage.setItem('password', password);
     
                 console.log("Stored userType:", userType);
-    
-                // Redirect to the common page (e.g., home)
-                window.location.href = "/";
+                router.push("/");
+
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
             } else if (statusCode === 403) {
