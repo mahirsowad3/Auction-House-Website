@@ -208,7 +208,10 @@ const Navbar = () => {
                                     onClick={async () => {
                                         await fetchFunds();
                                         // temporary fix for funds useState varaible not updating in time
-                                        const funds = sessionStorage.getItem('funds');
+                                        let funds = sessionStorage.getItem('funds');
+                                        if (!funds) {
+                                            funds = (0).toString();
+                                        }
                                         alert(`Your funds: $${funds}`);
                                     }}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
