@@ -121,8 +121,8 @@ const Navbar = () => {
             if (response.data.statusCode === 200) {
                 alert("Account closed successfully!");
                 sessionStorage.clear();
-                setUserName(null); // Clear userName explicitly
-                setUserType(null); // Clear userType explicitly
+                setUserName(null); 
+                setUserType(null); 
                 router.push('/');
             } else {
                 alert("An unexpected error occurred.");
