@@ -56,8 +56,11 @@ const Navbar = () => {
                 }
             }
 
+            if (fundsResponse) {
+                sessionStorage.setItem('funds', fundsResponse.toString());
+            }
             setFunds(fundsResponse || null);
-            
+
             // Allow 0 as a valid value
             if (fundsResponse === null || fundsResponse === undefined) {
 
@@ -108,9 +111,9 @@ const Navbar = () => {
             } else if (response.data.statusCode === 400) {
 
                 alert("Cannot close account with active auctions.");
-            
-            
-            }else {
+
+
+            } else {
                 alert("An unexpected error occurred.");
             }
         } catch (err) {
@@ -202,7 +205,12 @@ const Navbar = () => {
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             {userName && funds !== null && funds >= 0 && (
                                 <button
-                                    onClick={() => alert(`Your funds: $${funds}`)}
+                                    onClick={async () => {
+                                        await fetchFunds();
+                                        // temporary fix for funds useState varaible not updating in time
+                                        const funds = sessionStorage.getItem('funds');
+                                        alert(`Your funds: $${funds}`);
+                                    }}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                 >
                                     See Your Funds
