@@ -90,7 +90,16 @@ const Navbar = () => {
                 setUserType(null);
                 setFunds(null);
                 router.push('/');
-            } else {
+            } else if (response.data.statusCode === 404) {
+
+                alert("User not found.");
+
+            } else if (response.data.statusCode === 400) {
+
+                alert("Cannot close account with active auctions.");
+            
+            
+            }else {
                 alert("An unexpected error occurred.");
             }
         } catch (err) {
