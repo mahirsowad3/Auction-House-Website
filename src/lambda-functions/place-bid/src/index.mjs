@@ -1,4 +1,3 @@
-import mysql from 'mysql';
 
 // Set up the connection to your MySQL database
 const pool = mysql.createPool({
@@ -249,6 +248,7 @@ let getNewBid = (insertID) => {
 
   // Main query to publish item
   try {
+    await adjustTimeZone();
     const [NYTimeZone, buyer] = await Promise.all([
       adjustTimeZone(), 
       buyerExists(username, password)
@@ -262,7 +262,7 @@ let getNewBid = (insertID) => {
       let currentBuyerHighestBidOnItem;
       let absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem;
       if(itemBidCount > 0) {
-        const [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
+        [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
           getHighestBidOnItem(itemID), 
           getHighestBidOnItemOfBuyer(itemID, username)
         ])
@@ -273,12 +273,15 @@ let getNewBid = (insertID) => {
       }
       else{
         currentHighestBidOnItem = await getItemPrice(itemID);
+        console.log(`current highest bid:` + currentHighestBidOnItem);
         currentBuyerHighestBidOnItem = 0;
         absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid;
       }
-      if(requestedBid <= currentHighestBidOnItem){
+      console.log(currentHighestBidOnItem);
+      console.log(200 <= currentHighestBidOnItem);
+      if(requestedBid <= currentHighestBidOnItem) {
         response.statusCode = 400;
-        response.error = "Requested bid on item must be greater than both the item's current highest bid the item's original price";
+        response.error = "Requested bid on item must be greater than both the item's current highest bid and the item's original price.";
       } else {
         const buyerWithCurrentHighestBidOnItem = await getBuyerNameOfHighestBidOnItem(itemID);
         console.log(buyerWithCurrentHighestBidOnItem);
@@ -315,3 +318,4 @@ let getNewBid = (insertID) => {
   
   return response;
 };
+
