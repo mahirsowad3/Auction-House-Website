@@ -96,7 +96,8 @@ Additionally, we have also include our package.json file in case there are issue
 #### Add Item
 
 1. After logging in, click the "Add Item" button on the top left side of the screen.
-2. Fill in the fields: "Item Name", "Initial Price", "Item Description", "Bid End Date", and upload images.
+2. Fill in the fields: "Item Name", "Initial Price", "Item Description", "Bid End Date", and upload images, and toggle the 
+"Is Buy Now" option if you wish to create your item as of type "Buy Now" instead of "Bidding".
 3. Click the "Add Item" button to add your item and redirect to the Review Items Page.
 
 #### Review Items
@@ -113,6 +114,8 @@ Additionally, we have also include our package.json file in case there are issue
 
 1. Click the "Publish Item" button on an inactive item to make it active.
 2. Ensure the BidEndDate is later than the current date and time.
+3. If active items have associated bids or have been bought, a table with the
+related information will be shown.
 
 #### Unpublish Item
 
@@ -149,6 +152,8 @@ Additionally, we have also include our package.json file in case there are issue
 4. Scroll down to the bottom of the /review-items/specific-item page and click on the "Fulfill Item" button.
 5. If successful, you will briefly see a green alert notification stating "Item has been successfully fulfilled." You will also see that the "Activity Status" field has now been updated to "Archived".
 6. After fulfilling an item, both the seller's and the winning buyer's funds should be updated accordingly. Of course, if the item was of type "Buy Now" then the winning buyer is just the person who bought the item.
+3. If completed or archived items have associated bids or have been bought, a table with the
+related information will be shown.
 
 ### Buyer Use-Cases
 
@@ -209,8 +214,8 @@ Additionally, we have also include our package.json file in case there are issue
 5. If the item currently has no bids, the item's price will be treated as the item's current highest bid, the buyer's highest bid will be treated as 0, and the difference between the buyer's requested bid and their highest bid will just be treated as
    the buyer's requested bid when determining if the buyer can place their desired bid.
 6. Buyer can only place a bid if their requested bid is higher than the item's current highest bid, if they are not related to
-   the item's overall highest bid, and if the difference between the buyer's requested bid and their highest bid + the sum of their
-   current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
+   the item's overall highest bid, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
+7. At the bottom of the page used to place bids for an item, a table with information related to all of bids placed for that item will be shown to the user
 
 #### Buy Now
 
@@ -221,6 +226,7 @@ Additionally, we have also include our package.json file in case there are issue
 5. If you scroll down to the "Purchase History" table, you will also see the purchase that you have just made on this item.
 6. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
 7. Buyer can only buy an item if the item is not already bought, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
+8. If a buyer successfully buys an item, a table with the purchase will be shown at the bottom of the page used to buy an item.
 
 ---
 
