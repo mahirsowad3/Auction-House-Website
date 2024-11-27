@@ -1,17 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
-const LoginPage = () => {
+export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
@@ -20,7 +18,7 @@ const LoginPage = () => {
         e.preventDefault();
         setMessage(null);
         setError(null);
-
+    
         try {
             const response = await axios.post(`${baseURL}/login-account`, {
                 body: {
@@ -32,34 +30,32 @@ const LoginPage = () => {
                     'Content-Type': 'application/json',
                 }
             });
-
+    
             console.log("Response received:", response);
-
+    
+            // Parse the response
             const { statusCode, body } = response.data;
             if (statusCode === 200) {
-                const parsedBody = JSON.parse(body);
+                const parsedBody = JSON.parse(body); // Parse the 'body' field to access userType
                 const { userType, message } = parsedBody;
-
+    
                 setMessage(message || 'Login successful!');
-
-                // Update sessionStorage
+    
+                // Store user details in sessionStorage
                 sessionStorage.setItem('userName', username);
-                sessionStorage.setItem('userType', userType);
-
-                // Emit custom event to update Navbar
-                const sessionUpdatedEvent = new CustomEvent('sessionUpdated', {
-                    detail: { userType, userName: username },
-                });
-                window.dispatchEvent(sessionUpdatedEvent);
-
-                // Redirect to the home page
-                router.push('/');
+                sessionStorage.setItem('userType', userType); // Store the correct userType
+                sessionStorage.setItem('password', password);
+    
+                console.log("Stored userType:", userType);
+    
+                // Redirect to the common page (e.g., home)
+                window.location.href = "/";
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
             } else if (statusCode === 403) {
                 setError('Account is closed and cannot be logged in.');
             } else {
-                setError('An unexpected error occurred. Please try again later.');
+                setError(message || 'An unexpected error occurred. Please try again later.');
             }
         } catch (err: any) {
             console.error("Error caught in catch block:", err);
@@ -72,7 +68,7 @@ const LoginPage = () => {
             }
         }
     };
-
+    
     return (
         <main className="container mx-auto mt-5">
             <h1 className="text-4xl mb-6">Login</h1>
@@ -113,6 +109,4 @@ const LoginPage = () => {
             </form>
         </main>
     );
-};
-
-export default LoginPage;
+}
