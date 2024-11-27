@@ -8,8 +8,22 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
+interface ItemDetailsProps {
+    BidEndDate: string;
+    BidStartDate: string;
+    Description: string;
+    HighestBid: number;
+    Images: string[];
+    InitialPrice: number;
+    IsBuyNow: number;
+    IsExpired: number;
+    IsSold: number;
+    ItemID: number;
+    Name: string;
+};
+
 export default function ViewSpecificItem() {
-    const [itemDetails, setItemDetails] = useState<any>(null);
+    const [itemDetails, setItemDetails] = useState<ItemDetailsProps | null>(null);
     const [biddingHistory, setBiddingHistory] = useState<any[]>([]);
     const [placeBidLoading, setPlaceBidLoading] = useState<boolean>(false);
     const [buyerDetails, setBuyerDetails] = useState<any>(null);
@@ -18,6 +32,14 @@ export default function ViewSpecificItem() {
     const [placeBidError, setPlaceBidError] = useState<string>('');
     const [placeBidSuccess, setPlaceBidSuccess] = useState<string>('');
     const [Bid, setBid] = React.useState<string>('');
+    const [buyNowSuccess, setBuyNowSuccess] = useState<string>('');
+    const [buyNowError, setBuyNowError] = useState<string>('');
+
+    useEffect(() => {
+        console.log("itemDetails: ", itemDetails);
+        console.log("biddingHistory: ", biddingHistory);
+        console.log("buyerDetails: ", buyerDetails);
+    }, [itemDetails, biddingHistory, buyerDetails]);
 
     const updateItemsActivityStatus = async () => {
         try {
@@ -74,8 +96,6 @@ export default function ViewSpecificItem() {
 
 
     useEffect(() => {
-        
-
         fetchItemDetails();
     }, []);
 
@@ -100,15 +120,15 @@ export default function ViewSpecificItem() {
             headers: { "Content-Type": "application/json" },
         });
         console.log(`response data: `, response.data)
-        if(response.data.body){
+        if (response.data.body) {
             const data = JSON.parse(response.data.body);
             console.log(`response data body: `, response.data.body)
             await fetchItemDetails();
             setPlaceBidLoading(false);
             setPlaceBidSuccess('true');
-                setTimeout(() => {
-                    setPlaceBidSuccess('');
-                }, 5000);
+            setTimeout(() => {
+                setPlaceBidSuccess('');
+            }, 5000);
         }
         else {
             setPlaceBidLoading(false);
@@ -141,15 +161,15 @@ export default function ViewSpecificItem() {
             headers: { "Content-Type": "application/json" },
         });
         console.log(`response data: `, response.data)
-        if(response.data.body){
+        if (response.data.body) {
             const data = JSON.parse(response.data.body);
             console.log(`response data body: `, response.data.body)
             await fetchItemDetails();
             setPlaceBidLoading(false);
             setPlaceBidSuccess('true');
-                setTimeout(() => {
-                    setPlaceBidSuccess('');
-                }, 5000);
+            setTimeout(() => {
+                setPlaceBidSuccess('');
+            }, 5000);
         }
         else {
             setPlaceBidLoading(false);
@@ -158,6 +178,38 @@ export default function ViewSpecificItem() {
             console.log(`response data error: `, response.data.error)
         }
     }
+
+    const handleBuyNow = async () => {
+        console.log("Buy Now button pressed");
+        const itemID = sessionStorage.getItem("viewItemID");
+        if (!itemID) {
+            setError("No item selected.");
+            return;
+        }
+        const payload = {
+            body: {
+                username: sessionStorage.getItem("userName"),
+                password: sessionStorage.getItem("password"),
+                itemID: parseInt(itemID),
+            },
+        };
+        const response = await axios.post(`${baseURL}/buy-now`, payload, {
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log(`buy now response data: `, response.data)
+        if (response.data.body) {
+            const data = JSON.parse(response.data.body);
+            console.log(`buy now response data body: `, data)
+            console.log("Fetching the new item details after buy now");
+            setBuyNowSuccess('The item has been successfully bought!');
+            await fetchItemDetails();
+        } else {
+            const error = response.data.error;
+            setBuyNowError(error);
+            console.log(`buy now response data error: `, response.data.error)
+        }
+    }
+
 
     if (loading) {
         return <p className="text-center text-gray-600">Loading...</p>;
@@ -209,11 +261,11 @@ export default function ViewSpecificItem() {
                             <strong className="text-gray-800">Expiration Date:</strong>{" "}
                             {itemDetails.BidEndDate
                                 ? new Date(itemDetails.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                      timeZone: "UTC",
-                                      year: "numeric",
-                                      month: "long",
-                                      day: "numeric",
-                                  })
+                                    timeZone: "UTC",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })
                                 : "N/A"}
                         </p>
                         <p className="text-gray-600 mb-2">
@@ -221,42 +273,70 @@ export default function ViewSpecificItem() {
                             {itemDetails.IsSold
                                 ? "Sold"
                                 : itemDetails.IsExpired
-                                ? "Expired"
-                                : "Active"}
+                                    ? "Expired"
+                                    : "Active"}
                         </p>
+                        {/* Place bid and buy now functionality below */}
                         <div>
-                            <div>
-                                <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
-                                <input type="text" id="custom_bid" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded my-3" 
-                                placeholder="0" value={Bid} onChange={(event) => {
-
-                                    const value = event.target.value.replace(/^0+|[^0-9]/g, ""); 
-                                    setBid(value);}} required />
-                            </div>
-                             <button disabled={(Bid == '' || placeBidLoading) ? true : false} onClick = {placeBid} className={
-                                !(Bid == '' || placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{ placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Custom Entered Bid" }
-                            </button>
-                            <div className="text-black font-bold py-2 px-4">Or:</div>
-                            <button onClick = {(event) => {
-                                console.log("button pressed");
-                                placeNextHigherBid(itemDetails.HighestBid + 1);
-                            }} className={
-                                !(placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{ placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Next Highest Bid (The Item's Current Highest Bid + 1)" }
-                            </button>
+                            {/* Place bid field, buttons, and alerts */}
+                            {itemType === "Bidding" && (
+                                <div>
+                                    <div>
+                                        <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
+                                        <input type="text" id="custom_bid" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded my-3"
+                                            placeholder="0" value={Bid} onChange={(event) => {
+                                                const value = event.target.value.replace(/^0+|[^0-9]/g, "");
+                                                setBid(value);
+                                            }} required />
+                                    </div>
+                                    <button disabled={(Bid == '' || placeBidLoading) ? true : false} onClick={placeBid} className={
+                                        !(Bid == '' || placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Custom Entered Bid"}
+                                    </button>
+                                    <div className="text-black font-bold py-2 px-4">Or:</div>
+                                    <button onClick={(event) => {
+                                        console.log("button pressed");
+                                        placeNextHigherBid(itemDetails.HighestBid + 1);
+                                    }} className={
+                                        !(placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Next Highest Bid (The Item's Current Highest Bid + 1)"}
+                                    </button>
+                                </div>)}
                             {placeBidError != '' &&
-                            <div className="mt-4 rounded bg-red-200 p-2">
-                                <h2 className="text-2xl">Error: </h2>
-                                <p className="text-xl">
-                                {placeBidError}
-                                </p>
-                            </div>}
+                                <div className="mt-4 rounded bg-red-200 p-2">
+                                    <h2 className="text-2xl">Error: </h2>
+                                    <p className="text-xl">
+                                        {placeBidError}
+                                    </p>
+                                </div>}
                             {placeBidSuccess != '' &&
-                    <div className="mt-4 rounded bg-green-200 p-2">
-                        <h2 className="text-2xl">Success: </h2>
-                        <p className="text-xl">
-                            The bid has been successfully placed.
-                        </p>
-                    </div>}
+                                <div className="mt-4 rounded bg-green-200 p-2">
+                                    <h2 className="text-2xl">Success: </h2>
+                                    <p className="text-xl">
+                                        The bid has been successfully placed.
+                                    </p>
+                                </div>}
+
+                            {/* Buy now button and alerts*/}
+                            {itemType === "Buy Now" &&
+                                <button
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    onClick={handleBuyNow}>
+                                    Buy Now
+                                </button>}
+                            {buyNowError != '' &&
+                                <div className="mt-4 rounded bg-red-200 p-2">
+                                    <h2 className="text-2xl">Error: </h2>
+                                    <p className="text-xl">
+                                        {buyNowError}
+                                    </p>
+                                </div>}
+                            {buyNowSuccess != '' &&
+                                <div className="mt-4 rounded bg-green-200 p-2">
+                                    <h2 className="text-2xl">Success: </h2>
+                                    <p className="text-xl">
+                                        {buyNowSuccess}
+                                    </p>
+                                </div>
+                            }
                         </div>
                     </div>
                     {itemDetails.Images && itemDetails.Images.length > 0 && (
@@ -285,44 +365,46 @@ export default function ViewSpecificItem() {
 
 
             {/* Bidding History */}
-            {itemType === "Bidding" && (
-                <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Bidding History</h2>
-                    {biddingHistory.length > 0 ? (
-                        <table className="w-full table-auto border-collapse border border-gray-300 text-sm">
-                            <thead>
-                                <tr className="bg-gray-200 text-left">
-                                    <th className="border border-gray-300 px-4 py-2">Buyer ID</th>
-                                    <th className="border border-gray-300 px-4 py-2">Bid Value</th>
-                                    <th className="border border-gray-300 px-4 py-2">Date Made</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {biddingHistory.map((bid, index) => (
-                                    <tr key={index} className="hover:bg-gray-100">
-                                        <td className="border border-gray-300 px-4 py-2">{bid.RelatedBuyer}</td>
-                                        <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
-                                        <td className="border border-gray-300 px-4 py-2">
-                                            {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                timeZone: "UTC",
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                second: "2-digit",
-                                                hour12: false,
-                                            })}
-                                        </td>
+            {
+                itemType === "Bidding" && (
+                    <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Bidding History</h2>
+                        {biddingHistory.length > 0 ? (
+                            <table className="w-full table-auto border-collapse border border-gray-300 text-sm">
+                                <thead>
+                                    <tr className="bg-gray-200 text-left">
+                                        <th className="border border-gray-300 px-4 py-2">Buyer ID</th>
+                                        <th className="border border-gray-300 px-4 py-2">Bid Value</th>
+                                        <th className="border border-gray-300 px-4 py-2">Date Made</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="text-gray-600">No bidding history available.</p>
-                    )}
-                </div>
-            )}
-        </div>
+                                </thead>
+                                <tbody>
+                                    {biddingHistory.map((bid, index) => (
+                                        <tr key={index} className="hover:bg-gray-100">
+                                            <td className="border border-gray-300 px-4 py-2">{bid.RelatedBuyer}</td>
+                                            <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
+                                                    timeZone: "UTC",
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                    hour12: false,
+                                                })}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p className="text-gray-600">No bidding history available.</p>
+                        )}
+                    </div>
+                )
+            }
+        </div >
     );
 }
