@@ -194,6 +194,14 @@ const Navbar = () => {
                             >
                                 {userName ? 'Logout' : 'Login'}
                             </button>
+                            {!userName && (
+                                <Link
+                                    href="/create-account"
+                                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                >
+                                    Create Account
+                                </Link>
+                            )}
                             {userName && (
                                 <button
                                     onClick={handleCloseAccount}
