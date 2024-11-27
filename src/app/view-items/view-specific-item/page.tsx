@@ -301,13 +301,17 @@ export default function ViewSpecificItem() {
                                 : "N/A"}
                         </p> */}
                         <p className="text-gray-600 mb-2">
-                            <strong className="text-gray-800">Expiration Date:</strong>{" "}
+                            <strong className="text-gray-800">Expiration DateTime:</strong>{" "}
                             {itemDetails.BidEndDate
                                 ? new Date(itemDetails.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
                                     timeZone: "UTC",
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                    hour12: false,
                                 })
                                 : "N/A"}
                         </p>
@@ -421,7 +425,7 @@ export default function ViewSpecificItem() {
                                     <tr className="bg-gray-200 text-left">
                                         <th className="border border-gray-300 px-4 py-2">Buyer ID</th>
                                         <th className="border border-gray-300 px-4 py-2">Bid Value</th>
-                                        <th className="border border-gray-300 px-4 py-2">Date Made</th>
+                                        <th className="border border-gray-300 px-4 py-2">DateTime Made</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -462,7 +466,7 @@ export default function ViewSpecificItem() {
                                     <tr className="bg-gray-200 text-left">
                                         <th className="border border-gray-300 px-4 py-2">Buyer ID</th>
                                         <th className="border border-gray-300 px-4 py-2">Purchase Price</th>
-                                        <th className="border border-gray-300 px-4 py-2">Date Purchased</th>
+                                        <th className="border border-gray-300 px-4 py-2">DateTime Purchased</th>
                                     </tr>
                                 </thead>
                                 <tbody>
