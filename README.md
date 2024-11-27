@@ -108,23 +108,45 @@
 3. If you have active items, you will see: "Cannot close account with active auctions".
 4. If successful, you will see: "Account closed successfully!".
 
----
-
 ### Buyer Use-Cases
 
-#### View Item
+#### Create Account
 
-1. Buyer can view all the active items.
-2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+1. Click on the "Create Account" button at the top-right corner of the page.
+2. Fill in the username, password, and select "Buyer" as the user type.
+3. Avoid using usernames: "Buyer1", "Buyer2".
+4. Upon successful account creation, you will see a message: "Account created successfully!".
 
-#### View details of the item
+#### Login Account
 
-1. Buyer can click on the item to view more details of the item.
-2. Buyer can see the details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
-3. Buyer can see the bid history of the item.
-4. Buyer can place a bid on the item.
-5. Buyer can see the highest bid on the item.
-6. Buyer can see the time remaining for the bid to end.
+1. Click on the "Login" button next to the "Create Account" button.
+2. Enter your username and password.
+3. Click the "Login" button.
+4. If credentials are incorrect, you will see: "Invalid username or password.".
+
+#### See Your Fund
+
+1. After logging in, click the "See Your Funds" button on the top right-side the screen.
+2. Your fund balance will be displayed as a pop-up message, e.g., "Your funds: $...".
+3. Click the "OK" button to close the message.
+
+#### Add Funds
+
+1. After logging in, click the "Add Funds" button on the top-left side of the screen.
+2. You will be redirected to the Add Funds page.
+3. On this page, your current balance will be displayed as: "Current Balance: $...".
+4. Enter the amount you want to add in the "Enter amount to add" box and click the "Add Funds" button to update your balance.
+5. The updated balance will be shown as "Current Balance: $...". You can also click the "See Your Funds" button in the navbar to view the updated balance.
+6. Make sure the entered value is an integer; decimal values are not allowed.
+
+#### Close Account
+
+1. Click the "Close Account" button on the top right side of the navbar.
+2. Confirm the action in the alert.
+3. If you have active bids, you will see: "Cannot close account with active auctions".
+4. If successful, you will see: "Account closed successfully!".
+
+---
 
 ## Getting Started
 
