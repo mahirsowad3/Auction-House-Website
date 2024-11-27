@@ -158,10 +158,12 @@
 4. Buyer can see the highest bid on the item.
 5. Buyer can see the time remaining for the bid to end.
 
-### Place bid
+#### Place bid
 1. Buyer can place a bid on the item.
-2. Buyer can enter the custom amount and then click on the "Place Custom Entered Bid".
-3. Buyer can enter the next higher price (by $1) just by clicking on " Place Next Highest Bid ( The Item's Current Highest Bid + 1)" button.
+2. Buyers can place a bid on an item.
+3. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
+4. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
+
 
 
 ---
