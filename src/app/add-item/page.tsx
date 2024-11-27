@@ -9,7 +9,6 @@ export default function AddItem() {
   const [itemName, setItemName] = React.useState<string>('');
   const [initialPrice, setInitialPrice] = React.useState<string>('');
   const [itemDescription, setItemDescription] = React.useState<string>('');
-  const [isBuyNow, setIsBuyNow] = React.useState<number>(0);
   const [bidEndDate, setBidEndDate] = React.useState<string>('');
   const [isABuyNow, setIsABuyNow] = React.useState<number>(0);
   const [imageFiles, setImageFiles] = React.useState<File[]>([]);
@@ -79,7 +78,7 @@ export default function AddItem() {
           password: currentPassword,
           itemName: itemName,
           initialPrice: initialPrice,
-          isBuyNow: isBuyNow,
+          isBuyNow: isABuyNow,
           itemDescription: itemDescription,
           bidEndDate: bidEndDate,
         },
