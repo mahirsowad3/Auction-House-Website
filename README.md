@@ -161,16 +161,15 @@
 1. Buyer can view all the active items by clicking on "View Items" on the top left side of the navbar.
 2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
 3. Buyer can click on the "View Details" for each item to view more details of that.
-4. Buyer can see the details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+4. Buyer can see the all details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
 5. Buyer can see the bid history of the item.
 6. Buyer can see the highest bid on the item.
 7. Buyer can see the time remaining for the bid to end.
 
 #### Place bid
 1. Buyer can place a bid on the item.
-2. Buyers can place a bid on an item.
-3. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
-4. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
+2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
+3. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
 
 
 
