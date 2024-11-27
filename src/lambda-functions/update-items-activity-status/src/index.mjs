@@ -144,11 +144,11 @@ export const handler = async (event, context) => {
           if(error) {
             return reject(error);
           }
-          else if(rows && rows.length > 0) {
+          else if(rows) {
             return resolve(rows)
           }
           else {
-            return resolve(null);;
+            return reject(error);
           }
         }
       )
@@ -156,11 +156,8 @@ export const handler = async (event, context) => {
   }
 
   try {
-    await adjustTimeZone();
-    const [NYTimeZone, activeExpiredItems] = await Promise.all([
-      adjustTimeZone(), 
-      getActiveItemsPastExpirationDate()
-    ])
+    const NYTimeZone = await adjustTimeZone();
+    const activeExpiredItems = await getActiveItemsPastExpirationDate();
     if(activeExpiredItems == null || activeExpiredItems.length === 0){
       const getAllDatabaseItems = await getAllItems();
       response.statusCode = 200;
@@ -193,7 +190,7 @@ export const handler = async (event, context) => {
     }
   } catch(error) {
     response.statusCode = 400;
-    response.error = "Could not successfully insert the new bid on the item."
+    response.error = "Could not successfully insert update the items' activity status."
   }
   
   return response;

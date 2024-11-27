@@ -231,11 +231,8 @@ export const handler = async (event, context) => {
 
   // Main query to buy the item
   try {
-    await adjustTimeZone();
-    const [NYTimeZone, buyer] = await Promise.all([
-      adjustTimeZone(),
-      buyerExists(username, password) 
-    ])
+    const NYTimeZone = await adjustTimeZone();
+    const buyer = await buyerExists(username, password);
     console.log("buyer: ", buyer);
     if(!buyer){
       response.statusCode = 400;
