@@ -26,6 +26,17 @@
 - Publish Item
 - Unpublish Item
 
+### Buyer Use-Cases
+
+- Create Account
+- Close Account
+- Login Account
+- See Your Fund
+- Add Funds
+- View Items
+- View Details
+- Place Bid
+
 ---
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
