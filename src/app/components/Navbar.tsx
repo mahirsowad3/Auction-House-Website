@@ -15,15 +15,19 @@ const Navbar = () => {
     const syncSessionState = () => {
         const storedUserType = sessionStorage.getItem('userType');
         const storedUserName = sessionStorage.getItem('userName');
-        setUserType(storedUserType || null); // Ensure null if not set
-        setUserName(storedUserName || null); // Ensure null if not set
+        setUserType(storedUserType || null);
+        setUserName(storedUserName || null);
     };
 
     const fetchFunds = async () => {
+        const username = sessionStorage.getItem("userName");
+        const password = sessionStorage.getItem("password");
+        if (!username || !password) return;
+
         const payload = {
             body: {
-                username: sessionStorage.getItem("userName"),
-                password: sessionStorage.getItem("password"),
+                username,
+                password,
             },
         };
 
@@ -52,62 +56,23 @@ const Navbar = () => {
                 }
             }
 
-            if (fundsResponse === null || fundsResponse === undefined) {
-                throw new Error("Funds field is missing in the response.");
-            }
-
-            setFunds(fundsResponse);
+            setFunds(fundsResponse || null);
         } catch (error) {
             console.error("Error retrieving funds:", error);
-            setFunds(null); // Set funds to null in case of error
+            setFunds(null);
         }
     };
 
-    useEffect(() => {
-        syncSessionState();
-
-        const handleStorageChange = () => syncSessionState();
-
-        const handleFundsUpdated = (event: CustomEvent<{ newFunds: number }>) => {
-            const { newFunds } = event.detail;
-            console.log("Funds updated via event:", newFunds);
-            setFunds(newFunds);
-        };
-
-        window.addEventListener("storage", handleStorageChange);
-        window.addEventListener("fundsUpdated", handleFundsUpdated as EventListener);
-
-        if (userType) {
-            fetchFunds();
-        }
-
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-            window.removeEventListener("fundsUpdated", handleFundsUpdated as EventListener);
-        };
-    }, [userType, userName]); // Added userName to ensure proper synchronization
-
-    const handleLoginLogout = () => {
-        if (userName) {
-            sessionStorage.clear();
-            setUserName(null); // Clear userName explicitly
-            setUserType(null); // Clear userType explicitly
-            router.push('/');
-        } else {
-            router.push('/login-account');
-        }
-    };
-    
     const handleCloseAccount = async () => {
         if (!userName) {
             alert("Username is not available. Please log in.");
             return;
         }
-    
+
         if (!confirm("Are you sure you want to close your account? This action cannot be undone.")) {
             return;
         }
-    
+
         try {
             const response = await axios.post(`${baseURL}/close-account`, {
                 body: {
@@ -117,12 +82,13 @@ const Navbar = () => {
             }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-    
+
             if (response.data.statusCode === 200) {
                 alert("Account closed successfully!");
                 sessionStorage.clear();
-                setUserName(null); // Clear userName explicitly
-                setUserType(null); // Clear userType explicitly
+                setUserName(null);
+                setUserType(null);
+                setFunds(null);
                 router.push('/');
             } else {
                 alert("An unexpected error occurred.");
@@ -131,13 +97,38 @@ const Navbar = () => {
             console.error(err);
             alert("Error closing account. Please try again.");
         }
-    };    
+    };
 
-    const handleSeeYourFunds = () => {
-        if (funds !== null) {
-            alert(`Your funds: $${funds}`);
+    useEffect(() => {
+        const handleSessionUpdate = () => {
+            syncSessionState();
+        };
+
+        syncSessionState(); // Sync session on initial render
+
+        window.addEventListener('sessionUpdated', handleSessionUpdate);
+
+        return () => {
+            window.removeEventListener('sessionUpdated', handleSessionUpdate);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Fetch funds when userType updates
+        if (userType) {
+            fetchFunds();
+        }
+    }, [userType]);
+
+    const handleLoginLogout = () => {
+        if (userName) {
+            sessionStorage.clear();
+            setUserName(null);
+            setUserType(null);
+            setFunds(null); // Clear funds on logout
+            router.push('/');
         } else {
-            alert('Unable to fetch funds. Please try again later.');
+            router.push('/login-account');
         }
     };
 
@@ -189,9 +180,9 @@ const Navbar = () => {
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds !== null && funds !== undefined && funds >= 0 && (
+                            {userName && funds !== null && (
                                 <button
-                                    onClick={handleSeeYourFunds}
+                                    onClick={() => alert(`Your funds: $${funds}`)}
                                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                 >
                                     See Your Funds
@@ -203,14 +194,6 @@ const Navbar = () => {
                             >
                                 {userName ? 'Logout' : 'Login'}
                             </button>
-                            {!userName && (
-                                <Link
-                                    href="/create-account"
-                                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                >
-                                    Create Account
-                                </Link>
-                            )}
                             {userName && (
                                 <button
                                     onClick={handleCloseAccount}
@@ -223,10 +206,8 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
-            
         </div>
     );
-    
 };
 
 export default Navbar;
