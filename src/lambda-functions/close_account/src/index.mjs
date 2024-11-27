@@ -5,7 +5,7 @@ const pool = mysql.createPool({
     user: 'AHadmin',
     password: 'Az339667',
     database: 'CS509DB',
-    connectionLimit: 10 // Limit the number of connections in the pool
+    connectionLimit: 10, // Limit the number of connections in the pool
 });
 
 function query(sql, params) {
@@ -42,41 +42,74 @@ export const handler = async (event, context) => {
         return response;
     }
 
-    if (!body || !body.username) {
+    if (!body || !body.username || !body.userType) {
         response.statusCode = 400;
-        response.body = JSON.stringify({ message: "Username is required" });
+        response.body = JSON.stringify({ message: "Username and userType are required" });
         return response;
     }
 
-    const { username } = body;
+    const { username, userType } = body;
 
     try {
-        // Check if the user exists
-        const userExists = await query("SELECT * FROM Seller WHERE Username = ?", [username]);
-        if (userExists.length === 0) {
-            response.statusCode = 404;
-            response.body = JSON.stringify({ message: "User not found" });
-            return response;
-        }
+        if (userType === "Seller") {
+            // Check if the seller exists
+            const sellerExists = await query("SELECT * FROM Seller WHERE Username = ?", [username]);
+            if (sellerExists.length === 0) {
+                response.statusCode = 404;
+                response.body = JSON.stringify({ message: "Seller not found" });
+                return response;
+            }
 
-        // Check for active auctions by the user in the Item table using ActivityStatus column
-        const activeItems = await query("SELECT * FROM Item WHERE Creator = ? AND ActivityStatus = 'Active'", [username]);
-        if (activeItems.length > 0) {
+            // Check for active auctions by the seller in the Item table
+            const activeItems = await query("SELECT * FROM Item WHERE Creator = ? AND ActivityStatus = 'Active'", [username]);
+            if (activeItems.length > 0) {
+                response.statusCode = 400;
+                response.body = JSON.stringify({ message: "Cannot close account with active auctions" });
+                return response;
+            }
+
+            // Close the seller account
+            await query("UPDATE Seller SET IsClosed = 1 WHERE Username = ?", [username]);
+            response.statusCode = 200;
+            response.body = JSON.stringify({ message: "Seller account closed successfully" });
+        } else if (userType === "Buyer") {
+            // Check if the buyer exists
+            const buyerAccountExists = await query("SELECT * FROM Buyer WHERE Username = ?", [username]);
+            if (buyerAccountExists.length === 0) {
+                response.statusCode = 404;
+                response.body = JSON.stringify({ message: "Buyer not found" });
+                return response;
+            }
+
+            // Check for active bids by the buyer
+            const activeBids = await query(
+                `SELECT b.BidID 
+                 FROM Bid b 
+                 INNER JOIN Item i ON b.RelatedItemID = i.ItemID 
+                 WHERE b.RelatedBuyer = ? AND i.ActivityStatus = 'Active'`,
+                [username]
+            );
+
+            if (activeBids.length > 0) {
+                response.statusCode = 400;
+                response.body = JSON.stringify({ message: "Cannot close account with active bids on active items" });
+                return response;
+            }
+
+            // Close the buyer account
+            await query("UPDATE Buyer SET IsClosed = 1 WHERE Username = ?", [username]);
+            response.statusCode = 200;
+            response.body = JSON.stringify({ message: "Buyer account closed successfully" });
+        } else {
             response.statusCode = 400;
-            response.body = JSON.stringify({ message: "Cannot close account with active auctions" });
-            return response;
+            response.body = JSON.stringify({ message: "Invalid userType. Must be 'Seller' or 'Buyer'." });
         }
-
-        // Close the account by setting IsClosed to 1
-        await query("UPDATE Seller SET IsClosed = 1 WHERE Username = ?", [username]);
-        response.statusCode = 200;
-        response.body = JSON.stringify({ message: "Account closed successfully" });
     } catch (error) {
         console.error("Close Account Error:", error);
         response.statusCode = 500;
         response.body = JSON.stringify({
             message: "Failed to close account",
-            error: error.message
+            error: error.message,
         });
     }
 
