@@ -193,7 +193,6 @@ export default function ListItems() {
                                 <p className="text-gray-600 mb-2">
                                     <strong>Published DateTime:</strong>{" "}
                                     {new Date(item.PublishedDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    timeZone: "UTC",
                                                     year: "numeric",
                                                     month: "long",
                                                     day: "numeric",
@@ -206,7 +205,6 @@ export default function ListItems() {
                                 <p className="text-gray-600 mb-2">
                                     <strong>Expiration DateTime:</strong>{" "}
                                     {new Date(item.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    timeZone: "UTC",
                                                     year: "numeric",
                                                     month: "long",
                                                     day: "numeric",

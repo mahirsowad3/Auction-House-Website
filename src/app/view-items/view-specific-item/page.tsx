@@ -304,7 +304,6 @@ export default function ViewSpecificItem() {
                             <strong className="text-gray-800">Expiration DateTime:</strong>{" "}
                             {itemDetails.BidEndDate
                                 ? new Date(itemDetails.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                    timeZone: "UTC",
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
@@ -435,7 +434,6 @@ export default function ViewSpecificItem() {
                                             <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
                                             <td className="border border-gray-300 px-4 py-2">
                                                 {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    timeZone: "UTC",
                                                     year: "numeric",
                                                     month: "long",
                                                     day: "numeric",
@@ -476,7 +474,6 @@ export default function ViewSpecificItem() {
                                             <td className="border border-gray-300 px-4 py-2">${bid.AmountBid}</td>
                                             <td className="border border-gray-300 px-4 py-2">
                                                 {new Date(bid.PlacementDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    timeZone: "UTC",
                                                     year: "numeric",
                                                     month: "long",
                                                     day: "numeric",

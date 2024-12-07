@@ -156,7 +156,6 @@ export const handler = async (event, context) => {
   }
 
   try {
-    const NYTimeZone = await adjustTimeZone();
     const activeExpiredItems = await getActiveItemsPastExpirationDate();
     if(activeExpiredItems == null || activeExpiredItems.length === 0){
       const getAllDatabaseItems = await getAllItems();

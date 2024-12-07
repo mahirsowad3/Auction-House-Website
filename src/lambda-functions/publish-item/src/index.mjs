@@ -119,7 +119,6 @@ export const handler = async (event, context) => {
 
   // Main query to publish item
   try {
-    const NYTimeZone = await adjustTimeZone();
     const seller = await sellerExists(username, password);
     if(!seller){
       response.statusCode = 400;

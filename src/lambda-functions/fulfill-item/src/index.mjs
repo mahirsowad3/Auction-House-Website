@@ -146,6 +146,22 @@ export const handler = async (event, context) => {
     });
   }
 
+  const updateACFunds = (amountToCharge) => {
+    return new Promise((resolve, reject) => {
+      pool.query("UPDATE Admin Set TotalACFunds = TotalACFunds + (? * 0.05) WHERE Username = 'Admin1'", 
+      [amountToCharge], 
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        } else if (results && results.changedRows > 0) {
+          return resolve(results.changedRows);
+        } else {
+          return resolve(0);
+        }
+      });
+    });
+  }
+
   const changeActivityStausToFulfilled = (itemID) => {
     return new Promise((resolve, reject) => {
       pool.query("UPDATE Item SET ActivityStatus = 'Archived' WHERE ItemID = ?", [itemID], (error, results) => {
@@ -191,7 +207,6 @@ export const handler = async (event, context) => {
 
   // Main query to fulfill item
   try {
-    const NYTimeZone = await adjustTimeZone();
     const seller = await sellerExists(username, password);
     if(!seller){
       response.statusCode = 400;
@@ -213,9 +228,10 @@ export const handler = async (event, context) => {
           response.error = "Problem retrieving highest bid on item or the buyer with the highest bid";
         } else {
           // update the respective seller and buyer accounts
-          const [changedSellerCurrentBalance, changedBuyerCurrentBalance] = await Promise.all([
+          const [changedSellerCurrentBalance, changedBuyerCurrentBalance, updatedACFunds] = await Promise.all([
             updateSellerCurrentBalance(username, highestBidOnItem),
             updateBuyerCurrentBalance(highestBidBuyer, highestBidOnItem),
+            updateACFunds(highestBidOnItem),
           ]);
           console.log("Seller # of rows changed succesfully: " + changedSellerCurrentBalance);
           console.log("Buyer # of rows changed successfully: " + changedBuyerCurrentBalance);

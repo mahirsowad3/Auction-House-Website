@@ -123,6 +123,8 @@ export default function EditItem() {
     const editItem = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const bidEndDateUTC = new Date(bidEndDate).toISOString()
+
         setSubmissionLoading(true);
 
         const editBasicItemInfo = async () => {
@@ -135,7 +137,7 @@ export default function EditItem() {
                     initialPrice: initialPrice,
                     isBuyNow: isABuyNow,
                     itemDescription: itemDescription,
-                    bidEndDate: bidEndDate,
+                    bidEndDate: bidEndDateUTC,
                 },
             };
 

@@ -371,7 +371,6 @@ export default function Home() {
                     <h2 className="text-2xl">{isABuyNow ? "Purchase" : "Bid"} Start Date: </h2>
                     <p className="text-xl">{bidStartDate ? new Date(bidStartDate.replace(' ', 'T'))
                         .toLocaleDateString('en-US', {
-                            timeZone: 'UTC',
                             month: '2-digit',
                             day: '2-digit',
                             year: 'numeric',
@@ -385,7 +384,6 @@ export default function Home() {
                     <h2 className="text-2xl">{isABuyNow ? "Purchase" : "Bid"} End Date: </h2>
                     <p className="text-xl">{bidEndDate ? new Date(bidEndDate.replace(' ', 'T'))
                         .toLocaleDateString('en-US', {
-                            timeZone: 'UTC',
                             month: '2-digit',
                             day: '2-digit',
                             year: 'numeric',
@@ -399,7 +397,6 @@ export default function Home() {
                     <h2 className="text-2xl">Published Date: </h2>
                     <p className="text-xl">{publishedDate ? new Date(publishedDate.replace(' ', 'T'))
                         .toLocaleDateString('en-US', {
-                            timeZone: 'UTC',
                             month: '2-digit',
                             day: '2-digit',
                             year: 'numeric',

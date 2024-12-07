@@ -48,13 +48,6 @@ export const handler = async (event, context) => {
             throw new Error("Missing required parameters: username, password, or itemID");
         }
 
-        const adjustTimeZoneQuery = `
-        SET time_zone = 'America/New_York'
-    `;
-        const adjustTimeZone = await query(adjustTimeZoneQuery);
-
-        
-
         // Validate buyer credentials
         const buyerQuery = `
             SELECT Username

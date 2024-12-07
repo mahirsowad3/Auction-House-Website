@@ -249,7 +249,6 @@ let getNewBid = (insertID) => {
 
   // Main query to publish item
   try {
-    const NYTimeZone = await adjustTimeZone();
     const buyer = await buyerExists(username, password);
     if(!buyer){
       response.statusCode = 400;

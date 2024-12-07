@@ -67,6 +67,7 @@ export default function AddItem() {
   };
 
   const addItem = async (event: React.FormEvent<HTMLFormElement>) => {
+    const bidEndDateUTC = new Date(bidEndDate).toISOString();
     event.preventDefault();
 
     setSubmissionLoading(true);
@@ -80,7 +81,7 @@ export default function AddItem() {
           initialPrice: initialPrice,
           isBuyNow: isABuyNow,
           itemDescription: itemDescription,
-          bidEndDate: bidEndDate,
+          bidEndDate: bidEndDateUTC,
         },
       };
 

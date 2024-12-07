@@ -58,7 +58,6 @@ export default function Table({ bids, IsBuyNow }: BidsProps) {
                             <td className="border px-6 py-4 text-center border-black">{bid.RelatedBuyer}</td>
                             <td className="border px-6 py-4 text-center border-black">{new Date(bid.PlacementDate.replace(' ', 'T'))
                                 .toLocaleDateString('en-US', {
-                                    timeZone: 'UTC',
                                     month: '2-digit',
                                     day: '2-digit',
                                     year: 'numeric',

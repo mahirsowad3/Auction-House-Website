@@ -173,7 +173,7 @@ const Navbar = () => {
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                         >
-                                            View Items
+                                            View Active Items
                                         </Link>
                                     )}
                                     {userType === 'Seller' ? (
