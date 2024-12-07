@@ -47,6 +47,7 @@ export const handler = async (event, context) => {
         if (!username || !password || !itemID) {
             throw new Error("Missing required parameters: username, password, or itemID");
         }
+        
 
         // Validate buyer credentials
         const buyerQuery = `
@@ -107,7 +108,7 @@ export const handler = async (event, context) => {
         const auctionStatusQuery = `
         SELECT 
             CASE 
-                WHEN SYSDATE() < BidEndDate THEN FALSE
+                WHEN SYSDATE() < BidEndDate AND ActivityStatus = 'Active' THEN FALSE
             ELSE TRUE
             END AS IsAuctionActive
         FROM Item
@@ -117,7 +118,7 @@ export const handler = async (event, context) => {
         // Check if the auction is expired or the item is sold
         const isExpiredArray = await query(auctionStatusQuery, [itemID]);
         const isExpired = isExpiredArray[0].IsAuctionActive;
-        const isSold = item.ActivityStatus === "Sold";
+        const isSold = item.ActivityStatus === "Archived";
 
         response.statusCode = 200;
         response.body = JSON.stringify({
@@ -129,6 +130,7 @@ export const handler = async (event, context) => {
                 IsBuyNow: item.IsBuyNow,
                 BidStartDate: item.BidStartDate,
                 BidEndDate: item.BidEndDate,
+                SoldDate: item.SoldDate,
                 Images: itemImages,
                 HighestBid: highestBid,
                 IsExpired: isExpired,
@@ -137,8 +139,8 @@ export const handler = async (event, context) => {
             biddingHistory: biddingHistory,
             buyerDetails: {
                 Username: username,
-                CanPlaceHigherBid: !isExpired && !isSold,
-                CanPlaceCustomBid: !isExpired && !isSold,
+                CanPlaceHigherBid: !isExpired && !isSold, // Assume they can bid if auction is active
+                CanPlaceCustomBid: !isExpired && !isSold, // Assume they can bid if auction is active
             },
         });
     } catch (error) {
