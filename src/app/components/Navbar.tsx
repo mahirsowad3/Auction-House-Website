@@ -192,8 +192,8 @@ const Navbar = () => {
                                             </Link>
                                         </>
                                     ) : userType === 'Buyer' ? (
-                                         
-                                            <>
+
+                                        <>
                                             <Link
                                                 href="/view-recently-sold"
                                                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -201,14 +201,20 @@ const Navbar = () => {
                                                 View Recently Sold Items
                                             </Link>
                                             <Link
+                                                href="/review-active-bids"
+                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                            >
+                                                Review Active Bids
+                                            </Link>
+                                            <Link
                                                 href="/add-funds"
                                                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                             >
-                                                    Add Funds
-                                                </Link>
-                                                </>
+                                                Add Funds
+                                            </Link>
+                                        </>
                                     ) : null}
-                                    
+
                                 </div>
                             </div>
                         </div>
