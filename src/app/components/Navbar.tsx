@@ -54,6 +54,10 @@ const Navbar = () => {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.AccountFunds;
                 }
+
+            } else if (userType === "Admin") {
+
+                fundsResponse = 10000; // Example funds value for admin
             }
 
             if (fundsResponse) {
@@ -78,47 +82,49 @@ const Navbar = () => {
     };
 
     const handleCloseAccount = async () => {
-        if (!userName) {
-            alert("Username is not available. Please log in.");
-            return;
-        }
-
-        if (!confirm("Are you sure you want to close your account? This action cannot be undone.")) {
-            return;
-        }
-
-        try {
-            const response = await axios.post(`${baseURL}/close-account`, {
-                body: {
-                    username: userName,
-                    userType: userType,
-                },
-            }, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            if (response.data.statusCode === 200) {
-                alert("Account closed successfully!");
-                sessionStorage.clear();
-                setUserName(null);
-                setUserType(null);
-                setFunds(null);
-                router.push('/');
-            } else if (response.data.statusCode === 404) {
-
-                alert("User not found.");
-
-            } else if (response.data.statusCode === 400) {
-
-                alert("Cannot close account with active auctions.");
-
-
-            } else {
-                alert("An unexpected error occurred.");
+        if (userType !== 'Admin') {
+            if (!userName) {
+                alert("Username is not available. Please log in.");
+                return;
             }
-        } catch (err) {
-            console.error(err);
-            alert("Error closing account. Please try again.");
+
+            if (!confirm("Are you sure you want to close your account? This action cannot be undone.")) {
+                return;
+            }
+
+            try {
+                const response = await axios.post(`${baseURL}/close-account`, {
+                    body: {
+                        username: userName,
+                        userType: userType,
+                    },
+                }, {
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if (response.data.statusCode === 200) {
+                    alert("Account closed successfully!");
+                    sessionStorage.clear();
+                    setUserName(null);
+                    setUserType(null);
+                    setFunds(null);
+                    router.push('/');
+                } else if (response.data.statusCode === 404) {
+
+                    alert("User not found.");
+
+                } else if (response.data.statusCode === 400) {
+
+                    alert("Cannot close account with active auctions.");
+
+
+                } else {
+                    alert("An unexpected error occurred.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error closing account. Please try again.");
+            }
         }
     };
 
@@ -167,49 +173,48 @@ const Navbar = () => {
                                 </Link>
                             </div>
                             <div className="hidden sm:block sm:ml-6">
-                                <div className="flex space-x-4">
-                                    {userType !== 'Seller' && (
+                            <div className="flex space-x-4">
+                                {
+
+                                userType === 'Seller' ? (
+                                    <>
                                         <Link
-                                            href="/view-items"
+                                            href="/add-item"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                         >
-                                            View Active Items
+                                            Add Item
                                         </Link>
-                                    )}
-                                    {userType === 'Seller' ? (
-                                        <>
-                                            <Link
-                                                href="/add-item"
-                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                            >
-                                                Add Item
-                                            </Link>
-                                            <Link
-                                                href="/review-items"
-                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                            >
-                                                Review Items
-                                            </Link>
-                                        </>
-                                    ) : userType === 'Buyer' ? (
-                                         
-                                            <>
-                                            <Link
-                                                href="/view-recently-sold"
-                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                            >
-                                                View Recently Sold Items
-                                            </Link>
-                                            <Link
-                                                href="/add-funds"
-                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                            >
-                                                    Add Funds
-                                                </Link>
-                                                </>
-                                    ) : null}
-                                    
-                                </div>
+                                        <Link
+                                            href="/review-items"
+                                            className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                        >
+                                            Review Items
+                                        </Link>
+                                    </>
+                                ) : userType === 'Buyer' ? (
+                                    <>
+                                        <Link
+                                            href="/view-recently-sold"
+                                            className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                        >
+                                            View Recently Sold Items
+                                        </Link>
+                                        <Link
+                                            href="/add-funds"
+                                            className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                        >
+                                            Add Funds
+                                        </Link>
+                                    </>
+                                ) : userType !== 'Admin' && (
+                                    <Link
+                                        href="/view-items"
+                                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                    >
+                                        View Active Items
+                                    </Link>
+                                )}
+                            </div>
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -243,7 +248,7 @@ const Navbar = () => {
                                     Create Account
                                 </Link>
                             )}
-                            {userName && (
+                            {userName && userType !== 'Admin' && (
                                 <button
                                     onClick={handleCloseAccount}
                                     className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"

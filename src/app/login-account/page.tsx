@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
-
 export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -49,7 +48,12 @@ export default function LoginPage() {
                 // Emit a custom event to notify other components
                 window.dispatchEvent(new Event('sessionUpdated'));
 
-                router.push("/");
+                // Redirect based on userType
+                if (userType === "Admin") {
+                    router.push("/admin-dashboard");
+                } else {
+                    router.push("/");
+                }
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
             } else if (statusCode === 403) {
