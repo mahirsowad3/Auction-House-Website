@@ -50,11 +50,11 @@ export default function LoginPage() {
                 window.dispatchEvent(new Event('sessionUpdated'));
 
                 // Redirect based on userType
-                if (userType === "Admin") {
-                    router.push("/admin-dashboard");
-                } else {
-                    router.push("/");
-                }
+                // if (userType === "Admin") {
+                //     router.push("/admin-dashboard");
+                // } else {
+                router.push("/");
+                // }
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
             } else if (statusCode === 403) {
