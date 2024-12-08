@@ -58,7 +58,7 @@ export default function ListRecentlySoldItems() {
 
     const viewItemDetails = (itemID: number) => {
         sessionStorage.setItem("viewItemID", itemID.toString());
-        router.push("view-recently-sold/view-specific-recently-sold");
+        router.push("view-items/view-specific-item");
     };
 
     const filteredAndSortedItems = Array.isArray(items)
