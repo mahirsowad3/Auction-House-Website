@@ -9,6 +9,8 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
 
 interface ItemDetailsProps {
+    BuyerSoldTo: string;
+    SoldDate: string;
     BidEndDate: string;
     BidStartDate: string;
     Description: string;
@@ -322,10 +324,28 @@ export default function ViewSpecificItem() {
                                     ? "Expired"
                                     : "Active"}
                         </p>
+                        {itemDetails.IsSold == 1 && <p className="text-gray-600 mb-2">
+                            <strong className="text-gray-800">Sold DateTime:</strong>{" "}
+                            {itemDetails.BidEndDate
+                                ? new Date(itemDetails.SoldDate.replace(" ", "T")).toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                    hour12: false,
+                                })
+                                : "N/A"}
+                        </p>}
+                        {itemDetails.BuyerSoldTo && <p className="text-gray-600 mb-2">
+                            <strong className="text-gray-800">Buyer Sold To:</strong>{" "}
+                            {itemDetails.BuyerSoldTo}
+                        </p>}
                         {/* Place bid and buy now functionality below */}
                         <div>
                             {/* Place bid field, buttons, and alerts */}
-                            {itemType === "Bidding" && (
+                            {itemType === "Bidding" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && (
                                 <div>
                                     <div>
                                         <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
