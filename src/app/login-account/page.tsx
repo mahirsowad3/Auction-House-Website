@@ -49,7 +49,12 @@ export default function LoginPage() {
                 // Emit a custom event to notify other components
                 window.dispatchEvent(new Event('sessionUpdated'));
 
-                router.push("/");
+                // Redirect based on userType
+                if (userType === "Admin") {
+                    router.push("/admin-dashboard");
+                } else {
+                    router.push("/");
+                }
             } else if (statusCode === 401) {
                 setError('Invalid username or password.');
             } else if (statusCode === 403) {
