@@ -102,7 +102,7 @@ export const handler = async (event, context) => {
       pool.query("SELECT * FROM Bid WHERE RelatedItemID = ?", [itemID], (error, rows) => {
         if (error) {
           return reject(error);
-        } else if (rows && rows.length == 1) {
+        } else if (rows && rows.length > 0) {
           return resolve(true);
         } else {
           return resolve(false);
