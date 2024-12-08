@@ -37,14 +37,14 @@ export default function ReviewItems() {
 
         const getSellerItems = async () => {
             const updatedItems = await updateItemsActivityStatus();
-            if(updatedItems == 1) {
-                try{
+            if (updatedItems == 1) {
+                try {
                     const response = await axios.post(`${baseURL}/review-items`, {
                         body: {
                             username: sessionStorage.getItem('userName'),
                             password: sessionStorage.getItem('password'),
                         }
-        
+
                     });
                     const data = response.data.body ? response.data.body : [];
                     console.log(JSON.parse(data));
@@ -64,28 +64,35 @@ export default function ReviewItems() {
 
     }, []);
 
-    const filteredItems = items.filter((item: any) =>
-        chosenFilter === '' || item.ActivityStatus.toLowerCase() === chosenFilter.toLowerCase());
+    const filteredItems = items.filter((item: any) => {
+        if (chosenFilter === '') {
+            return true;
+        } else if (chosenFilter.toLowerCase() === 'frozen') {
+            return item.IsFrozen === 1;
+        } else {
+            return item.ActivityStatus.toLowerCase() === chosenFilter.toLowerCase()
+        }
+    });
 
     return (
         <main >
             <div className="container mx-auto mt-5">
                 <h1 className="text-4xl mb-6">Review Items Page</h1>
                 <ItemFilter {...{ chosenFilter, setChosenFilter }} />
-                {loading ? <div style = {{display: "flex", justifyContent: "center", alignItems: "center"}}> <LoadingSpinner></LoadingSpinner> </div> : 
-                <div className="grid grid-cols-4 gap-4">
-                    {filteredItems.map((item: ReviewItemCardComponentProps, index: number) => (
-                        <div
-                            key={index}
-                            onClick={() => {
-                                console.log('Clicked on item with ID ', item.ItemID);
-                                sessionStorage.setItem('selectedItemID', item.ItemID.toString());
-                                router.push('/review-items/specific-item');
-                            }}>
-                            <ReviewItemCardComponent {...item} />
-                        </div>
-                    ))}
-                </div>}
+                {loading ? <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}> <LoadingSpinner></LoadingSpinner> </div> :
+                    <div className="grid grid-cols-4 gap-4">
+                        {filteredItems.map((item: ReviewItemCardComponentProps, index: number) => (
+                            <div
+                                key={index}
+                                onClick={() => {
+                                    console.log('Clicked on item with ID ', item.ItemID);
+                                    sessionStorage.setItem('selectedItemID', item.ItemID.toString());
+                                    router.push('/review-items/specific-item');
+                                }}>
+                                <ReviewItemCardComponent {...item} />
+                            </div>
+                        ))}
+                    </div>}
             </div>
         </main>
     );

@@ -37,6 +37,7 @@ export default function Home() {
     const [publishItemLoading, setPublishItemLoading] = React.useState<boolean>(false);
     const [unpublishItemLoading, setUnpublishItemLoading] = React.useState<boolean>(false);
     const [fulfillItemLoading, setFulfillItemLoading] = React.useState<boolean>(false);
+    const [requestUnfreezeLoading, setRequestUnfreezeLoading] = React.useState<boolean>(false);
 
     // success and error messages variables
     const [fulfillItemSuccessMessage, setFulfillItemSuccessMessage] = React.useState<string>('');
@@ -92,7 +93,7 @@ export default function Home() {
                         setPublishedDate(item.PublishedDate);
                         setSoldDate(item.SoldDate);
                         setIsFrozen(item.IsFrozen);
-                        setRequestedUnfreeze(item.requestedunfreeze);
+                        setRequestedUnfreeze(item.requestedUnfreeze);
                         setCreator(item.Creator);
                         setBuyerSoldTo(item.BuyerSoldTo);
                         setActivityStatus(item.ActivityStatus);
@@ -196,7 +197,7 @@ export default function Home() {
             setPublishedDate(updatedItem.PublishedDate);
             setSoldDate(updatedItem.SoldDate);
             setIsFrozen(updatedItem.IsFrozen);
-            setRequestedUnfreeze(updatedItem.requestedunfreeze);
+            setRequestedUnfreeze(updatedItem.requestedUnfreeze);
             setCreator(updatedItem.Creator);
             setBuyerSoldTo(updatedItem.BuyerSoldTo);
             setActivityStatus(updatedItem.ActivityStatus);
@@ -236,7 +237,7 @@ export default function Home() {
             setPublishedDate(updatedItem.PublishedDate);
             setSoldDate(updatedItem.SoldDate);
             setIsFrozen(updatedItem.IsFrozen);
-            setRequestedUnfreeze(updatedItem.requestedunfreeze);
+            setRequestedUnfreeze(updatedItem.requestedUnfreeze);
             setCreator(updatedItem.Creator);
             setBuyerSoldTo(updatedItem.BuyerSoldTo);
             setActivityStatus(updatedItem.ActivityStatus);
@@ -314,7 +315,7 @@ export default function Home() {
                 setPublishedDate(updatedItem.PublishedDate);
                 setSoldDate(updatedItem.SoldDate);
                 setIsFrozen(updatedItem.IsFrozen);
-                setRequestedUnfreeze(updatedItem.requestedunfreeze);
+                setRequestedUnfreeze(updatedItem.requestedUnfreeze);
                 setCreator(updatedItem.Creator);
                 setBuyerSoldTo(updatedItem.BuyerSoldTo);
                 setActivityStatus(updatedItem.ActivityStatus);
@@ -333,6 +334,46 @@ export default function Home() {
         }
     };
 
+    const handleRequestUnfreeze = async () => {
+        setRequestUnfreezeLoading(true);
+
+        const payload = {
+            body: {
+                username: sessionStorage.getItem('userName'),
+                password: sessionStorage.getItem('password'),
+                itemID: itemID,
+            }
+        };
+
+        try {
+            const response = await axios.post(`${baseURL}/request-unfreeze-item`, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log('Response from request-unfreeze-item:', JSON.parse(response.data.body));
+            const updatedItem = JSON.parse(response.data.body);
+            setItemName(updatedItem.Name);
+            setItemDescription(updatedItem.ItemDescription);
+            setInitialPrice(updatedItem.InitialPrice);
+            setIsABuyNow(updatedItem.IsBuyNow);
+            setBidStartDate(updatedItem.BidStartDate);
+            setBidEndDate(updatedItem.BidEndDate);
+            setPublishedDate(updatedItem.PublishedDate);
+            setSoldDate(updatedItem.SoldDate);
+            setIsFrozen(updatedItem.IsFrozen);
+            setRequestedUnfreeze(updatedItem.requestedUnfreeze);
+            setCreator(updatedItem.Creator);
+            setBuyerSoldTo(updatedItem.BuyerSoldTo);
+            setActivityStatus(updatedItem.ActivityStatus);
+            // setPictures(updatedItem.Pictures);
+        } catch (error) {
+            console.error('Error requesting unfreeze item: ', error);
+        } finally {
+            setRequestUnfreezeLoading(false);
+        }
+    }
+
     // if fetching data is taking too long
     if (pageLoading) {
         return (<div className="flex items-center justify-center">
@@ -343,6 +384,19 @@ export default function Home() {
     return (
         <main>
             <div className="container mx-auto mt-5">
+                {isFrozen === 1 && (
+                    <div className="mt-4 mb-4 rounded bg-red-200 p-2">
+                        <h2 className="text-2xl">
+                            Warning:
+                        </h2>
+                        <p className="text-xl">
+                            {`This item has been frozen by the Auction House administrator. 
+                            ${requestedUnfreeze ?
+                                    'You have submitted a request to unfreeze this item. Please be patient.' :
+                                    'You can request to unfreeze the item below.'}`}
+                        </p>
+                    </div>
+                )}
 
                 <h1 className="text-4xl rounded bg-slate-200 p-2">Item ID: {itemID}</h1>
                 <h2 className="text-2xl mt-4 rounded bg-slate-200 p-2">Item Name: {itemName}</h2>
@@ -441,59 +495,79 @@ export default function Home() {
                             </div>}
                     </div>}
                 {/* Buttons */}
-                <div className="flex justify-between mt-4 mb-8">
-                    {activityStatus?.toLowerCase() === "inactive" &&
-                        <button
-                            onClick={handleRemoveItem}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                            {removeItemLoading ?
-                                <LoadingSpinner /> :
-                                "Remove Item"}
-                        </button>}
-                    {activityStatus?.toLowerCase() === "inactive" &&
-                        <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={() => {
-                                if (canPublishItem()) {
-                                    handlePublishItem();
+                {!isFrozen &&
+                    <div className="flex justify-between mt-4 mb-8">
+                        {activityStatus?.toLowerCase() === "inactive" &&
+                            <button
+                                onClick={handleRemoveItem}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                {removeItemLoading ?
+                                    <LoadingSpinner /> :
+                                    "Remove Item"}
+                            </button>}
+                        {activityStatus?.toLowerCase() === "inactive" &&
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={() => {
+                                    if (canPublishItem()) {
+                                        handlePublishItem();
+                                    }
+                                }}>
+                                {publishItemLoading ?
+                                    <LoadingSpinner /> :
+                                    "Publish Item"}
+                            </button>}
+                        {activityStatus?.toLowerCase() === "active" && bids.length === 0 &&
+                            <button
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleUnpublishItem}>
+                                {unpublishItemLoading ?
+                                    <LoadingSpinner /> :
+                                    "Unpublish Item"}
+                            </button>}
+                        {activityStatus?.toLowerCase() === "inactive" &&
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={() => {
+                                    sessionStorage.setItem('editItemID', itemID!.toString());
+                                    router.push('/review-items/specific-item/edit-item');
+                                }}>
+                                Edit Details
+                            </button>}
+                        {(activityStatus?.toLowerCase() === "inactive" || activityStatus?.toLowerCase() === "failed") && (
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleArchiveItem}>
+                                Archive Item
+                            </button>)}
+                        {activityStatus?.toLowerCase() === "completed" && (
+                            <button
+                                onClick={handleFulfillItem}
+                                disabled={fulfillItemLoading}
+                                className={!fulfillItemLoading ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"}>
+                                {fulfillItemLoading ? <LoadingSpinner /> : "Fulfill Item"}
+                            </button>
+                        )}
+                    </div>}
+                {/* Request Unfreeze */}
+                {isFrozen === 1 &&
+                    <div className="flex justify-center items-center mt-4 mb-8">
+                        {!requestedUnfreeze ? (
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleRequestUnfreeze}>
+                                {requestUnfreezeLoading ?
+                                    <LoadingSpinner /> :
+                                    "Request Unfreeze"
                                 }
-                            }}>
-                            {publishItemLoading ?
-                                <LoadingSpinner /> :
-                                "Publish Item"}
-                        </button>}
-                    {activityStatus?.toLowerCase() === "active" && bids.length === 0 &&
-                        <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={handleUnpublishItem}>
-                            {unpublishItemLoading ?
-                                <LoadingSpinner /> :
-                                "Unpublish Item"}
-                        </button>}
-                    {activityStatus?.toLowerCase() === "inactive" &&
-                        <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={() => {
-                                sessionStorage.setItem('editItemID', itemID!.toString());
-                                router.push('/review-items/specific-item/edit-item');
-                            }}>
-                            Edit Details
-                        </button>}
-                    {(activityStatus?.toLowerCase() === "inactive" || activityStatus?.toLowerCase() === "failed") && (
-                        <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={handleArchiveItem}>
-                            Archive Item
-                        </button>)}
-                    {activityStatus?.toLowerCase() === "completed" && (
-                        <button
-                            onClick={handleFulfillItem}
-                            disabled={fulfillItemLoading}
-                            className={!fulfillItemLoading ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"}>
-                            {fulfillItemLoading ? <LoadingSpinner /> : "Fulfill Item"}
-                        </button>
-                    )}
-                </div>
+                            </button>
+                        ) :
+                            (<div className="flex-auto flex justify-center items-center rounded bg-yellow-200 p-2">
+                                <h2 className="text-2xl">
+                                    You have submitted a request to unfreeze this item. Please be patient.
+                                </h2>
+                            </div>)}
+                    </div>}
                 {/* Fulfill Item success message */}
                 {fulfillItemSuccessMessage &&
                     <div className="mt-4 rounded bg-green-200 p-2">
