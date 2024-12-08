@@ -1,40 +1,124 @@
-'use client';
+"use client"; // Mark this file as a client component
 
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const AdminDashboard = () => {
+const baseURL = "https://ziek69aur9.execute-api.us-east-2.amazonaws.com/initial";
+
+const AdminUnfreezeRequests = () => {
+    const [unfreezeRequests, setUnfreezeRequests] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch unfreeze requests
+    const fetchUnfreezeRequests = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.post(`${baseURL}/fetch-unfreeze-request`, {
+                body: { action: "fetchRequests" },
+            });
+
+            // Parse the `body` field correctly
+            const parsedData = JSON.parse(response.data.body);
+            setUnfreezeRequests(parsedData); // Save parsed data to state
+        } catch (error) {
+            console.error("Error fetching unfreeze requests:", error);
+            setError("Failed to load unfreeze requests.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle Unfreeze action
+    const handleUnfreeze = async (itemID: number) => {
+        try {
+            const response = await axios.post(`${baseURL}/fetch-unfreeze-request`, {
+                body: { action: "unfreeze", ItemID: itemID },
+            });
+
+            if (response.status === 200) {
+                alert("Item successfully unfrozen!");
+                fetchUnfreezeRequests(); // Refresh the table
+            } else {
+                alert("Failed to unfreeze the item.");
+            }
+        } catch (error) {
+            console.error("Error unfreezing item:", error);
+            alert("An error occurred while unfreezing the item.");
+        }
+    };
+
+    // Handle Deny action
+    const handleDeny = async (itemID: number) => {
+        try {
+            const response = await axios.post(`${baseURL}/fetch-unfreeze-request`, {
+                body: { action: "deny", ItemID: itemID },
+            });
+
+            if (response.status === 200) {
+                alert("Unfreeze request denied!");
+                fetchUnfreezeRequests(); // Refresh the table
+            } else {
+                alert("Failed to deny the unfreeze request.");
+            }
+        } catch (error) {
+            console.error("Error denying request:", error);
+            alert("An error occurred while denying the unfreeze request.");
+        }
+    };
+
+    useEffect(() => {
+        fetchUnfreezeRequests();
+    }, []);
+
     return (
         <main className="container mx-auto mt-5">
-            <h1 className="text-4xl mb-6">Admin Dashboard</h1>
+            <h1 className="text-4xl mb-6">Unfreeze Requests</h1>
 
-            <section className="mb-6">
-                <h2 className="text-2xl font-bold mb-4">Admin Actions</h2>
-
-                <div className="space-y-4">
-                    <button
-                        onClick={() => alert('Unfreeze Requests clicked')}
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                    >
-                        Unfreeze Requests
-                    </button>
-
-                    <button
-                        onClick={() => alert('Generate Auction Report clicked')}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        Generate Auction Report
-                    </button>
-
-                    <button
-                        onClick={() => alert('Generate Forensics Report clicked')}
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    >
-                        Generate Forensics Report
-                    </button>
-                </div>
-            </section>
+            {loading ? (
+                <p>Loading...</p>
+            ) : error ? (
+                <p className="text-red-500">{error}</p>
+            ) : (
+                <table className="table-auto w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="border border-gray-300 px-4 py-2">Item ID</th>
+                            <th className="border border-gray-300 px-4 py-2">Name</th>
+                            <th className="border border-gray-300 px-4 py-2">Description</th>
+                            <th className="border border-gray-300 px-4 py-2">Creator</th>
+                            <th className="border border-gray-300 px-4 py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {unfreezeRequests.map((item: any) => (
+                            <tr key={item.ItemID}>
+                                <td className="border border-gray-300 px-4 py-2">{item.ItemID}</td>
+                                <td className="border border-gray-300 px-4 py-2">{item.Name}</td>
+                                <td className="border border-gray-300 px-4 py-2">{item.Description}</td>
+                                <td className="border border-gray-300 px-4 py-2">{item.Creator}</td>
+                                <td className="border border-gray-300 px-4 py-2 space-x-2">
+                                    <button
+                                        onClick={() => handleUnfreeze(item.ItemID)}
+                                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                                    >
+                                        Unfreeze
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeny(item.ItemID)}
+                                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                    >
+                                        Deny
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </main>
     );
 };
 
-export default AdminDashboard;
+export default AdminUnfreezeRequests;
