@@ -423,7 +423,7 @@ export default function ViewSpecificItem() {
                             {itemType === "Buy Now" && biddingHistory.length > 0 && (
                                 <div>
                                     <div>
-                                        <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item has already been bought.</label>
+                                        <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item has been bought.</label>
                                     </div>
                                 </div>)}
                         </div>
