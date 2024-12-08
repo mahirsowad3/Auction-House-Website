@@ -50,7 +50,7 @@ export const handler = async (event, context) => {
     return new Promise((resolve, reject) => {
       pool.query(
         "SELECT * FROM Item " +
-        "WHERE ActivityStatus = 'Active' AND SYSDATE() >= BidEndDate", (error, rows) => {
+        "WHERE ActivityStatus = 'Active' AND SYSDATE() > BidEndDate", (error, rows) => {
           if(error) {
             return reject(error);
           }
@@ -170,7 +170,7 @@ export const handler = async (event, context) => {
             checkIfItemExpiredItemIsFrozen(item.ItemID)
           ]);
           
-          if (numOfBidsForItem > 0 || isItemFrozen == true) {
+          if (numOfBidsForItem > 0 && isItemFrozen == false) {
             await updateItemActivityStatusToCompleted(item.ItemID);
           } else {
             await updateItemActivityStatusToFailed(item.ItemID);
