@@ -135,6 +135,7 @@ export const handler = async (event, context) => {
                 HighestBid: highestBid,
                 IsExpired: isExpired,
                 IsSold: isSold,
+                BuyerSoldTo: item.BuyerSoldTo
             },
             biddingHistory: biddingHistory,
             buyerDetails: {
