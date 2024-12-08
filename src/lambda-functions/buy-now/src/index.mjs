@@ -11,13 +11,13 @@ const pool = mysql.createPool({
 
 function query(conx, sql, params) {
   return new Promise((resolve, reject) => {
-      conx.query(sql, params, function (err, rows) {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(rows);
-          }
-      });
+    conx.query(sql, params, function (err, rows) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
   });
 }
 
@@ -26,9 +26,9 @@ export const handler = async (event, context) => {
 
   let response = {
     headers: {
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST"
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST"
     }
   };
 
@@ -41,12 +41,26 @@ export const handler = async (event, context) => {
   const adjustTimeZone = () => {
     return new Promise((resolve, reject) => {
       pool.query("SET time_zone = 'America/New_York'", (error) => {
-        if(error) {
+        if (error) {
           console.log(`Error encountered: ${error}`)
           reject(error)
         }
         else {
           resolve()
+        }
+      })
+    })
+  }
+
+  const isExpiredItem = (itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("SELECT * FROM Item WHERE SYSDATE() > BidEndDate AND ItemID = ?", [itemID], (error, rows) => {
+        if (error) {
+          reject(error);
+        } else if (rows && rows.length > 0) {
+          return resolve(true)
+        } else {
+          return resolve(false)
         }
       })
     })
@@ -67,7 +81,7 @@ export const handler = async (event, context) => {
       })
     })
   }
-  
+
   // to check if an item is a buy now item
   const isBuyNowItem = (itemID) => {
     return new Promise((resolve, reject) => {
@@ -102,10 +116,10 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT InitialPrice FROM Item " +
         "WHERE ItemID = ?", [itemID], (error, rows) => {
-          if(error) {
+          if (error) {
             return reject(error);
           }
-          else if(rows && rows.length > 0) {
+          else if (rows && rows.length > 0) {
             return resolve(rows[0].InitialPrice)
           }
           else {
@@ -122,17 +136,17 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT IFNULL(SUM(MaxBidOnItem), 0) AS TotalActiveBids " +
         "FROM (SELECT Item.ItemID, MAX(AmountBid) AS MaxBidOnItem FROM Item " +
-        "JOIN Bid ON Bid.RelatedItemID = Item.ItemID " + 
+        "JOIN Bid ON Bid.RelatedItemID = Item.ItemID " +
         "WHERE BidStartDate IS NOT NULL AND ActivityStatus = 'Active' AND SYSDATE() < BidEndDate AND RelatedBuyer = ? " +
         "GROUP BY Item.ItemID) AS GetItemsMaxBids", [username], (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else if (rows && rows.length > 0) {
-          return resolve(rows[0].TotalActiveBids);
-        } else {
-          return resolve(0);
-        }
-      })
+          if (error) {
+            return reject(error);
+          } else if (rows && rows.length > 0) {
+            return resolve(rows[0].TotalActiveBids);
+          } else {
+            return resolve(0);
+          }
+        })
     })
   }
 
@@ -144,8 +158,8 @@ export const handler = async (event, context) => {
         "FROM (SELECT Item.ItemID, MAX(AmountBid) AS MaxBidOnItem " +
         "FROM Item JOIN Bid ON Bid.RelatedItemID = Item.ItemID " +
         "WHERE BidStartDate IS NOT NULL AND ActivityStatus = 'Completed' AND IsFrozen = FALSE AND RelatedBuyer = ? " +
-        "GROUP BY Item.ItemID) AS GetItemsMaxBids", 
-        [username], 
+        "GROUP BY Item.ItemID) AS GetItemsMaxBids",
+        [username],
         (error, rows) => {
           if (error) {
             return reject(error);
@@ -173,35 +187,35 @@ export const handler = async (event, context) => {
       });
     });
   }
-  
+
   const updateActivityStatusToCompleted = (itemID) => {
     return new Promise((resolve, reject) => {
-      pool.query("UPDATE Item SET ActivityStatus = 'Completed' WHERE ItemID = ?", 
-      [itemID], 
-      (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else {
-          resolve(rows.affectedRows);
-        }
-      })
+      pool.query("UPDATE Item SET ActivityStatus = 'Completed' WHERE ItemID = ?",
+        [itemID],
+        (error, rows) => {
+          if (error) {
+            return reject(error);
+          } else {
+            resolve(rows.affectedRows);
+          }
+        })
     });
   }
 
   const placeBid = (itemID, requestedBid, username) => {
     return new Promise((resolve, reject) => {
-        pool.query(
-            "INSERT INTO Bid (RelatedItemID, AmountBid, RelatedBuyer, PlacementDate) VALUES (?, ?, ?, SYSDATE())", [itemID, requestedBid, username], (error, result) => {  
-                if (error) {
-                    return reject(error);
-                }
-                if (result) {
-                    return resolve(result.insertId);
-                } else {
-                    return resolve(null);
-                }
-            }
-        );
+      pool.query(
+        "INSERT INTO Bid (RelatedItemID, AmountBid, RelatedBuyer, PlacementDate) VALUES (?, ?, ?, SYSDATE())", [itemID, requestedBid, username], (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          if (result) {
+            return resolve(result.insertId);
+          } else {
+            return resolve(null);
+          }
+        }
+      );
     });
   };
 
@@ -231,68 +245,75 @@ export const handler = async (event, context) => {
 
   // Main query to buy the item
   try {
-    const buyer = await buyerExists(username, password);
-    console.log("buyer: ", buyer);
-    if(!buyer){
-      response.statusCode = 400;
-      response.error = "Invalid buyer credentials";
-    } else {
-      const [buyNowItem, itemAlreadyBought] = await Promise.all([
-        isBuyNowItem(itemID),
-        checkIfItemHasBeenBought(itemID)
-      ])
-      if (!(buyNowItem && !itemAlreadyBought)) {
-        console.log("buyNowItem: ", buyNowItem);
-        console.log("itemAlreadyBought: ", itemAlreadyBought);
+    const itemExpired = await isExpiredItem(itemID);
+    if (!itemExpired) {
+      const buyer = await buyerExists(username, password);
+      console.log("buyer: ", buyer);
+      if (!buyer) {
         response.statusCode = 400;
-        response.error = "Either the item is not a buy now item or item has already been bought";
+        response.error = "Invalid buyer credentials";
       } else {
-        const [userSumHighestActiveBids, userSumHighestCompletedAndUnfrozenBids, itemPrice, currentBalance] = await Promise.all([
-          sumHighestActiveBids(username),
-          sumHighestCompletedAndUnfrozenBids(username),
-          getItemPrice(itemID),
-          getCurrentBalance(username)
+        const [buyNowItem, itemAlreadyBought] = await Promise.all([
+          isBuyNowItem(itemID),
+          checkIfItemHasBeenBought(itemID)
         ])
-        console.log("sumHighestActiveBids: $" + userSumHighestActiveBids);
-        console.log("sumHighestCompletedAndUnfrozenBids: $" + userSumHighestCompletedAndUnfrozenBids);
-        console.log("itemPrice: $" + itemPrice);
-        console.log("currentBalance: $" + currentBalance);
-        if (userSumHighestActiveBids + userSumHighestCompletedAndUnfrozenBids + 
-          itemPrice > currentBalance) {
+        if (!(buyNowItem && !itemAlreadyBought)) {
+          console.log("buyNowItem: ", buyNowItem);
+          console.log("itemAlreadyBought: ", itemAlreadyBought);
           response.statusCode = 400;
-          response.error = "Not enough funds available to buy this item"
+          response.error = "Either the item is not a buy now item or item has already been bought";
         } else {
-          const [updatedActivityStatus, placedBid] = await Promise.all([
-            updateActivityStatusToCompleted(itemID),
-            placeBid(itemID, itemPrice, username)
-          ]);
-          if (!updatedActivityStatus || !placedBid ) {
-            if (!updatedActivityStatus) {
-              console.log("Item ActivityStatus could not be successfully updated to 'Completed'");
-            }
-            if (!placedBid) {
-              console.log("Bid for buy item could not be placed successfully")
-            }
+          const [userSumHighestActiveBids, userSumHighestCompletedAndUnfrozenBids, itemPrice, currentBalance] = await Promise.all([
+            sumHighestActiveBids(username),
+            sumHighestCompletedAndUnfrozenBids(username),
+            getItemPrice(itemID),
+            getCurrentBalance(username)
+          ])
+          console.log("sumHighestActiveBids: $" + userSumHighestActiveBids);
+          console.log("sumHighestCompletedAndUnfrozenBids: $" + userSumHighestCompletedAndUnfrozenBids);
+          console.log("itemPrice: $" + itemPrice);
+          console.log("currentBalance: $" + currentBalance);
+          if (userSumHighestActiveBids + userSumHighestCompletedAndUnfrozenBids +
+            itemPrice > currentBalance) {
             response.statusCode = 400;
-            response.error = "Item could not be bought successfully"
+            response.error = "Not enough funds available to buy this item"
           } else {
-            const [updatedItem, updatedBid] = await Promise.all([
-              getRecentlyBoughtItem(itemID),
-              getBoughtBid(placedBid) 
+            const [updatedActivityStatus, placedBid] = await Promise.all([
+              updateActivityStatusToCompleted(itemID),
+              placeBid(itemID, itemPrice, username)
             ]);
-            updatedItem.Bids = [];
-            updatedItem.Bids.push(updatedBid);
-            console.log("Joined Updated Item: " + JSON.stringify(updatedItem));
-            response.statusCode = 200;
-            response.body = JSON.stringify(updatedItem);
+            if (!updatedActivityStatus || !placedBid) {
+              if (!updatedActivityStatus) {
+                console.log("Item ActivityStatus could not be successfully updated to 'Completed'");
+              }
+              if (!placedBid) {
+                console.log("Bid for buy item could not be placed successfully")
+              }
+              response.statusCode = 400;
+              response.error = "Item could not be bought successfully"
+            } else {
+              const [updatedItem, updatedBid] = await Promise.all([
+                getRecentlyBoughtItem(itemID),
+                getBoughtBid(placedBid)
+              ]);
+              updatedItem.Bids = [];
+              updatedItem.Bids.push(updatedBid);
+              console.log("Joined Updated Item: " + JSON.stringify(updatedItem));
+              response.statusCode = 200;
+              response.body = JSON.stringify(updatedItem);
+            }
           }
         }
       }
     }
-  } catch(error) {
+    else {
+      response.statusCode = 400;
+      response.error = "The purchase expiration has passed for this item."
+    }
+  } catch (error) {
     response.statusCode = 400;
     response.error = "Could not successfully buy the item. Error: " + error
   }
-  
+
   return response;
 };

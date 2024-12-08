@@ -11,13 +11,13 @@ const pool = mysql.createPool({
 
 function query(conx, sql, params) {
   return new Promise((resolve, reject) => {
-      conx.query(sql, params, function (err, rows) {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(rows);
-          }
-      });
+    conx.query(sql, params, function (err, rows) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
   });
 }
 
@@ -26,9 +26,9 @@ export const handler = async (event, context) => {
 
   let response = {
     headers: {
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST"
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST"
     }
   };
 
@@ -40,12 +40,26 @@ export const handler = async (event, context) => {
   const adjustTimeZone = () => {
     return new Promise((resolve, reject) => {
       pool.query("SET time_zone = 'America/New_York'", (error) => {
-        if(error) {
+        if (error) {
           console.log(`Error encountered: ${error}`)
           reject(error)
         }
         else {
           resolve()
+        }
+      })
+    })
+  }
+
+  const isExpiredItem = (itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("SELECT * FROM Item WHERE SYSDATE() > BidEndDate AND ItemID = ?", [itemID], (error, rows) => {
+        if (error) {
+          reject(error);
+        } else if (rows && rows.length > 0) {
+          return resolve(true)
+        } else {
+          return resolve(false)
         }
       })
     })
@@ -85,10 +99,10 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT IFNULL(COUNT(*), 0) AS NumOfBids FROM Bid " +
         "WHERE RelatedItemID = ?", [itemID], (error, rows) => {
-          if(error) {
+          if (error) {
             return reject(error);
           }
-          else if(rows && rows.length > 0) {
+          else if (rows && rows.length > 0) {
             return resolve(rows[0].NumOfBids)
           }
           else {
@@ -104,10 +118,10 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT InitialPrice FROM Item " +
         "WHERE ItemID = ?", [itemID], (error, rows) => {
-          if(error) {
+          if (error) {
             return reject(error);
           }
-          else if(rows && rows.length > 0) {
+          else if (rows && rows.length > 0) {
             return resolve(rows[0].InitialPrice)
           }
           else {
@@ -124,14 +138,14 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT IFNULL(MAX(AmountBid), 0) AS MaxBidOnItem FROM Bid " +
         "WHERE RelatedItemID = ?", [itemID], (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else if (rows && rows.length > 0) {
-          return resolve(rows[0].MaxBidOnItem);
-        } else {
-          return resolve(0);
-        }
-      })
+          if (error) {
+            return reject(error);
+          } else if (rows && rows.length > 0) {
+            return resolve(rows[0].MaxBidOnItem);
+          } else {
+            return resolve(0);
+          }
+        })
     })
   }
 
@@ -140,14 +154,14 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT IFNULL(MAX(AmountBid), 0) AS UserMaxBidOnItem FROM Bid " +
         "WHERE RelatedItemID = ? AND RelatedBuyer = ?", [itemID, username], (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else if (rows && rows.length > 0) {
-          return resolve(rows[0].UserMaxBidOnItem);
-        } else {
-          return resolve(0);
-        }
-      })
+          if (error) {
+            return reject(error);
+          } else if (rows && rows.length > 0) {
+            return resolve(rows[0].UserMaxBidOnItem);
+          } else {
+            return resolve(0);
+          }
+        })
     })
   }
 
@@ -157,14 +171,14 @@ export const handler = async (event, context) => {
         "SELECT RelatedBuyer FROM Bid WHERE RelatedItemID = ? AND AmountBid = " +
         "(SELECT IFNULL(MAX(AmountBid), 0) AS MaxBidOnItem FROM Bid " +
         "WHERE RelatedItemID = ?)", [itemID, itemID], (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else if (rows && rows.length > 0) {
-          return resolve(rows[0].RelatedBuyer);
-        } else {
-          return resolve(null);
-        }
-      })
+          if (error) {
+            return reject(error);
+          } else if (rows && rows.length > 0) {
+            return resolve(rows[0].RelatedBuyer);
+          } else {
+            return resolve(null);
+          }
+        })
     })
   }
 
@@ -175,17 +189,17 @@ export const handler = async (event, context) => {
       pool.query(
         "SELECT IFNULL(SUM(MaxBidOnItem), 0) AS TotalActiveBids " +
         "FROM (SELECT Item.ItemID, MAX(AmountBid) AS MaxBidOnItem FROM Item " +
-        "JOIN Bid ON Bid.RelatedItemID = Item.ItemID " + 
+        "JOIN Bid ON Bid.RelatedItemID = Item.ItemID " +
         "WHERE BidStartDate IS NOT NULL AND ActivityStatus = 'Active' AND SYSDATE() < BidEndDate AND RelatedBuyer = ? " +
         "GROUP BY Item.ItemID) AS GetItemsMaxBids", [username], (error, rows) => {
-        if (error) {
-          return reject(error);
-        } else if (rows && rows.length > 0) {
-          return resolve(rows[0].TotalActiveBids);
-        } else {
-          return resolve(0);
-        }
-      })
+          if (error) {
+            return reject(error);
+          } else if (rows && rows.length > 0) {
+            return resolve(rows[0].TotalActiveBids);
+          } else {
+            return resolve(0);
+          }
+        })
     })
   }
 
@@ -197,8 +211,8 @@ export const handler = async (event, context) => {
         "FROM (SELECT Item.ItemID, MAX(AmountBid) AS MaxBidOnItem " +
         "FROM Item JOIN Bid ON Bid.RelatedItemID = Item.ItemID " +
         "WHERE BidStartDate IS NOT NULL AND ActivityStatus = 'Completed' AND IsFrozen = FALSE AND RelatedBuyer = ? " +
-        "GROUP BY Item.ItemID) AS GetItemsMaxBids", 
-        [username], 
+        "GROUP BY Item.ItemID) AS GetItemsMaxBids",
+        [username],
         (error, rows) => {
           if (error) {
             return reject(error);
@@ -216,102 +230,109 @@ export const handler = async (event, context) => {
 
   const placeBid = (itemID, requestedBid, username) => {
     return new Promise((resolve, reject) => {
-        pool.query(
-            "INSERT INTO Bid (RelatedItemID, AmountBid, RelatedBuyer, PlacementDate) VALUES (?, ?, ?, SYSDATE())", [itemID, requestedBid, username], (error, result) => {  
-                if (error) {
-                    return reject(error);
-                }
-                if (result) {
-                    return resolve(result.insertId);
-                } else {
-                    return resolve(null);
-                }
-            }
-        );
+      pool.query(
+        "INSERT INTO Bid (RelatedItemID, AmountBid, RelatedBuyer, PlacementDate) VALUES (?, ?, ?, SYSDATE())", [itemID, requestedBid, username], (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          if (result) {
+            return resolve(result.insertId);
+          } else {
+            return resolve(null);
+          }
+        }
+      );
     });
-};
+  };
 
 
-let getNewBid = (insertID) => {
-  return new Promise((resolve, reject) => {
+  let getNewBid = (insertID) => {
+    return new Promise((resolve, reject) => {
       pool.query("SELECT * FROM Bid WHERE BidID=?", [insertID], (error, rows) => {
         if (error) { return reject(error); }
         if ((rows) && (rows.length > 0)) {
           return resolve(rows[0]);
-      } 
-      else {
+        }
+        else {
           return resolve(null);
-      }
+        }
       });
-  });
-};
+    });
+  };
 
 
   // Main query to publish item
   try {
-    const buyer = await buyerExists(username, password);
-    if(!buyer){
-      response.statusCode = 400;
-      response.error = "Invalid buyer credentials";
-    } else {
-      const itemBidCount = await countBidsForItem(itemID);
-      let currentHighestBidOnItem;
-      let currentBuyerHighestBidOnItem;
-      let absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem;
-      if(itemBidCount > 0) {
-        [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
-          getHighestBidOnItem(itemID), 
-          getHighestBidOnItemOfBuyer(itemID, username)
-        ])
-        console.log(currentHighestBidOnItem);
-        console.log(currentBuyerHighestBidOnItem);
-        absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid - currentBuyerHighestBidOnItem;
-        console.log(absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem);
-      }
-      else{
-        currentHighestBidOnItem = await getItemPrice(itemID);
-        console.log(`current highest bid:` + currentHighestBidOnItem);
-        currentBuyerHighestBidOnItem = 0;
-        absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid;
-      }
-      console.log(currentHighestBidOnItem);
-      console.log(200 <= currentHighestBidOnItem);
-      if(requestedBid <= currentHighestBidOnItem) {
+    const itemExpired = await isExpiredItem(itemID);
+    if (!itemExpired) {
+      const buyer = await buyerExists(username, password);
+      if (!buyer) {
         response.statusCode = 400;
-        response.error = "Requested bid on item must be greater than both the item's current highest bid and the item's original price.";
+        response.error = "Invalid buyer credentials";
       } else {
-        const buyerWithCurrentHighestBidOnItem = await getBuyerNameOfHighestBidOnItem(itemID);
-        console.log(buyerWithCurrentHighestBidOnItem);
-        if (username == buyerWithCurrentHighestBidOnItem) {
-          response.statusCode = 400;
-          response.error = "You currently have the highest bid on the item."
-        } else { 
-          const [currentBalance, sumOfBuyerHighestActiveBids, sumOfBuyerHighestCompletedAndUnfrozenBids] = await Promise.all([
-            getCurrentBuyerBalance(username, password),
-            sumHighestActiveBids(username),
-            sumHighestCompletedAndUnfrozenBids(username)
+        const itemBidCount = await countBidsForItem(itemID);
+        let currentHighestBidOnItem;
+        let currentBuyerHighestBidOnItem;
+        let absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem;
+        if (itemBidCount > 0) {
+          [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
+            getHighestBidOnItem(itemID),
+            getHighestBidOnItemOfBuyer(itemID, username)
           ])
-
-          console.log(currentBalance);
-          console.log(sumOfBuyerHighestActiveBids);
-          console.log(sumOfBuyerHighestCompletedAndUnfrozenBids);
-          if(absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem + sumOfBuyerHighestActiveBids + sumOfBuyerHighestCompletedAndUnfrozenBids > currentBalance){
+          console.log(currentHighestBidOnItem);
+          console.log(currentBuyerHighestBidOnItem);
+          absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid - currentBuyerHighestBidOnItem;
+          console.log(absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem);
+        }
+        else {
+          currentHighestBidOnItem = await getItemPrice(itemID);
+          console.log(`current highest bid:` + currentHighestBidOnItem);
+          currentBuyerHighestBidOnItem = 0;
+          absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid;
+        }
+        console.log(currentHighestBidOnItem);
+        console.log(200 <= currentHighestBidOnItem);
+        if (requestedBid <= currentHighestBidOnItem) {
+          response.statusCode = 400;
+          response.error = "Requested bid on item must be greater than both the item's current highest bid and the item's original price.";
+        } else {
+          const buyerWithCurrentHighestBidOnItem = await getBuyerNameOfHighestBidOnItem(itemID);
+          console.log(buyerWithCurrentHighestBidOnItem);
+          if (username == buyerWithCurrentHighestBidOnItem) {
             response.statusCode = 400;
-            response.error = "You do not have enough funds to place this bid on the item."
-          }
-          else {
-            const insertedBidID = await placeBid(itemID, requestedBid, username);
-            const getNewlyInsertedBid = await getNewBid(insertedBidID);
-            response.statusCode = 200;
-            response.body = JSON.stringify(getNewlyInsertedBid);
+            response.error = "You currently have the highest bid on the item."
+          } else {
+            const [currentBalance, sumOfBuyerHighestActiveBids, sumOfBuyerHighestCompletedAndUnfrozenBids] = await Promise.all([
+              getCurrentBuyerBalance(username, password),
+              sumHighestActiveBids(username),
+              sumHighestCompletedAndUnfrozenBids(username)
+            ])
+
+            console.log(currentBalance);
+            console.log(sumOfBuyerHighestActiveBids);
+            console.log(sumOfBuyerHighestCompletedAndUnfrozenBids);
+            if (absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem + sumOfBuyerHighestActiveBids + sumOfBuyerHighestCompletedAndUnfrozenBids > currentBalance) {
+              response.statusCode = 400;
+              response.error = "You do not have enough funds to place this bid on the item."
+            }
+            else {
+              const insertedBidID = await placeBid(itemID, requestedBid, username);
+              const getNewlyInsertedBid = await getNewBid(insertedBidID);
+              response.statusCode = 200;
+              response.body = JSON.stringify(getNewlyInsertedBid);
+            }
           }
         }
       }
     }
-  } catch(error) {
+    else {
+      response.statusCode = 400;
+      response.error = "The bid expiration has passed for this item."
+    }
+  } catch (error) {
     response.statusCode = 400;
     response.error = "Could not successfully insert the new bid on the item."
   }
-  
+
   return response;
 };
