@@ -384,7 +384,7 @@ export default function ViewSpecificItem() {
                                 </div>}
 
                             {/* Buy now button and alerts*/}
-                            {(itemType === "Buy Now" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0) &&
+                            {(itemType === "Buy Now" && biddingHistory.length == 0 && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0) &&
                                 <button
                                     className={(buyNowLoading) ?
                                         "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" :
