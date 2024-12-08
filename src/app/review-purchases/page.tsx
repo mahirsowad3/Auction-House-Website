@@ -41,7 +41,18 @@ export default function ListRecentlySoldItems() {
         const updatedItems = await updateItemsActivityStatus();
         if (updatedItems === 1) {
             try {
-                const response = await axios.get(`${baseURL}/fetch-recently-sold`);
+                const payload = {
+                    body: {
+                        username: sessionStorage.getItem("userName"),
+                        password: sessionStorage.getItem("password"),
+                    }
+                };
+                const response = await axios.post(`${baseURL}/review-purchases`, payload, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                console.log('Response from review-purchases:', JSON.parse(response.data.body));
                 const data = JSON.parse(response.data.body);
                 setItems(data);
             } catch (error) {
@@ -58,42 +69,42 @@ export default function ListRecentlySoldItems() {
 
     const viewItemDetails = (itemID: number) => {
         sessionStorage.setItem("viewItemID", itemID.toString());
-        router.push("view-items/view-specific-item");
+        router.push("/view-items/view-specific-item");
     };
 
     const filteredAndSortedItems = Array.isArray(items)
         ? items
-              .filter((item) => {
-                  // Filter by search term
-                  const matchesSearchTerm =
-                      item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                      item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase());
+            .filter((item) => {
+                // Filter by search term
+                const matchesSearchTerm =
+                    item.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.ItemDescription.toLowerCase().includes(searchTerm.toLowerCase());
 
-                  // Filter by price range
-                  const price = item.InitialPrice;
-                  const matchesPriceRange =
-                      (!minPrice || price >= parseFloat(minPrice)) &&
-                      (!maxPrice || price <= parseFloat(maxPrice));
+                // Filter by price range
+                const price = item.InitialPrice;
+                const matchesPriceRange =
+                    (!minPrice || price >= parseFloat(minPrice)) &&
+                    (!maxPrice || price <= parseFloat(maxPrice));
 
-                  return matchesSearchTerm && matchesPriceRange;
-              })
-              .sort((a, b) => {
-                  if (sortOption === "price") {
-                      const priceA = a.InitialPrice;
-                      const priceB = b.InitialPrice;
-                      return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
-                  } else if (sortOption === "publishedDate") {
-                      return sortOrder === "asc"
-                          ? new Date(a.PublishedDate).getTime() - new Date(b.PublishedDate).getTime()
-                          : new Date(b.PublishedDate).getTime() - new Date(a.PublishedDate).getTime();
-                  } else if (sortOption === "expirationDate") {
-                      return sortOrder === "asc"
-                          ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
-                          : new Date(b.BidEndDate).getTime() - new Date(a.BidEndDate).getTime();
-                  } else {
-                      return 0;
-                  }
-              })
+                return matchesSearchTerm && matchesPriceRange;
+            })
+            .sort((a, b) => {
+                if (sortOption === "price") {
+                    const priceA = a.InitialPrice;
+                    const priceB = b.InitialPrice;
+                    return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
+                } else if (sortOption === "publishedDate") {
+                    return sortOrder === "asc"
+                        ? new Date(a.PublishedDate).getTime() - new Date(b.PublishedDate).getTime()
+                        : new Date(b.PublishedDate).getTime() - new Date(a.PublishedDate).getTime();
+                } else if (sortOption === "expirationDate") {
+                    return sortOrder === "asc"
+                        ? new Date(a.BidEndDate).getTime() - new Date(b.BidEndDate).getTime()
+                        : new Date(b.BidEndDate).getTime() - new Date(a.BidEndDate).getTime();
+                } else {
+                    return 0;
+                }
+            })
         : [];
 
     if (loading) {
@@ -106,7 +117,7 @@ export default function ListRecentlySoldItems() {
 
     return (
         <main className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold text-start mb-6">Recently Sold Items</h1>
+            <h1 className="text-3xl font-bold text-start mb-6">Items Where You Have Active Bids</h1>
 
             {/* Search and Sort Section */}
             <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
@@ -153,7 +164,7 @@ export default function ListRecentlySoldItems() {
 
             {/* Items Grid */}
             {filteredAndSortedItems.length === 0 ? (
-                <p className="text-center text-gray-600">No recently sold items found.</p>
+                <p className="text-center text-gray-600">You currently have not made any purchases.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {filteredAndSortedItems.map((item) => {
@@ -193,25 +204,25 @@ export default function ListRecentlySoldItems() {
                                 <p className="text-gray-600 mb-2">
                                     <strong>Published DateTime:</strong>{" "}
                                     {new Date(item.PublishedDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                    hour12: false,
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: false,
                                     })}
                                 </p>
                                 <p className="text-gray-600 mb-2">
                                     <strong>Expiration DateTime:</strong>{" "}
                                     {new Date(item.BidEndDate.replace(" ", "T")).toLocaleDateString("en-US", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                    hour12: false,
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: false,
                                     })}
                                 </p>
                                 <p className="text-gray-600 mb-2">
