@@ -117,7 +117,7 @@ export default function ListRecentlySoldItems() {
 
     return (
         <main className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold text-start mb-6">Items Where You Have Active Bids</h1>
+            <h1 className="text-3xl font-bold text-start mb-6">Purchased Items</h1>
 
             {/* Search and Sort Section */}
             <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
