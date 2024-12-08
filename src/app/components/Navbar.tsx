@@ -54,6 +54,17 @@ const Navbar = () => {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.AccountFunds;
                 }
+            
+            } else if (userType === "Admin") {
+                const response = await axios.post(
+                    `${baseURL}/get-admin-information`,
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                if (response.data?.body) {
+                    const parsedBody = JSON.parse(response.data.body);
+                    fundsResponse = parsedBody?.TotalACFunds;
+                }
             }
 
             if (fundsResponse) {
@@ -168,7 +179,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
-                                    {userType !== 'Seller' && (
+                                    {userType !== 'Seller' && userType !== 'Admin' && (
                                         <Link
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -255,7 +266,7 @@ const Navbar = () => {
                                     Create Account
                                 </Link>
                             )}
-                            {userName && (
+                            {userName && userType !== 'Admin' && (
                                 <button
                                     onClick={handleCloseAccount}
                                     className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
