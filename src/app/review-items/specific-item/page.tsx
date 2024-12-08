@@ -495,7 +495,7 @@ export default function Home() {
                             </div>}
                     </div>}
                 {/* Buttons */}
-                {!isFrozen &&
+                
                     <div className="flex justify-between mt-4 mb-8">
                         {activityStatus?.toLowerCase() === "inactive" &&
                             <button
@@ -517,7 +517,7 @@ export default function Home() {
                                     <LoadingSpinner /> :
                                     "Publish Item"}
                             </button>}
-                        {activityStatus?.toLowerCase() === "active" && bids.length === 0 &&
+                        {activityStatus?.toLowerCase() === "active" && bids.length === 0 && !isFrozen &&
                             <button
                                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                                 onClick={handleUnpublishItem}>
@@ -540,7 +540,7 @@ export default function Home() {
                                 onClick={handleArchiveItem}>
                                 Archive Item
                             </button>)}
-                        {activityStatus?.toLowerCase() === "completed" && (
+                        {activityStatus?.toLowerCase() === "completed" && !isFrozen &&(
                             <button
                                 onClick={handleFulfillItem}
                                 disabled={fulfillItemLoading}
@@ -548,7 +548,7 @@ export default function Home() {
                                 {fulfillItemLoading ? <LoadingSpinner /> : "Fulfill Item"}
                             </button>
                         )}
-                    </div>}
+                    </div>
                 {/* Request Unfreeze */}
                 {isFrozen === 1 &&
                     <div className="flex justify-center items-center mt-4 mb-8">
