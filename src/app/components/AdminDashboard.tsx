@@ -12,10 +12,10 @@ const AdminDashboard = () => {
 
                 <div className="space-y-4">
                     <button
-                        onClick={() => alert('Freeze/Unfreeze Item clicked')}
+                        onClick={() => alert('Unfreeze Item clicked')}
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                     >
-                        Freeze/Unfreeze Item
+                        Unfreeze Item
                     </button>
 
                     <button
