@@ -42,26 +42,35 @@ export const handler = async (event, context) => {
             throw new Error("Invalid request body format");
         }
 
-        const { username, password, itemID } = body;
+        const { username, password, itemID, userType } = body;
 
-        if (!username || !password || !itemID) {
-            throw new Error("Missing required parameters: username, password, or itemID");
+        if (!username || !password || !itemID || !userType) {
+            throw new Error("Missing required parameters: username, password, or itemID, or userType");
         }
         
 
-        // Validate buyer credentials
-        const buyerQuery = `
-            SELECT Username
-            FROM Buyer
-            WHERE Username = ? AND Password = ?
-        `;
-        const buyerResult = await query(buyerQuery, [username, password]);
-
-        if (buyerResult.length === 0) {
-            throw new Error("Invalid buyer credentials");
-        }
-
-
+          // Validate credentials based on user type
+          let userQuery;
+          if (userType === "Admin") {
+              userQuery = `  
+                  SELECT Username  
+                  FROM Admin  
+                  WHERE Username = ? AND Password = ?  
+              `;  
+          } else if (userType === "Buyer") {  
+              userQuery = `  
+                  SELECT Username 
+                  FROM Buyer 
+                  WHERE Username = ? AND Password = ? 
+              `;  
+          } else {  
+              throw new Error("Invalid userType. Must be 'Admin' or 'Buyer'.");  
+          }  
+    
+          const userResult = await query(userQuery, [username, password]);  
+          if (userResult.length === 0) {  
+              throw new Error("Invalid credentials");  
+          }
 
         // Query to get item details
         const itemDetailsQuery = `
@@ -139,10 +148,11 @@ export const handler = async (event, context) => {
                 BuyerSoldTo: item.BuyerSoldTo
             },
             biddingHistory: biddingHistory,
-            buyerDetails: {
+            userDetails: {
                 Username: username,
-                CanPlaceHigherBid: !isExpired && !isSold, // Assume they can bid if auction is active
-                CanPlaceCustomBid: !isExpired && !isSold, // Assume they can bid if auction is active
+                Role: userType, // Added role for clarity
+                CanPlaceHigherBid: userType === "Buyer" && !isExpired && !isSold, // Only Buyers can bid
+                CanPlaceCustomBid: userType === "Buyer" && !isExpired && !isSold, // Only Buyers can bid
             },
         });
     } catch (error) {
@@ -156,4 +166,3 @@ export const handler = async (event, context) => {
 
     return response;
 };
-

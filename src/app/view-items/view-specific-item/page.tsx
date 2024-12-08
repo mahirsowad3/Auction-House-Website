@@ -71,6 +71,7 @@ export default function ViewSpecificItem() {
     const [placeBidError, setPlaceBidError] = useState<string>('');
     const [placeBidSuccess, setPlaceBidSuccess] = useState<string>('');
     const [Bid, setBid] = React.useState<string>('');
+    const userType = sessionStorage.getItem("userType"); // Get user type from session storage
     const [buyNowSuccess, setBuyNowSuccess] = useState<string>('');
     const [buyNowError, setBuyNowError] = useState<string>('');
     const [buyNowLoading, setBuyNowLoading] = useState<boolean>(false);
@@ -112,6 +113,7 @@ export default function ViewSpecificItem() {
                         username: sessionStorage.getItem("userName"),
                         password: sessionStorage.getItem("password"),
                         itemID: parseInt(itemID),
+                        userType, // Include userType in the request
                     },
                 };
 
@@ -346,7 +348,7 @@ export default function ViewSpecificItem() {
                         {/* Place bid and buy now functionality below */}
                         <div>
                             {/* Place bid field, buttons, and alerts */}
-                            {itemType === "Bidding" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0 && (
+                            {userType === "Buyer" && itemType === "Bidding" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0 && (
                                 <div>
                                     <div>
                                         <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
@@ -384,7 +386,7 @@ export default function ViewSpecificItem() {
                                 </div>}
 
                             {/* Buy now button and alerts*/}
-                            {(itemType === "Buy Now" && biddingHistory.length == 0 && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0) &&
+                            {(userType === "Buyer" && itemType === "Buy Now" && biddingHistory.length == 0 && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0) &&
                                 <button
                                     className={(buyNowLoading) ?
                                         "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" :
