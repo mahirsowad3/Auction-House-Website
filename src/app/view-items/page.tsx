@@ -61,6 +61,31 @@ export default function ListItems() {
         router.push("view-items/view-specific-item");
     };
 
+    const updateItemStatus = async (itemID: number, action: "freeze" | "unfreeze"): Promise<void> => {
+        console.log(`Attempting to ${action} item with ID:`, itemID);
+    
+        try {
+            const response = await axios.post(`${baseURL}/freeze-items`, {
+                body: {
+                    action: action,
+                    ItemID: itemID,
+                },
+            });
+    
+            console.log(`Backend response for ${action}:`, response.data);
+    
+            if (response.status === 200) {
+                alert(`Item successfully ${action}d.`);
+                fetchItems(); // Refresh the list after the action
+            } else {
+                alert(`Failed to ${action} the item.`);
+            }
+        } catch (error) {
+            console.error(`Error during ${action}:`, error);
+            alert(`An error occurred while trying to ${action} the item.`);
+        }
+    };
+
     const filteredAndSortedItems = Array.isArray(items)
         ? items
               .filter((item) => {
@@ -215,6 +240,23 @@ export default function ListItems() {
                                     })}
                                 </p>
                                 <p className="text-gray-700 mb-4">{item.ItemDescription}</p>
+                                {sessionStorage.getItem("userType") === "Admin" && (
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            console.log("ItemID passed to updateItemStatus:", item.ItemID);
+                                            const action = item.IsFrozen ? "unfreeze" : "freeze";
+                                            updateItemStatus(item.ItemID, action);
+                                        }}
+                                        className={`mt-2 px-4 py-2 rounded text-white ${
+                                            item.IsFrozen ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
+                                        }`}
+                                    >
+                                        {item.IsFrozen ? "Unfreeze" : "Freeze"}
+                                    </button>
+                                </>
+                            )}
+
                                 {sessionStorage.getItem("userType") === "Buyer" && (
                                     <button
                                         onClick={() => viewItemDetails(item.ItemID)}

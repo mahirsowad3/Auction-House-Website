@@ -179,7 +179,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
-                                    {userType !== 'Seller' && userType !== 'Admin' && (
+                                    {userType !== 'Seller' && (
                                         <Link
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
