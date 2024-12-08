@@ -86,7 +86,7 @@ export const handler = async (event, context) => {
   const requestUnfreeze = (itemID) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        "UPDATE Item SET IsFrozen = 1 " +
+        "UPDATE Item SET requestedUnfreeze = 1 " +
         "WHERE ItemID = ?", [itemID], (error, result) => {
           if(error) {
             return reject(error);
