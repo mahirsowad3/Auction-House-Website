@@ -54,6 +54,9 @@ const Navbar = () => {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.AccountFunds;
                 }
+            
+            } else if (userType === "Admin") {
+                fundsResponse = 10000; 
             }
 
             if (fundsResponse) {
@@ -168,7 +171,7 @@ const Navbar = () => {
                             </div>
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
-                                    {userType !== 'Seller' && (
+                                    {userType !== 'Seller' && userType !== 'Admin' && (
                                         <Link
                                             href="/view-items"
                                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -205,6 +208,12 @@ const Navbar = () => {
                                                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                             >
                                                 Review Active Bids
+                                            </Link>
+                                            <Link
+                                                href="/review-purchases"
+                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                            >
+                                                Review Purchases
                                             </Link>
                                             <Link
                                                 href="/add-funds"
@@ -249,7 +258,7 @@ const Navbar = () => {
                                     Create Account
                                 </Link>
                             )}
-                            {userName && (
+                            {userName && userType !== 'Admin' && (
                                 <button
                                     onClick={handleCloseAccount}
                                     className="text-gray-300 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
