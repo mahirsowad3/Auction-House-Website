@@ -414,10 +414,16 @@ export default function ViewSpecificItem() {
                                         <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item is frozen and cannot receive any new bids at the moment.</label>
                                     </div>
                                 </div>)}
-                            {itemType === "Buy Now" && itemDetails.IsFrozen == 1 && (
+                            {itemType === "Buy Now" && itemDetails.IsFrozen == 1 && biddingHistory.length == 0 && (
                                 <div>
                                     <div>
                                         <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item is frozen and cannot be bought at the moment.</label>
+                                    </div>
+                                </div>)}
+                            {itemType === "Buy Now" && biddingHistory.length > 0 && (
+                                <div>
+                                    <div>
+                                        <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item has already been bought.</label>
                                     </div>
                                 </div>)}
                         </div>
