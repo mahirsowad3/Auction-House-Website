@@ -1,4 +1,4 @@
-"use client"; // Mark this file as a client component
+"use client";
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -9,6 +9,7 @@ const AdminUnfreezeRequests = () => {
     const [unfreezeRequests, setUnfreezeRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showTable, setShowTable] = useState(false);
 
     // Fetch unfreeze requests
     const fetchUnfreezeRequests = async () => {
@@ -68,54 +69,71 @@ const AdminUnfreezeRequests = () => {
         }
     };
 
-    useEffect(() => {
+    // Show table and fetch data when the button is clicked
+    const handleShowRequests = () => {
+        setShowTable(true);
         fetchUnfreezeRequests();
-    }, []);
+    };
 
     return (
         <main className="container mx-auto mt-5">
-            <h1 className="text-4xl mb-6">Unfreeze Requests</h1>
+            <h1 className="text-4xl mb-6">Admin Dashboard</h1>
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p className="text-red-500">{error}</p>
-            ) : (
-                <table className="table-auto w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="border border-gray-300 px-4 py-2">Item ID</th>
-                            <th className="border border-gray-300 px-4 py-2">Name</th>
-                            <th className="border border-gray-300 px-4 py-2">Description</th>
-                            <th className="border border-gray-300 px-4 py-2">Creator</th>
-                            <th className="border border-gray-300 px-4 py-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {unfreezeRequests.map((item: any) => (
-                            <tr key={item.ItemID}>
-                                <td className="border border-gray-300 px-4 py-2">{item.ItemID}</td>
-                                <td className="border border-gray-300 px-4 py-2">{item.Name}</td>
-                                <td className="border border-gray-300 px-4 py-2">{item.Description}</td>
-                                <td className="border border-gray-300 px-4 py-2">{item.Creator}</td>
-                                <td className="border border-gray-300 px-4 py-2 space-x-2">
-                                    <button
-                                        onClick={() => handleUnfreeze(item.ItemID)}
-                                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                                    >
-                                        Unfreeze
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeny(item.ItemID)}
-                                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                    >
-                                        Deny
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            {/* Button to show unfreeze requests */}
+            {!showTable && (
+                <button
+                    onClick={handleShowRequests}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                    Show Unfreeze Requests
+                </button>
+            )}
+
+            {/* Table of unfreeze requests */}
+            {showTable && (
+                <>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : error ? (
+                        <p className="text-red-500">{error}</p>
+                    ) : (
+                        <table className="table-auto w-full border-collapse border border-gray-300 mt-4">
+                            <thead>
+                                <tr className="bg-gray-200">
+                                    <th className="border border-gray-300 px-4 py-2">Item ID</th>
+                                    <th className="border border-gray-300 px-4 py-2">Name</th>
+                                    <th className="border border-gray-300 px-4 py-2">Description</th>
+                                    <th className="border border-gray-300 px-4 py-2">Creator</th>
+                                    <th className="border border-gray-300 px-4 py-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {unfreezeRequests.map((item: any) => (
+                                    <tr key={item.ItemID}>
+                                        <td className="border border-gray-300 px-4 py-2">{item.ItemID}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.Name}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.Description}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.Creator}</td>
+                                        <td className="border border-gray-300 px-4 py-2 space-x-2">
+                                            <button
+                                                onClick={() => handleUnfreeze(item.ItemID)}
+                                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                                            >
+                                                Unfreeze
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeny(item.ItemID)}
+                                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                            >
+                                                Deny
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </>
             )}
         </main>
     );
