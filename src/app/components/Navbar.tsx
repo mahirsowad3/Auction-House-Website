@@ -56,7 +56,15 @@ const Navbar = () => {
                 }
             
             } else if (userType === "Admin") {
-                fundsResponse = 10000; 
+                const response = await axios.post(
+                    `${baseURL}/get-admin-information`,
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                if (response.data?.body) {
+                    const parsedBody = JSON.parse(response.data.body);
+                    fundsResponse = parsedBody?.TotalACFunds;
+                }
             }
 
             if (fundsResponse) {
