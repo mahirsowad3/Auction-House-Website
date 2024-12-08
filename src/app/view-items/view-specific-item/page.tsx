@@ -20,6 +20,7 @@ interface ItemDetailsProps {
     IsBuyNow: number;
     IsExpired: number;
     IsSold: number;
+    IsFrozen: number;
     ItemID: number;
     Name: string;
 };
@@ -345,7 +346,7 @@ export default function ViewSpecificItem() {
                         {/* Place bid and buy now functionality below */}
                         <div>
                             {/* Place bid field, buttons, and alerts */}
-                            {itemType === "Bidding" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && (
+                            {itemType === "Bidding" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0 && (
                                 <div>
                                     <div>
                                         <label htmlFor="custom_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Custom Bid Amount:</label>
@@ -366,6 +367,7 @@ export default function ViewSpecificItem() {
                                         !(placeBidLoading) ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3" : "bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed my-3"}>{placeBidLoading ? <LoadingSpinner></LoadingSpinner> : "Place Next Highest Bid (The Item's Current Highest Bid + 1)"}
                                     </button>
                                 </div>)}
+
                             {placeBidError != '' &&
                                 <div className="mt-4 rounded bg-red-200 p-2">
                                     <h2 className="text-2xl">Error: </h2>
@@ -382,7 +384,7 @@ export default function ViewSpecificItem() {
                                 </div>}
 
                             {/* Buy now button and alerts*/}
-                            {(itemType === "Buy Now" && !itemDetails.IsSold) &&
+                            {(itemType === "Buy Now" && itemDetails.IsSold == 0 && itemDetails.IsExpired == 0 && itemDetails.IsFrozen == 0) &&
                                 <button
                                     className={(buyNowLoading) ?
                                         "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" :
@@ -406,6 +408,18 @@ export default function ViewSpecificItem() {
                                     </p>
                                 </div>
                             }
+                            {itemType === "Bidding" && itemDetails.IsFrozen == 1 && (
+                                <div>
+                                    <div>
+                                        <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item is frozen and cannot receive any new bids at the moment.</label>
+                                    </div>
+                                </div>)}
+                            {itemType === "Buy Now" && itemDetails.IsFrozen == 1 && (
+                                <div>
+                                    <div>
+                                        <label htmlFor="frozen_item_bid" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">This item is frozen and cannot be bought at the moment.</label>
+                                    </div>
+                                </div>)}
                         </div>
                     </div>
                     {itemDetails.Images && itemDetails.Images.length > 0 && (
