@@ -51,6 +51,20 @@ export const handler = async (event, context) => {
     })
   }
 
+  const isFrozenItem = (itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("SELECT * FROM Item WHERE isFrozen = 1 AND ItemID = ?", [itemID], (error, rows) => {
+        if (error) {
+          reject(error);
+        } else if (rows && rows.length > 0) {
+          return resolve(true)
+        } else {
+          return resolve(false)
+        }
+      })
+    })
+  }
+
   const isExpiredItem = (itemID) => {
     return new Promise((resolve, reject) => {
       pool.query("SELECT * FROM Item WHERE SYSDATE() > BidEndDate AND ItemID = ?", [itemID], (error, rows) => {
@@ -263,71 +277,78 @@ export const handler = async (event, context) => {
 
   // Main query to publish item
   try {
-    const itemExpired = await isExpiredItem(itemID);
-    if (!itemExpired) {
-      const buyer = await buyerExists(username, password);
-      if (!buyer) {
-        response.statusCode = 400;
-        response.error = "Invalid buyer credentials";
-      } else {
-        const itemBidCount = await countBidsForItem(itemID);
-        let currentHighestBidOnItem;
-        let currentBuyerHighestBidOnItem;
-        let absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem;
-        if (itemBidCount > 0) {
-          [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
-            getHighestBidOnItem(itemID),
-            getHighestBidOnItemOfBuyer(itemID, username)
-          ])
-          console.log(currentHighestBidOnItem);
-          console.log(currentBuyerHighestBidOnItem);
-          absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid - currentBuyerHighestBidOnItem;
-          console.log(absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem);
-        }
-        else {
-          currentHighestBidOnItem = await getItemPrice(itemID);
-          console.log(`current highest bid:` + currentHighestBidOnItem);
-          currentBuyerHighestBidOnItem = 0;
-          absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid;
-        }
-        console.log(currentHighestBidOnItem);
-        console.log(200 <= currentHighestBidOnItem);
-        if (requestedBid <= currentHighestBidOnItem) {
+    const itemFrozen = await isFrozenItem(itemID);
+    if (!itemFrozen) {
+      const itemExpired = await isExpiredItem(itemID);
+      if (!itemExpired) {
+        const buyer = await buyerExists(username, password);
+        if (!buyer) {
           response.statusCode = 400;
-          response.error = "Requested bid on item must be greater than both the item's current highest bid and the item's original price.";
+          response.error = "Invalid buyer credentials";
         } else {
-          const buyerWithCurrentHighestBidOnItem = await getBuyerNameOfHighestBidOnItem(itemID);
-          console.log(buyerWithCurrentHighestBidOnItem);
-          if (username == buyerWithCurrentHighestBidOnItem) {
-            response.statusCode = 400;
-            response.error = "You currently have the highest bid on the item."
-          } else {
-            const [currentBalance, sumOfBuyerHighestActiveBids, sumOfBuyerHighestCompletedAndUnfrozenBids] = await Promise.all([
-              getCurrentBuyerBalance(username, password),
-              sumHighestActiveBids(username),
-              sumHighestCompletedAndUnfrozenBids(username)
+          const itemBidCount = await countBidsForItem(itemID);
+          let currentHighestBidOnItem;
+          let currentBuyerHighestBidOnItem;
+          let absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem;
+          if (itemBidCount > 0) {
+            [currentHighestBidOnItem, currentBuyerHighestBidOnItem] = await Promise.all([
+              getHighestBidOnItem(itemID),
+              getHighestBidOnItemOfBuyer(itemID, username)
             ])
-
-            console.log(currentBalance);
-            console.log(sumOfBuyerHighestActiveBids);
-            console.log(sumOfBuyerHighestCompletedAndUnfrozenBids);
-            if (absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem + sumOfBuyerHighestActiveBids + sumOfBuyerHighestCompletedAndUnfrozenBids > currentBalance) {
+            console.log(currentHighestBidOnItem);
+            console.log(currentBuyerHighestBidOnItem);
+            absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid - currentBuyerHighestBidOnItem;
+            console.log(absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem);
+          }
+          else {
+            currentHighestBidOnItem = await getItemPrice(itemID);
+            console.log(`current highest bid:` + currentHighestBidOnItem);
+            currentBuyerHighestBidOnItem = 0;
+            absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem = requestedBid;
+          }
+          console.log(currentHighestBidOnItem);
+          console.log(200 <= currentHighestBidOnItem);
+          if (requestedBid <= currentHighestBidOnItem) {
+            response.statusCode = 400;
+            response.error = "Requested bid on item must be greater than both the item's current highest bid and the item's original price.";
+          } else {
+            const buyerWithCurrentHighestBidOnItem = await getBuyerNameOfHighestBidOnItem(itemID);
+            console.log(buyerWithCurrentHighestBidOnItem);
+            if (username == buyerWithCurrentHighestBidOnItem) {
               response.statusCode = 400;
-              response.error = "You do not have enough funds to place this bid on the item."
-            }
-            else {
-              const insertedBidID = await placeBid(itemID, requestedBid, username);
-              const getNewlyInsertedBid = await getNewBid(insertedBidID);
-              response.statusCode = 200;
-              response.body = JSON.stringify(getNewlyInsertedBid);
+              response.error = "You currently have the highest bid on the item."
+            } else {
+              const [currentBalance, sumOfBuyerHighestActiveBids, sumOfBuyerHighestCompletedAndUnfrozenBids] = await Promise.all([
+                getCurrentBuyerBalance(username, password),
+                sumHighestActiveBids(username),
+                sumHighestCompletedAndUnfrozenBids(username)
+              ])
+
+              console.log(currentBalance);
+              console.log(sumOfBuyerHighestActiveBids);
+              console.log(sumOfBuyerHighestCompletedAndUnfrozenBids);
+              if (absoluteDifferenceBetweenRequestedBidAndHighestBuyerBidOnItem + sumOfBuyerHighestActiveBids + sumOfBuyerHighestCompletedAndUnfrozenBids > currentBalance) {
+                response.statusCode = 400;
+                response.error = "You do not have enough funds to place this bid on the item."
+              }
+              else {
+                const insertedBidID = await placeBid(itemID, requestedBid, username);
+                const getNewlyInsertedBid = await getNewBid(insertedBidID);
+                response.statusCode = 200;
+                response.body = JSON.stringify(getNewlyInsertedBid);
+              }
             }
           }
         }
       }
+      else {
+        response.statusCode = 400;
+        response.error = "The bid expiration has passed for this item."
+      }
     }
     else {
       response.statusCode = 400;
-      response.error = "The bid expiration has passed for this item."
+      response.error = "This item is frozen and currently cannot receive new bids."
     }
   } catch (error) {
     response.statusCode = 400;

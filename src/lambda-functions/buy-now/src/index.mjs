@@ -52,6 +52,20 @@ export const handler = async (event, context) => {
     })
   }
 
+  const isFrozenItem = (itemID) => {
+    return new Promise((resolve, reject) => {
+      pool.query("SELECT * FROM Item WHERE isFrozen = 1 AND ItemID = ?", [itemID], (error, rows) => {
+        if (error) {
+          reject(error);
+        } else if (rows && rows.length > 0) {
+          return resolve(true)
+        } else {
+          return resolve(false)
+        }
+      })
+    })
+  }
+
   const isExpiredItem = (itemID) => {
     return new Promise((resolve, reject) => {
       pool.query("SELECT * FROM Item WHERE SYSDATE() > BidEndDate AND ItemID = ?", [itemID], (error, rows) => {
@@ -245,70 +259,77 @@ export const handler = async (event, context) => {
 
   // Main query to buy the item
   try {
-    const itemExpired = await isExpiredItem(itemID);
-    if (!itemExpired) {
-      const buyer = await buyerExists(username, password);
-      console.log("buyer: ", buyer);
-      if (!buyer) {
-        response.statusCode = 400;
-        response.error = "Invalid buyer credentials";
-      } else {
-        const [buyNowItem, itemAlreadyBought] = await Promise.all([
-          isBuyNowItem(itemID),
-          checkIfItemHasBeenBought(itemID)
-        ])
-        if (!(buyNowItem && !itemAlreadyBought)) {
-          console.log("buyNowItem: ", buyNowItem);
-          console.log("itemAlreadyBought: ", itemAlreadyBought);
+    const itemFrozen = await isFrozenItem(itemID);
+    if (!itemFrozen) {
+      const itemExpired = await isExpiredItem(itemID);
+      if (!itemExpired) {
+        const buyer = await buyerExists(username, password);
+        console.log("buyer: ", buyer);
+        if (!buyer) {
           response.statusCode = 400;
-          response.error = "Either the item is not a buy now item or item has already been bought";
+          response.error = "Invalid buyer credentials";
         } else {
-          const [userSumHighestActiveBids, userSumHighestCompletedAndUnfrozenBids, itemPrice, currentBalance] = await Promise.all([
-            sumHighestActiveBids(username),
-            sumHighestCompletedAndUnfrozenBids(username),
-            getItemPrice(itemID),
-            getCurrentBalance(username)
+          const [buyNowItem, itemAlreadyBought] = await Promise.all([
+            isBuyNowItem(itemID),
+            checkIfItemHasBeenBought(itemID)
           ])
-          console.log("sumHighestActiveBids: $" + userSumHighestActiveBids);
-          console.log("sumHighestCompletedAndUnfrozenBids: $" + userSumHighestCompletedAndUnfrozenBids);
-          console.log("itemPrice: $" + itemPrice);
-          console.log("currentBalance: $" + currentBalance);
-          if (userSumHighestActiveBids + userSumHighestCompletedAndUnfrozenBids +
-            itemPrice > currentBalance) {
+          if (!(buyNowItem && !itemAlreadyBought)) {
+            console.log("buyNowItem: ", buyNowItem);
+            console.log("itemAlreadyBought: ", itemAlreadyBought);
             response.statusCode = 400;
-            response.error = "Not enough funds available to buy this item"
+            response.error = "Either the item is not a buy now item or item has already been bought";
           } else {
-            const [updatedActivityStatus, placedBid] = await Promise.all([
-              updateActivityStatusToCompleted(itemID),
-              placeBid(itemID, itemPrice, username)
-            ]);
-            if (!updatedActivityStatus || !placedBid) {
-              if (!updatedActivityStatus) {
-                console.log("Item ActivityStatus could not be successfully updated to 'Completed'");
-              }
-              if (!placedBid) {
-                console.log("Bid for buy item could not be placed successfully")
-              }
+            const [userSumHighestActiveBids, userSumHighestCompletedAndUnfrozenBids, itemPrice, currentBalance] = await Promise.all([
+              sumHighestActiveBids(username),
+              sumHighestCompletedAndUnfrozenBids(username),
+              getItemPrice(itemID),
+              getCurrentBalance(username)
+            ])
+            console.log("sumHighestActiveBids: $" + userSumHighestActiveBids);
+            console.log("sumHighestCompletedAndUnfrozenBids: $" + userSumHighestCompletedAndUnfrozenBids);
+            console.log("itemPrice: $" + itemPrice);
+            console.log("currentBalance: $" + currentBalance);
+            if (userSumHighestActiveBids + userSumHighestCompletedAndUnfrozenBids +
+              itemPrice > currentBalance) {
               response.statusCode = 400;
-              response.error = "Item could not be bought successfully"
+              response.error = "Not enough funds available to buy this item"
             } else {
-              const [updatedItem, updatedBid] = await Promise.all([
-                getRecentlyBoughtItem(itemID),
-                getBoughtBid(placedBid)
+              const [updatedActivityStatus, placedBid] = await Promise.all([
+                updateActivityStatusToCompleted(itemID),
+                placeBid(itemID, itemPrice, username)
               ]);
-              updatedItem.Bids = [];
-              updatedItem.Bids.push(updatedBid);
-              console.log("Joined Updated Item: " + JSON.stringify(updatedItem));
-              response.statusCode = 200;
-              response.body = JSON.stringify(updatedItem);
+              if (!updatedActivityStatus || !placedBid) {
+                if (!updatedActivityStatus) {
+                  console.log("Item ActivityStatus could not be successfully updated to 'Completed'");
+                }
+                if (!placedBid) {
+                  console.log("Bid for buy item could not be placed successfully")
+                }
+                response.statusCode = 400;
+                response.error = "Item could not be bought successfully"
+              } else {
+                const [updatedItem, updatedBid] = await Promise.all([
+                  getRecentlyBoughtItem(itemID),
+                  getBoughtBid(placedBid)
+                ]);
+                updatedItem.Bids = [];
+                updatedItem.Bids.push(updatedBid);
+                console.log("Joined Updated Item: " + JSON.stringify(updatedItem));
+                response.statusCode = 200;
+                response.body = JSON.stringify(updatedItem);
+              }
             }
           }
         }
       }
+      else {
+        response.statusCode = 400;
+        response.error = "The purchase expiration has passed for this item."
+      }
     }
     else {
       response.statusCode = 400;
-      response.error = "The purchase expiration has passed for this item."
+      response.error = "This item is frozen and currently cannot be bought."
     }
   } catch (error) {
     response.statusCode = 400;
