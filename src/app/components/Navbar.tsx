@@ -207,6 +207,12 @@ const Navbar = () => {
                                                 Review Active Bids
                                             </Link>
                                             <Link
+                                                href="/review-purchases"
+                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                            >
+                                                Review Purchases
+                                            </Link>
+                                            <Link
                                                 href="/add-funds"
                                                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                             >
