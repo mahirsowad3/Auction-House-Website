@@ -252,7 +252,7 @@ export default function ListItems() {
                                             item.IsFrozen ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
                                         }`}
                                     >
-                                        {item.IsFrozen ? "Unfreeze" : "Freeze"}
+                                        {item.IsFrozen ? "Unfrozen" : "Frozen"}
                                     </button>
                                     <button
                                             onClick={() => viewItemDetails(item.ItemID)}
