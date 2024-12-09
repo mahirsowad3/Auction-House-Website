@@ -100,7 +100,18 @@ export const handler = async (event, context) => {
             return response;
         }
 
-        // If the user is not found in either table
+        // Check the Admin table
+        const admin = await query("SELECT * FROM Admin WHERE Username = ? AND Password = ?", [username, password]);
+        if (admin.length > 0) {
+            response.statusCode = 200;
+            response.body = JSON.stringify({
+                message: "Login successful",
+                userType: "Admin" // Specify the userType as admin
+            });
+            return response;
+        }
+
+        // If the user is not found in any table
         response.statusCode = 401; // Unauthorized
         response.body = JSON.stringify({ message: "Invalid username or password" });
     } catch (error) {
