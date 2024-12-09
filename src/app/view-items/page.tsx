@@ -75,8 +75,13 @@ export default function ListItems() {
             console.log(`Backend response for ${action}:`, response.data);
     
             if (response.status === 200) {
-                alert(`Item successfully ${action}d.`);
-                fetchItems(); // Refresh the list after the action
+                if (action === "freeze") {
+                    alert(`The item is successfully frozen.`);
+                    fetchItems(); // Refresh the list after the action
+                } else {
+                    alert(`The item is successfully unfrozen.`);
+                    fetchItems(); // Refresh the list after the action
+                }
             } else {
                 alert(`Failed to ${action} the item.`);
             }
@@ -252,14 +257,14 @@ export default function ListItems() {
                                             item.IsFrozen ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
                                         }`}
                                     >
-                                        {item.IsFrozen ? "Unfrozen" : "Frozen"}
+                                        {item.IsFrozen ? "Unfreeze" : "Freeze"}
                                     </button>
                                     <button
                                             onClick={() => viewItemDetails(item.ItemID)}
                                             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                         >
                                             View Details
-                                        </button>
+                                    </button>
                                 </>
                             )}
 
