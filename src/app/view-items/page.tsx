@@ -76,10 +76,10 @@ export default function ListItems() {
     
             if (response.status === 200) {
                 if (action === "freeze") {
-                    alert(`The item is successfully frozen.`);
+                    alert(`Item successfully frozen!`);
                     fetchItems(); // Refresh the list after the action
                 } else {
-                    alert(`The item is successfully unfrozen.`);
+                    alert(`Item successfully unfrozen!`);
                     fetchItems(); // Refresh the list after the action
                 }
             } else {
