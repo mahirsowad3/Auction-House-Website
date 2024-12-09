@@ -60,23 +60,37 @@ export const handler = async (event, context) => {
 
     const updateItem = async (ItemID, isFrozen) => {
         const checkQuery = "SELECT * FROM Item WHERE ItemID = ?";
-        const updateQuery = `
+        const updateQueryUnfreeze = `
             UPDATE Item 
-            SET IsFrozen = ? 
+            SET IsFrozen = 0, 
+                requestedUnfreeze = 0 
             WHERE ItemID = ? AND ActivityStatus = 'Active'
         `;
-
+        const updateQueryFreeze = `
+            UPDATE Item 
+            SET IsFrozen = 1
+            WHERE ItemID = ? AND ActivityStatus = 'Active'
+        `;
+    
         try {
             // Debug the row before updating
             const rows = await query(pool, checkQuery, [ItemID]);
             console.log("Item details before update:", rows);
-
+    
             if (rows.length === 0) {
                 console.warn("No item found with the specified ItemID:", ItemID);
                 return false;
             }
-
-            const result = await query(pool, updateQuery, [isFrozen, ItemID]);
+    
+            let result;
+            if (isFrozen === 0) {
+                // Unfreeze logic: Set IsFrozen to 0 and requestedUnfreeze to 0
+                result = await query(pool, updateQueryUnfreeze, [ItemID]);
+            } else {
+                // Freeze logic: Set IsFrozen to 1 (keep requestedUnfreeze unchanged)
+                result = await query(pool, updateQueryFreeze, [ItemID]);
+            }
+    
             console.log("Update result:", result);
             return result.affectedRows > 0;
         } catch (error) {
@@ -84,6 +98,7 @@ export const handler = async (event, context) => {
             throw new Error("Failed to execute query");
         }
     };
+    
 
     try {
         const isFrozen = action === "freeze" ? 1 : 0; // Freeze: 1, Unfreeze: 0
