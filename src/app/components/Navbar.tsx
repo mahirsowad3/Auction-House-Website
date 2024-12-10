@@ -54,7 +54,6 @@ const Navbar = () => {
                     const parsedBody = JSON.parse(response.data.body);
                     fundsResponse = parsedBody?.AccountFunds;
                 }
-            
             } else if (userType === "Admin") {
                 const response = await axios.post(
                     `${baseURL}/get-admin-information`,
@@ -72,16 +71,11 @@ const Navbar = () => {
             }
             setFunds(fundsResponse || null);
 
-            // Allow 0 as a valid value
             if (fundsResponse === null || fundsResponse === undefined) {
-
                 throw new Error("Funds field is missing in the response.");
-
             }
 
-            setFunds(fundsResponse); // Set funds to the returned value, including 0
-
-
+            setFunds(fundsResponse);
         } catch (error) {
             console.error("Error retrieving funds:", error);
             setFunds(null);
@@ -116,14 +110,9 @@ const Navbar = () => {
                 setFunds(null);
                 router.push('/');
             } else if (response.data.statusCode === 404) {
-
                 alert("User not found.");
-
             } else if (response.data.statusCode === 400) {
-
                 alert("Cannot close account with active auctions.");
-
-
             } else {
                 alert("An unexpected error occurred.");
             }
@@ -138,7 +127,7 @@ const Navbar = () => {
             syncSessionState();
         };
 
-        syncSessionState(); // Sync session on initial render
+        syncSessionState();
 
         window.addEventListener('sessionUpdated', handleSessionUpdate);
 
@@ -148,7 +137,6 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        // Fetch funds when userType updates
         if (userType) {
             fetchFunds();
         }
@@ -159,7 +147,7 @@ const Navbar = () => {
             sessionStorage.clear();
             setUserName(null);
             setUserType(null);
-            setFunds(null); // Clear funds on logout
+            setFunds(null);
             router.push('/');
         } else {
             router.push('/login-account');
@@ -210,9 +198,15 @@ const Navbar = () => {
                                             >
                                                 Unfreeze Requests
                                             </Link>
-                                        </>    
+                                            <Link
+                                                href="/admin-report"
+                                                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                                            >
+                                                Reports
+                                            </Link>
+                                            
+                                        </>
                                     ) : userType === 'Buyer' ? (
-
                                         <>
                                             <Link
                                                 href="/view-recently-sold"
@@ -240,16 +234,14 @@ const Navbar = () => {
                                             </Link>
                                         </>
                                     ) : null}
-
                                 </div>
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            {userName && funds !== null && funds >= 0 && (
+                            {userName && userType !== 'Admin' && funds !== null && funds >= 0 && (
                                 <button
                                     onClick={async () => {
                                         await fetchFunds();
-                                        // temporary fix for funds useState varaible not updating in time
                                         let funds = sessionStorage.getItem('funds');
                                         if (!funds) {
                                             funds = (0).toString();
