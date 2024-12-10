@@ -58,8 +58,14 @@ export const handler = async (event, context) => {
     try {
         // Check if the username exists for any userType
         const userExists = await query(
-            "SELECT * FROM Seller WHERE Username = ? UNION SELECT * FROM Buyer WHERE Username = ?",
-            [username, username]
+            `
+            SELECT Username FROM Seller WHERE Username = ?
+            UNION
+            SELECT Username FROM Buyer WHERE Username = ?
+            UNION
+            SELECT Username FROM Admin WHERE Username = ?
+            `,
+            [username, username, username]
         );
 
         if (userExists.length > 0) {
