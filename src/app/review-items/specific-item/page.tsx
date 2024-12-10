@@ -144,14 +144,14 @@ export default function Home() {
 
     const canPublishItem = () => {
         const currentDate = new Date();
-        currentDate.setTime(currentDate.getTime() - (currentDate.getTimezoneOffset() * 60000));
+        //currentDate.setTime(currentDate.getTime() - (currentDate.getTimezoneOffset() * 60000));
         const currentDateAsString = currentDate.toISOString();
         console.log(currentDateAsString);
         const currentDatePlus30Minutes = new Date(currentDate.getTime() + 30 * 60 * 1000);
         const currentDatePlus30MinutesAsString = currentDatePlus30Minutes.toISOString();
         console.log("currentDatePlus30MinutesAsString: " + currentDatePlus30MinutesAsString);
-
-        if (activityStatus?.toLowerCase() === "inactive" && bidEndDate && new Date(bidEndDate).toISOString() >= currentDatePlus30MinutesAsString) {
+        console.log("bid end date: ",bidEndDate);
+        if (activityStatus?.toLowerCase() === "inactive" && bidEndDate && bidEndDate >= currentDatePlus30MinutesAsString) {
             setBidStartDate(currentDateAsString);
             console.log('Can publish item');
             return true;

@@ -76,7 +76,14 @@ export default function EditItem() {
                 setInitialPrice(itemDetails.InitialPrice ? itemDetails.InitialPrice : '');
                 setItemDescription(itemDetails.ItemDescription ? itemDetails.ItemDescription : '');
                 setIsABuyNow(itemDetails.IsBuyNow);
-                setBidEndDate(itemDetails.BidEndDate ? new Date(itemDetails.BidEndDate).toISOString().slice(0, 16) : '');
+                const BidEndDateTime = new Date(itemDetails.BidEndDate);
+                const BidEndYear = BidEndDateTime.getFullYear();
+                const BidEndMonth = String(BidEndDateTime.getMonth() + 1).padStart(2, '0');
+                const BidEndDay = String(BidEndDateTime.getDate()).padStart(2, '0');
+                const BidEndHours = String(BidEndDateTime.getHours()).padStart(2, '0');
+                const BidEndMinutes = String(BidEndDateTime.getMinutes()).padStart(2, '0');
+                const BidEndDateTimeString = `${BidEndYear}-${BidEndMonth}-${BidEndDay}T${BidEndHours}:${BidEndMinutes}`;
+                setBidEndDate(itemDetails.BidEndDate ? BidEndDateTimeString : '');
                 const AWSpictures: Picture[] = [];
                 itemDetails.Pictures.forEach((picture: Picture) => {
                     AWSpictures.push(picture);
