@@ -384,7 +384,7 @@ export default function Home() {
     return (
         <main>
             <div className="container mx-auto mt-5">
-                {isFrozen === 1 && (
+                {activityStatus?.toLowerCase() === "active" && isFrozen === 1 && (
                     <div className="mt-4 mb-4 rounded bg-red-200 p-2">
                         <h2 className="text-2xl">
                             Warning:
@@ -550,7 +550,7 @@ export default function Home() {
                         )}
                     </div>
                 {/* Request Unfreeze */}
-                {isFrozen === 1 &&
+                {activityStatus?.toLowerCase() === "active" && isFrozen === 1 &&
                     <div className="flex justify-center items-center mt-4 mb-8">
                         {!requestedUnfreeze ? (
                             <button
