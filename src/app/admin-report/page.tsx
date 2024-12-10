@@ -74,10 +74,10 @@ const AdminFunds = () => {
                     const uniqueItems = Object.values(groupedByItem);
 
                     const total = uniqueItems.length;
-                    const unsoldItems = uniqueItems.filter(item => item.SoldDate === null).length;
+                    const unsoldItems = uniqueItems.filter((item: any) => item.SoldDate === null).length;
                     const soldItems = total - unsoldItems;
 
-                    const processedData = uniqueItems.map(item => ({
+                    const processedData = uniqueItems.map((item: any) => ({
                         ...item,
                         Buyer: item.SoldDate ? item.Buyer : "Not Sold",
                         AverageBid: ((item.HighestBid + item.LowestBid) / 2).toFixed(2),
