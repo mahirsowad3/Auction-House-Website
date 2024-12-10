@@ -51,7 +51,7 @@ export const handler = async (event, context) => {
                     InitialPrice, 
                     IsFrozen 
                 FROM Item 
-                WHERE IsFrozen = 1 AND requestedUnfreeze = 1
+                WHERE IsFrozen = 1 AND requestedUnfreeze = 1 AND SYSDATE() < BidEndDate
             `;
             const unfreezeRequests = await query(sql, []);
             response = {
