@@ -64,15 +64,23 @@ const AdminFunds = () => {
                 const res = JSON.parse(response.data.body);
 
                 if (Array.isArray(res)) {
-                    // Calculate metrics
-                    const total = res.length;
-                    const unsoldItems = res.filter(item => item.SoldDate === null).length;
+                    const groupedByItem = res.reduce((acc, item) => {
+                        if (!acc[item.ItemName] || item.BidAmount > acc[item.ItemName].BidAmount) {
+                            acc[item.ItemName] = item; 
+                        }
+                        return acc;
+                    }, {});
+
+                    const uniqueItems = Object.values(groupedByItem);
+
+                    const total = uniqueItems.length;
+                    const unsoldItems = uniqueItems.filter(item => item.SoldDate === null).length;
                     const soldItems = total - unsoldItems;
 
-                    const processedData = res.map(item => ({
+                    const processedData = uniqueItems.map(item => ({
                         ...item,
-                        Buyer: item.SoldDate ? item.Buyer : "Not Sold", // Only show buyer if item is sold
-                        AverageBid: ((item.HighestBid + item.LowestBid) / 2).toFixed(2), // Average bid
+                        Buyer: item.SoldDate ? item.Buyer : "Not Sold",
+                        AverageBid: ((item.HighestBid + item.LowestBid) / 2).toFixed(2),
                     }));
 
                     setAuctionData(processedData);
@@ -128,6 +136,7 @@ const AdminFunds = () => {
                                         <th className="px-4 py-2 border border-gray-300">Initial Price</th>
                                         <th className="px-4 py-2 border border-gray-300">Highest Bid</th>
                                         <th className="px-4 py-2 border border-gray-300">Lowest Bid</th>
+                                        <th className="px-4 py-2 border border-gray-300">Bid Amount</th>
                                         <th className="px-4 py-2 border border-gray-300">Average Bid</th>
                                         <th className="px-4 py-2 border border-gray-300">Seller</th>
                                         <th className="px-4 py-2 border border-gray-300">Buyer</th>
@@ -142,6 +151,7 @@ const AdminFunds = () => {
                                             <td className="px-4 py-2 border border-gray-300">${auction.InitialPrice}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.HighestBid}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.LowestBid}</td>
+                                            <td className="px-4 py-2 border border-gray-300">${auction.BidAmount || "N/A"}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.AverageBid}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.Seller}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.Buyer}</td>
