@@ -138,10 +138,10 @@ const AdminFunds = () => {
                                         <th className="px-4 py-2 border border-gray-300">Lowest Bid</th>
                                         <th className="px-4 py-2 border border-gray-300">Bid Amount</th>
                                         <th className="px-4 py-2 border border-gray-300">Average Bid</th>
-                                        <th className="px-4 py-2 border border-gray-300">Seller</th>
-                                        <th className="px-4 py-2 border border-gray-300">Buyer</th>
                                         <th className="px-4 py-2 border border-gray-300">Sold Date</th>
                                         <th className="px-4 py-2 border border-gray-300">Total Bids</th>
+                                        <th className="px-4 py-2 border border-gray-300">Seller</th>
+                                        <th className="px-4 py-2 border border-gray-300">Buyer</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -149,14 +149,14 @@ const AdminFunds = () => {
                                         <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : ""}>
                                             <td className="px-4 py-2 border border-gray-300">{auction.ItemName}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.InitialPrice}</td>
-                                            <td className="px-4 py-2 border border-gray-300">${auction.HighestBid}</td>
-                                            <td className="px-4 py-2 border border-gray-300">${auction.LowestBid}</td>
+                                            <td className="px-4 py-2 border border-gray-300">${auction.HighestBid || "N/A"}</td>
+                                            <td className="px-4 py-2 border border-gray-300">${auction.LowestBid || "N/A"}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.BidAmount || "N/A"}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.AverageBid}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{auction.Seller}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{auction.Buyer}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.SoldDate || "Not Sold"}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.TotalBids}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{auction.Seller}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{auction.Buyer}</td>
                                         </tr>
                                     ))}
                                 </tbody>
