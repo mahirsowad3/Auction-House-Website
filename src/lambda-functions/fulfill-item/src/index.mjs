@@ -118,7 +118,7 @@ export const handler = async (event, context) => {
 
   const updateSellerCurrentBalance = (username, amountToAdd) => {
     return new Promise((resolve, reject) => {
-      pool.query("UPDATE Seller Set Funds = Funds + ?  WHERE Username = ?", [amountToAdd, username], (error, results) => {
+      pool.query("UPDATE Seller Set Funds = Funds + (? * 0.95)  WHERE Username = ?", [amountToAdd, username], (error, results) => {
         if (error) {
           return reject(error);
         } else if (results && results.changedRows > 0) {
