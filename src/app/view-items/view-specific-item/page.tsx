@@ -70,8 +70,11 @@ export default function ViewSpecificItem() {
     const [error, setError] = useState<string | null>(null);
     const [placeBidError, setPlaceBidError] = useState<string>('');
     const [placeBidSuccess, setPlaceBidSuccess] = useState<string>('');
-    const [Bid, setBid] = React.useState<string>('');
-    const userType = sessionStorage.getItem("userType"); // Get user type from session storage
+    const [Bid, setBid] = React.useState<string>(''); // Get user type from session storage
+    const [userType, setUserType] = useState<string>('');
+    const [userName, setUserName] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [currentItem, setCurrentItem] = useState<string>('');
     const [buyNowSuccess, setBuyNowSuccess] = useState<string>('');
     const [buyNowError, setBuyNowError] = useState<string>('');
     const [buyNowLoading, setBuyNowLoading] = useState<boolean>(false);
@@ -97,7 +100,7 @@ export default function ViewSpecificItem() {
 
 
     const fetchItemDetails = async () => {
-        const itemID = sessionStorage.getItem("viewItemID");
+        const itemID = currentItem;
         if (!itemID) {
             setError("No item selected.");
             setLoading(false);
@@ -110,8 +113,8 @@ export default function ViewSpecificItem() {
             try {
                 const payload = {
                     body: {
-                        username: sessionStorage.getItem("userName"),
-                        password: sessionStorage.getItem("password"),
+                        username: userName,
+                        password: password,
                         itemID: parseInt(itemID),
                         userType, // Include userType in the request
                     },
@@ -138,22 +141,38 @@ export default function ViewSpecificItem() {
 
 
     useEffect(() => {
-        fetchItemDetails();
+        const currentItemIDVal = sessionStorage.getItem("viewItemID");
+        const userNameVal = sessionStorage.getItem("userName");
+        const passwordVal = sessionStorage.getItem("password");
+        const userTypeVal = sessionStorage.getItem("userType");
+        if(currentItemIDVal && userNameVal && passwordVal && userTypeVal){
+            setCurrentItem(currentItemIDVal);
+            setUserName(userNameVal);
+            setPassword(passwordVal);
+            setUserType(userTypeVal);
+        }
+
     }, []);
+
+    useEffect(() => {
+        if (currentItem && userName && password && userType) {
+            fetchItemDetails();
+          }
+    }, [currentItem, userName, password, userType]);
 
     const placeBid = async () => {
         setPlaceBidError('');
         setPlaceBidLoading(true);
         console.log("placing Bid");
-        const itemID = sessionStorage.getItem("viewItemID");
+        const itemID = currentItem;
         if (!itemID) {
             setError("No item selected.");
             return;
         }
         const payload = {
             body: {
-                username: sessionStorage.getItem("userName"),
-                password: sessionStorage.getItem("password"),
+                username: userName,
+                password: password,
                 itemID: parseInt(itemID),
                 requestedBid: parseInt(Bid)
             },
@@ -186,15 +205,15 @@ export default function ViewSpecificItem() {
         setPlaceBidError('');
         setPlaceBidLoading(true);
         console.log("placing Bid");
-        const itemID = sessionStorage.getItem("viewItemID");
+        const itemID = currentItem;
         if (!itemID) {
             setError("No item selected.");
             return;
         }
         const payload = {
             body: {
-                username: sessionStorage.getItem("userName"),
-                password: sessionStorage.getItem("password"),
+                username: userName,
+                password: password,
                 itemID: parseInt(itemID),
                 requestedBid: theNextHighestBid
             },
@@ -225,15 +244,15 @@ export default function ViewSpecificItem() {
         setBuyNowError('');
         setBuyNowLoading(true);
         console.log("Buy Now button pressed");
-        const itemID = sessionStorage.getItem("viewItemID");
+        const itemID = currentItem;
         if (!itemID) {
             setError("No item selected.");
             return;
         }
         const payload = {
             body: {
-                username: sessionStorage.getItem("userName"),
-                password: sessionStorage.getItem("password"),
+                username: userName,
+                password: password,
                 itemID: parseInt(itemID),
             },
         };
