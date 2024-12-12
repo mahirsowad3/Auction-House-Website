@@ -228,6 +228,20 @@ related information will be shown.
 7. Buyer can only buy an item if the item is not already bought, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
 8. If a buyer successfully buys an item, a table with the purchase will be shown at the bottom of the page used to buy an item.
 
+### Admin Use-Cases
+
+#### Freeze/Unfreeze Item
+1. After logging in, click the "View Active Items" button on the navbar.
+2. A list of all active items will be displayed.
+3. To see more details about an item, click the "View Details" button next to the item.
+4. To manage an item’s status, click the "Freeze" or "Unfreeze" button corresponding to the item.
+   -- When you freeze an item, a pop-up message will appear: "Item successfully frozen!"
+   -- When you unfreeze an item, a pop-up message will appear: "Item successfully unfrozen!"
+5. To review unfreeze requests, click the "Unfreeze Requests" button in the navbar.
+6. A table displaying all unfreeze requests will appear.
+7. From this table, click "Approve" to unfreeze the item or "Deny" to reject the request.
+8. When you deny a request, a pop-up message will appear: "Unfreeze request denied."
+
 ---
 
 ## Getting Started
