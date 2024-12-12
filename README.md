@@ -239,7 +239,7 @@ related information will be shown.
 3. To see more details about an item, click the "View Details" button next to the item.
 4. To manage an item’s status, click the "Freeze" or "Unfreeze" button corresponding to the item.
    - When you freeze an item, a pop-up message will appear: "Item successfully frozen!"
-    When you unfreeze an item, a pop-up message will appear: "Item successfully unfrozen!"
+   - When you unfreeze an item, a pop-up message will appear: "Item successfully unfrozen!"
 5. To review unfreeze requests, click the "Unfreeze Requests" button in the navbar.
 6. A table displaying all unfreeze requests will appear.
 7. From this table, click "Approve" to unfreeze the item or "Deny" to reject the request.
