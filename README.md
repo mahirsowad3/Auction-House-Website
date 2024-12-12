@@ -41,6 +41,9 @@ Additionally, we have also include our package.json file in case there are issue
 - Place Bid
 - Buy Now
 
+### Admin Use-Cases
+
+- Freeze/Unfreeze Items
 ---
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
