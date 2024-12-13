@@ -66,7 +66,7 @@ const AdminFunds = () => {
                 if (Array.isArray(res)) {
                     const groupedByItem = res.reduce((acc, item) => {
                         if (!acc[item.ItemName] || item.BidAmount > acc[item.ItemName].BidAmount) {
-                            acc[item.ItemName] = item; 
+                            acc[item.ItemName] = item;
                         }
                         return acc;
                     }, {});
@@ -153,7 +153,15 @@ const AdminFunds = () => {
                                             <td className="px-4 py-2 border border-gray-300">${auction.LowestBid || "N/A"}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.BidAmount || "N/A"}</td>
                                             <td className="px-4 py-2 border border-gray-300">${auction.AverageBid}</td>
-                                            <td className="px-4 py-2 border border-gray-300">{auction.SoldDate || "Not Sold"}</td>
+                                            <td className="px-4 py-2 border border-gray-300">{new Date(auction.SoldDate.replace(" ", "T")).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                second: "2-digit",
+                                                hour12: false,
+                                            }) || "Not Sold"}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.TotalBids}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.Seller}</td>
                                             <td className="px-4 py-2 border border-gray-300">{auction.Buyer}</td>
