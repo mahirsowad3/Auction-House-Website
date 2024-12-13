@@ -44,6 +44,8 @@ Additionally, we have also include our package.json file in case there are issue
 ### Admin Use-Cases
 
 - Freeze/Unfreeze Items
+- Auction Report
+- Auction Forensics
 ---
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
