@@ -247,6 +247,14 @@ related information will be shown.
 7. From this table, click "Unfreeze" to unfreeze the item or "Deny" to reject the request.
 8. When you deny a request, a pop-up message will appear: "Unfreeze request denied."
 
+
+#### Auction Reports
+1. After logging in as Admin.
+2. User will click on the Report tab in navbar.
+3. and will see a page with two sections
+4. First row showing total profit earned.
+5. Second row shows forensics report 
+
 ---
 
 ## Getting Started
