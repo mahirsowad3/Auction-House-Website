@@ -271,6 +271,7 @@ export default function ViewSpecificItem() {
             await fetchItemDetails();
             setBuyNowLoading(false);
         } else {
+            setBuyNowLoading(false);
             const error = response.data.error;
             setBuyNowError(error);
             console.log(`buy now response data error: `, response.data.error)
