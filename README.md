@@ -32,7 +32,7 @@ Additionally, we have also include our package.json file in case there are issue
 
 ### Buyer Use-Cases
 
-- Create Account
+- Open Account
 - Close Account
 - Login Account
 - See Your Fund
@@ -53,10 +53,13 @@ Additionally, we have also include our package.json file in case there are issue
 **IMPORTANT NOTES:**
 
 1. Do NOT refresh/reload the application once there through the link as that will break the application's functionality.
-2. When accessing certain pages on the application such as "view items" "review items", or when viewing a specific item, expired items will automatically become completed or failed depending on the conditions described on the "FINALIZED" version of the use-cases before any of the items and their contents show up.
+2. When accessing certain pages on the application such as "view active items", "review items", other similar pages, or when viewing a specific item, expired items will automatically become completed or failed depending on the conditions described on the "FINALIZED" version of the use-cases before any of the items and their contents show up.
 3. Despite what is said on the README regarding each use-case, it is important to take into consideration what is described on the "FINALIZED" version of the use-cases as to why the condition behaves in certain ways when certain actions are taken by the user.
 4. You will be treated as a Customer until you log in as either a seller or buyer. If you log out of your account at any point, you will be treated as a Customer again until you log back in as either a seller or buyer.
-5. Do NOT use the usernames "Test1", "TestB", "Seller2", "Buyer1", "Buyer2", "Buyer3" when creating an account(s) as all those usernames have already been used to create accounts for testing purposes.
+5. Do NOT use the username "Admin1" when creating an account as that username is already taken
+6. To log in as the auction house's "Admin" side, use the username "Admin1" and password "Admin1", both without the quotes and while ensuring the correct capitalization.
+7. On the "Reports" page on the Admin, the "Total Funds:" section represents the required generated auction report, and the "auction forensics"
+section represents the required generated forensics report.
 
 ### Customer Use-Cases
 
@@ -65,7 +68,7 @@ Additionally, we have also include our package.json file in case there are issue
 1. On the landing page, you are considered a "Customer" until you log into an account.
 2. Click on the "View Items" button on the top left side of the navbar.
 3. You will see all the published items displayed as rectangular cards in a grid format.
-4. Each item card contains information such as name, description, images, published date, expiration date, initial price, and bids (if any).
+4. Each item card contains information such as name, description, images, published date, expiration date, initial price, and the current highest bid if there is one.
 
 #### Sort Items
 
@@ -87,9 +90,9 @@ Additionally, we have also include our package.json file in case there are issue
 
 1. Click on the "Create Account" button at the top-right corner of the page.
 2. Fill in the username, password, and select "Seller" as the user type.
-3. Avoid using usernames: "Test1", "TestB", "Seller2".
+3. Avoid using username "Admin1" s that username is already taken
 4. Upon successful account creation, you will see a message: "Account created successfully!".
-5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer.
+5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer or the admin.
 
 #### Login Account
 
@@ -121,6 +124,7 @@ Additionally, we have also include our package.json file in case there are issue
 2. Ensure the BidEndDate is later than the current date and time.
 3. If active items have associated bids or have been bought, a table with the
 related information will be shown.
+4. You will only be able to publish an item if the bid or purchase end date selected is at least 30 minutes from the current time.
 
 #### Unpublish Item
 
@@ -129,7 +133,7 @@ related information will be shown.
 
 #### Edit Item
 
-1. Click the "Edit Details" button on an inactive item to edit its details.
+1. Click the "Edit Details" button on an inactive item to edit any of its details.
 2. Update the fields and click "Save Edits".
 
 #### Close Account
@@ -142,9 +146,9 @@ related information will be shown.
 #### Archive Item
 
 1. After logging in as a Seller, the user should navigate to the Review Items page.
-2. On the Review Items page, you have the option to select the "Inactive" filter options from the Activity Status filter options
+2. On the Review Items page, you have the option to select the "Inactive" or "Failed" filter options from the Activity Status filter options
    if you do not feel like trying out all the items one by one.
-3. Click on an "Inactive" item which will take you to the /review-items/specific-items for that particular item.
+3. Click on an "Inactive" or "Failed" item which will take you to the /review-items/specific-items for that particular item.
 4. Scroll down to the bottom of the /review-items/specific-item page and click on the "Archive Item" button.
 5. If successful, you will briefly see a green alert notification stating "Item has been successfully archived." You will also see that the "Activity Status" field has now been updated to "Archived".
 
@@ -160,15 +164,23 @@ related information will be shown.
 3. If completed or archived items have associated bids or have been bought, a table with the
 related information will be shown.
 
+### Request Unfreeze Item
+
+1. First, click on a "Frozen" item from the "Review Items" page
+2. Click on the "Request Unfreeze" button
+3. Once that is done, the seller will be given a message saying that they need to wait for the Admin to unfreeze the item
+4. If an item is frozen past its bid or purchase end date, its activity status will become "Failed"
+
+
 ### Buyer Use-Cases
 
-#### Create Account
+#### Open Account
 
 1. Click on the "Create Account" button at the top-right corner of the page.
 2. Fill in the username, password, and select "Buyer" as the user type.
 3. Avoid using usernames: "Buyer1", "Buyer2", "Buyer3".
 4. Upon successful account creation, you will see a message: "Account created successfully!".
-5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer.
+5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer or the admin.
 
 #### Login Account
 
@@ -197,8 +209,8 @@ related information will be shown.
 
 1. Click the "Close Account" button on the top right side of the navbar.
 2. Confirm the action in the alert.
-3. If you have active bids, you will see: "Cannot close account with active auctions".
-4. If successful, you will see: "Account closed successfully!".
+3. If you have active bids, you will see: "Cannot close account with active auctions" and the account will not be closed.
+4. If successful, you will see: "Account closed successfully!" and the account will be closed.
 
 #### View Item
 
@@ -214,13 +226,15 @@ related information will be shown.
 
 1. Buyer can place a bid on the item.
 2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
-3. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
-4. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
-5. If the item currently has no bids, the item's price will be treated as the item's current highest bid, the buyer's highest bid will be treated as 0, and the difference between the buyer's requested bid and their highest bid will just be treated as
+3. Make sure the entered bid is an integer; decimal values are not allowed.
+4. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
+5. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
+6. If the item currently has no bids, the item's price will be treated as the item's current highest bid, the buyer's highest bid will be treated as 0, and the difference between the buyer's requested bid and their highest bid will just be treated as
    the buyer's requested bid when determining if the buyer can place their desired bid.
-6. Buyer can only place a bid if their requested bid is higher than the item's current highest bid, if they are not related to
+7. Buyer can only place a bid if their requested bid is higher than the item's current highest bid, if they are not related to
    the item's overall highest bid, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
-7. At the bottom of the page used to place bids for an item, a table with information related to all of bids placed for that item will be shown to the user
+8. At the bottom of the page used to place bids for an item, a table with information related to all of bids placed for that item will be shown to the user
+9. Buyer will NOT be able to place a bid(s) on an active item that is currently frozen
 
 #### Buy Now
 
@@ -231,7 +245,8 @@ related information will be shown.
 5. If you scroll down to the "Purchase History" table, you will also see the purchase that you have just made on this item.
 6. In order to leave the view-specific-item page, click on the "View Items" option in the Navbar.
 7. Buyer can only buy an item if the item is not already bought, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
-8. If a buyer successfully buys an item, a table with the purchase will be shown at the bottom of the page used to buy an item.
+8. If a buyer successfully buys an item, a table with the purchase will be shown at the bottom of the page used to buy an item, and that item's activity status will immediately become completed.
+9. Buyer will NOT be able to buy an active item that is currently frozen
 
 ### Admin Use-Cases
 
@@ -239,21 +254,21 @@ related information will be shown.
 1. After logging in, click the "View Active Items" button on the Navbar.
 2. A list of all active items will be displayed.
 3. To see more details about an item, click the "View Details" button next to the item.
-4. To manage an item’s status, click the "Freeze" or "Unfreeze" button corresponding to the item.
+4. To manage an item’s frozen status, click the "Freeze" or "Unfreeze" button corresponding to the item.
    - When you freeze an item, a pop-up message will appear: "Item successfully frozen!"
    - When you unfreeze an item, a pop-up message will appear: "Item successfully unfrozen!"
 5. To review unfreeze requests, click the "Unfreeze Requests" button in the Navbar.
-6. A table displaying all unfreeze requests will appear.
+6. A table displaying all unfreeze requests for active items will appear.
 7. From this table, click "Unfreeze" to unfreeze the item or "Deny" to reject the request.
-8. When you deny a request, a pop-up message will appear: "Unfreeze request denied."
+8. When you deny a request, a pop-up message will appear: "Unfreeze request denied", and the seller will be able to
+request to unfreeze that item
+9. When you "unfreeze" a request, a pop-up message will appear to inform that the item has been unfrozen
 
 
-#### Auction Reports
-1. After logging in as Admin.
-2. User will click on the Report tab in navbar.
-3. and will see a page with two sections
-4. First row showing total profit earned.
-5. Second row shows forensics report 
+#### Generate Auction Report and Generate Forensics Report
+1. Log in in as Admin.
+2. Admin will click on the "Reports" tab on the navbar.
+4. Once there, they can both generate the Auction and Forensics reports as described under the "IMPORTANT NOTES" section of this README..
 
 ---
 
