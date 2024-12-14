@@ -37,15 +37,15 @@ Additionally, we have also include our package.json file in case there are issue
 - Login Account
 - See Your Fund
 - Add Funds
-- View Items
+- View Item
 - Place Bid
 - Buy Now
 
 ### Admin Use-Cases
 
 - Freeze/Unfreeze Items
-- Auction Report
-- Auction Forensics
+- Generate Auction Report
+- Generate Forensics Report
 ---
 
 ## How to Navigate Through the Application and Test This Iteration's Use-Cases
@@ -53,7 +53,7 @@ Additionally, we have also include our package.json file in case there are issue
 **IMPORTANT NOTES:**
 
 1. Do NOT refresh/reload the application once there through the link as that will break the application's functionality.
-2. When accessing certain pages on the application such as "view active items", "review items", other similar pages, or when viewing a specific item, expired items will automatically become completed or failed depending on the conditions described on the "FINALIZED" version of the use-cases before any of the items and their contents show up.
+2. When accessing certain pages on the application such as "view active items", "review items", other similar pages, or when viewing a specific item, items past their bid or purcahse end date will automatically become completed or failed depending on the conditions described on the "FINALIZED" version of the use-cases before any of the items and their contents show up.
 3. Despite what is said on the README regarding each use-case, it is important to take into consideration what is described on the "FINALIZED" version of the use-cases as to why the condition behaves in certain ways when certain actions are taken by the user.
 4. You will be treated as a Customer until you log in as either a seller or buyer. If you log out of your account at any point, you will be treated as a Customer again until you log back in as either a seller or buyer.
 5. Do NOT use the username "Admin1" when creating an account as that username is already taken
@@ -215,9 +215,9 @@ related information will be shown.
 #### View Item
 
 1. Buyer can view all the active items by clicking on "View Items" on the top left side of the navbar.
-2. Buyer can see different details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+2. Buyer can initiall see different details of the item like name, description, images, published date, expiration date, initial price, the current highest bid if there is one.
 3. Buyer can click on the "View Details" for each item to view more details of that.
-4. Buyer can see the all details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
+4. Once that is done, Buyer can see the additional details of the item like name, description, images, published date, expiration date, initial price, and bids (if any).
 5. Buyer can see the bid history of the item.
 6. Buyer can see the highest bid on the item.
 7. Buyer can see the time remaining for the bid to end.
@@ -228,7 +228,7 @@ related information will be shown.
 2. To place a custom bid, enter the desired amount and click the "Place Custom Entered Bid" button.
 3. Make sure the entered bid is an integer; decimal values are not allowed.
 4. To place the next higher bid (by $1), simply click the "Place Next Highest Bid (The Item's Current Highest Bid + $1)" button.
-5. In order to leave the view-specific-item page, click on the "View Items" option in Navbar.
+5. In order to leave the view-specific-item page, click on the "View Active Items" or any other option on the Navbar.
 6. If the item currently has no bids, the item's price will be treated as the item's current highest bid, the buyer's highest bid will be treated as 0, and the difference between the buyer's requested bid and their highest bid will just be treated as
    the buyer's requested bid when determining if the buyer can place their desired bid.
 7. Buyer can only place a bid if their requested bid is higher than the item's current highest bid, if they are not related to
@@ -243,7 +243,7 @@ related information will be shown.
 3. Click on the "Buy Now" button to buy the item.
 4. Upon successfully buying the item, there will be a green alert notification that states "You have successfully purchased the item!".
 5. If you scroll down to the "Purchase History" table, you will also see the purchase that you have just made on this item.
-6. In order to leave the view-specific-item page, click on the "View Items" option in the Navbar.
+6. In order to leave the view-specific-item page, click on the "View Active Items" or any other option on the Navbar.
 7. Buyer can only buy an item if the item is not already bought, and if the difference between the buyer's requested bid and their highest bid + the sum of their current highest bids on active items + the sum of their current highest bids on completed but not frozen items is less than or equal to their current funds.
 8. If a buyer successfully buys an item, a table with the purchase will be shown at the bottom of the page used to buy an item, and that item's activity status will immediately become completed.
 9. Buyer will NOT be able to buy an active item that is currently frozen
