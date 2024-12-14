@@ -64,7 +64,8 @@ export const handler = async (event, context) => {
             SELECT *
             FROM Item 
             JOIN Bid On RelatedItemID = ItemID
-            WHERE ActivityStatus = 'Archived' AND BuyerSoldTo = ?`;
+            WHERE ActivityStatus = 'Archived' AND BuyerSoldTo = ?
+            GROUP BY ItemID`;
       const itemsWithActiveBids = await query(itemSql, [username]);
 
       // Extract item IDs
