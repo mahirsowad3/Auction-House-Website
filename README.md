@@ -1,9 +1,5 @@
 # Auction House Application
 
-### Landing Page
-
-[Visit the application](http://deployedac.s3-website.us-east-2.amazonaws.com/)
-
 ---
 
 Additionally, we have also include our package.json file in case there are issues with navigating through our app on AWS and you wish to try running it locally.
