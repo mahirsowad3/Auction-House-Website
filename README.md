@@ -25,6 +25,7 @@ Additionally, we have also include our package.json file in case there are issue
 - Unpublish Item
 - Archive Item
 - Fulfill Item
+- Request Unfreeze Item
 
 ### Buyer Use-Cases
 
@@ -175,7 +176,7 @@ Additionally, we have also include our package.json file in case there are issue
 
 1. Click on the "Create Account" button at the top-right corner of the page.
 2. Fill in the username, password, and select "Buyer" as the user type.
-3. Avoid using usernames: "Buyer1", "Buyer2", "Buyer3".
+3. Avoid using username "Admin1" s that username is already taken
 4. Upon successful account creation, you will see a message: "Account created successfully!".
 5. You will NOT be able to successfully create your account if the username you chose already exists as either a seller or a buyer or the admin.
 
@@ -284,6 +285,8 @@ Additionally, we have also include our package.json file in case there are issue
 1. Log in in as Admin.
 2. Admin will click on the "Reports" tab on the navbar.
 3. Once there, they can both generate the Auction and Forensics reports as described under the "IMPORTANT NOTES" section of this README..
+
+---
 
 ---
 
